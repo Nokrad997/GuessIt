@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using NetTopologySuite.Geometries;
 
-namespace WebApplication1.Entities;
+namespace Backend.Entities;
 
 [Table("geolocations")]
 public class Geolocations

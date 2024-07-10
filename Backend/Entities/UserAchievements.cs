@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebApplication1.Entities;
+namespace Backend.Entities;
 
 [Table("user_achievements")]
 public class UserAchievements
@@ -12,14 +12,18 @@ public class UserAchievements
     public int UserAchievementId { get; set; }
     
     [Required]
+    [ForeignKey("UserIdFk")]
     [Column("user_id")]
-    [ForeignKey("UserId")]
-    public virtual Users UserId { get; set; }
+    public int UserIdFk { get; set; }
+    
+    public Users User { get; set; }
     
     [Required]
+    [ForeignKey("AchievementIdFk")]
     [Column("achievement_id")]
-    [ForeignKey("AchievementId")]
-    public virtual Achievements AchievementId { get; set; }
+    public int AchievementId { get; set; }
+    
+    public Achievements Achievement { get; set; }
     
     [Required]
     [Column("earned_at")]

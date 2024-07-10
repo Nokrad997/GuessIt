@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebApplication1.Entities;
+namespace Backend.Entities;
 
 [Table("friends")]
 public class Friends
@@ -13,14 +13,18 @@ public class Friends
     public int FriendsId { get; set; }
     
     [Required]
+    [ForeignKey("UserIdFk")]
     [Column("user_id")]
-    [ForeignKey("UserId")]
-    public virtual Users UserId { get; set; }
+    public int UserIdFk { get; set; }
+    
+    public Users User { get; set; }
     
     [Required]
+    [ForeignKey("FriendIdFk")]
     [Column("friend_id")]
-    [ForeignKey("UserId")]
-    public virtual Users FriendId { get; set; }
+    public int FriendIdFk { get; set; }
+    
+    public Users Friend { get; set; }
     
     [Required]
     [Column("status")]

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebApplication1.Entities;
+namespace Backend.Entities;
 
 [Table("games")]
 public class Games
@@ -12,39 +12,41 @@ public class Games
     public int GameId { get; set; }
     
     [Required]
-    [ForeignKey("UserId")]
+    [ForeignKey("UserIdFk")]
     [Column("user_id")]
-    public virtual Users UserId { get; set; }
+    public int UserIdFk { get; set; }
+    
+    public Users User { get; set; }
     
     [Required]
-    [ForeignKey("start_latitude")]
+    [Column("start_latitude")]
     public decimal StartLatitude { get; set; }
     
     [Required]
-    [ForeignKey("start_longitude")]
+    [Column("start_longitude")]
     public decimal StartLongitude { get; set; }
     
     [Required]
-    [ForeignKey("guessed_latitude")]
+    [Column("guessed_latitude")]
     public decimal GuessedLatitude { get; set; }
     
     [Required]
-    [ForeignKey("guessed_longitude")]
+    [Column("guessed_longitude")]
     public decimal GuessedLongitude { get; set; }
     
     [Required]
-    [ForeignKey("distance_to_starting_location")]
+    [Column("distance_to_starting_location")]
     public decimal DistanceToStartingLocation { get; set; }
 
     [Required]
-    [ForeignKey("start_time")]
+    [Column("start_time")]
     public TimeSpan StartTime { get; set; }
 
     [Required]
-    [ForeignKey("end_time")]
+    [Column("end_time")]
     public TimeSpan EndTime { get; set; }
     
     [Required]
-    [ForeignKey("score")]
+    [Column("score")]
     public int Score { get; set; }
 }

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebApplication1.Entities;
+namespace Backend.Entities;
     [Table("cities")]
     public class Cities
     {
@@ -15,12 +15,16 @@ namespace WebApplication1.Entities;
         public string CityName { get; set; }
 
         [Required]
-        [ForeignKey("Countries")]
+        [ForeignKey("CountryIdFk")]
         [Column("country_id")]
-        public int CountryId { get; set; }
+        public int CountryIdFk { get; set; }
+        
+        public Countries Country { get; set; }
 
         [Required]
-        [ForeignKey("GeolocationId")]
+        [ForeignKey("GeolocationIdFk")]
         [Column("geolocation_id")]
-        public Geolocations GeolocationId { get; set; }
+        public int GeolocationIdFk { get; set; }
+        
+        public Geolocations Geolocation { get; set; }
 }

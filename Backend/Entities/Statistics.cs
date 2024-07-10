@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WebApplication1.Entities;
+namespace Backend.Entities;
 
 [Table("statistics")]
 public class Statistics
@@ -12,9 +12,11 @@ public class Statistics
     public int StatisticId { get; set; }
     
     [Required]
+    [ForeignKey("UserIdFk")]
     [Column("user_id")]
-    [ForeignKey("UserId")]
-    public virtual Users User { get; set; }
+    public int UserIdFk { get; set; }
+    
+    public Users User { get; set; }
     
     [Required]
     [Column("total_games")]
