@@ -1,9 +1,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Entities.Interfaces;
 
 namespace Backend.Entities;
 [Table("leaderboard")]
-public class Leaderboard
+public class Leaderboard : IHasTimeStamp
 {
     [Key]
     [Required]
@@ -15,14 +16,9 @@ public class Leaderboard
     [Column("user_id")]
     public int UserIdFk { get; set; }
     
-    public Users User { get; set; }
+    public User User { get; set; }
     
     [Required]
     [Column("total_points")]
     public int TotalPoints { get; set; }
-    
-    [Required]
-    [Column("last_updated")]
-    [Timestamp, DataType("timestamp")]
-    public byte[] LastUpdate { get; set; }
 }

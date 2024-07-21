@@ -24,7 +24,8 @@ namespace Backend.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     achievement_name = table.Column<string>(type: "text", nullable: false),
                     achievement_description = table.Column<string>(type: "text", nullable: false),
-                    created_at = table.Column<byte[]>(type: "bytea", rowVersion: true, nullable: false)
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -54,8 +55,8 @@ namespace Backend.Migrations
                     email = table.Column<string>(type: "character varying(24)", maxLength: 24, nullable: false),
                     password = table.Column<string>(type: "text", nullable: false),
                     verified = table.Column<bool>(type: "boolean", nullable: false),
-                    updated_at = table.Column<byte[]>(type: "bytea", rowVersion: true, nullable: false),
-                    created_at = table.Column<byte[]>(type: "bytea", rowVersion: true, nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
                 constraints: table =>
                 {
@@ -92,15 +93,16 @@ namespace Backend.Migrations
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     friend_id = table.Column<int>(type: "integer", nullable: false),
                     status = table.Column<string>(type: "text", nullable: false),
-                    created_at = table.Column<byte[]>(type: "bytea", rowVersion: true, nullable: false),
-                    UsersUserId = table.Column<int>(type: "integer", nullable: true)
+                    UserId = table.Column<int>(type: "integer", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_friends", x => x.friends_id);
                     table.ForeignKey(
-                        name: "FK_friends_users_UsersUserId",
-                        column: x => x.UsersUserId,
+                        name: "FK_friends_users_UserId",
+                        column: x => x.UserId,
                         principalTable: "users",
                         principalColumn: "user_id");
                     table.ForeignKey(
@@ -154,7 +156,8 @@ namespace Backend.Migrations
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     total_points = table.Column<int>(type: "integer", nullable: false),
-                    last_updated = table.Column<byte[]>(type: "bytea", rowVersion: true, nullable: false)
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -202,7 +205,8 @@ namespace Backend.Migrations
                     user_id = table.Column<int>(type: "integer", nullable: false),
                     UserId = table.Column<int>(type: "integer", nullable: false),
                     achievement_id = table.Column<int>(type: "integer", nullable: false),
-                    earned_at = table.Column<byte[]>(type: "bytea", rowVersion: true, nullable: false)
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -314,9 +318,9 @@ namespace Backend.Migrations
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_friends_UsersUserId",
+                name: "IX_friends_UserId",
                 table: "friends",
-                column: "UsersUserId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_games_UserId",

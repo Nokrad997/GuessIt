@@ -1,12 +1,13 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Entities.Interfaces;
 
 namespace Backend.Entities;
 [Table("users")]
-public class Users
+public class User : IHasTimeStamp
 {
     [Key]
-    [Required]
     [Column("user_id")]
     public int UserId { get; set; }
     
@@ -26,21 +27,20 @@ public class Users
     [Column("password")]
     public string Password { get; set; }
     
-    [Required]
     [Column("verified")]
+    [DefaultValue(false)]
     public bool Verified { get; set; }
-    
-    [Timestamp, DataType("timestamp")]
-    [Column("updated_at")]
-    public byte[] CreatedAt { get; set; }
-    
-    [Timestamp]
-    [Column("created_at")]
-    public byte[] UpdatedAt { get; set; }
+
+    [Column("is_admin")] 
+    [DefaultValue(false)]
+    public bool isAdmin { get; set; }
+
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 
     public ICollection<Statistics> Statistics { get; set; }
     public ICollection<Friends> Friends { get; set; }
-    public ICollection<Games> Games { get; set; }
+    public ICollection<Game> Games { get; set; }
     public ICollection<Leaderboard> Leaderboards { get; set; }
     public ICollection<UserAchievements> UserAchievements { get; set; }
 }

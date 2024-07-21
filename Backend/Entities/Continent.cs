@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Backend.Entities;
 
 [Table("continents")]
-public class Continents
+public class Continent
 {
     [Key]
     [Required]
@@ -20,7 +20,7 @@ public class Continents
     [Column("geolocation_id")]
     public int GeolocationIdFk { get; set; }
 
-    public Geolocations Geolocation { get; set; }
+    public Geolocation Geolocation { get; set; }
     
-    public ICollection<Countries> Countries { get; set; }
+    public ICollection<Country> Countries { get; set; }
 }

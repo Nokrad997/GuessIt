@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Entities.Interfaces;
 
 namespace Backend.Entities;
 
 [Table("achievements")]
-public class Achievements
+public class Achievement : IHasTimeStamp
 {
     [Key]
     [Required]
@@ -18,9 +19,4 @@ public class Achievements
     [Required]
     [Column("achievement_description")]
     public string AchievementDescription { get; set; }
-    
-    [Required]
-    [Column("created_at")]
-    [Timestamp, DataType("timestamp")]
-    public byte[] CreatedAt { get; set; }
 }

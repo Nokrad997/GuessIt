@@ -5,7 +5,7 @@ using NetTopologySuite.Geometries;
 namespace Backend.Entities;
 
 [Table("geolocations")]
-public class Geolocations
+public class Geolocation
 {
     [Key]
     [Required]

@@ -16,7 +16,7 @@ public class Statistics
     [Column("user_id")]
     public int UserIdFk { get; set; }
     
-    public Users User { get; set; }
+    public User User { get; set; }
     
     [Required]
     [Column("total_games")]

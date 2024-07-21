@@ -1,11 +1,12 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Entities.Interfaces;
 
 namespace Backend.Entities;
 
 [Table("friends")]
-public class Friends
+public class Friends : IHasTimeStamp
 {
     [Key]
     [Required]
@@ -17,23 +18,18 @@ public class Friends
     [Column("user_id")]
     public int UserIdFk { get; set; }
     
-    public Users User { get; set; }
+    public User User { get; set; }
     
     [Required]
     [ForeignKey("FriendIdFk")]
     [Column("friend_id")]
     public int FriendIdFk { get; set; }
     
-    public Users Friend { get; set; }
+    public User Friend { get; set; }
     
     [Required]
     [Column("status")]
     [DefaultValue("Pending")]
     [AllowedValues("Pending", "Accepted", "Rejected", "Blocked")]
     public string Status { get; set; }
-    
-    [Required]
-    [Column("created_at")]
-    [Timestamp, DataType("timestamp")]
-    public byte[] CreatedAt { get; set; }
 }

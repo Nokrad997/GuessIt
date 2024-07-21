@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.Migrations
 {
     [DbContext(typeof(GuessItContext))]
-    [Migration("20240710193836_Initial")]
+    [Migration("20240720171849_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -27,7 +27,7 @@ namespace Backend.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Backend.Entities.Achievements", b =>
+            modelBuilder.Entity("Backend.Entities.Achievement", b =>
                 {
                     b.Property<int>("AchievementId")
                         .ValueGeneratedOnAdd()
@@ -46,19 +46,20 @@ namespace Backend.Migrations
                         .HasColumnType("text")
                         .HasColumnName("achievement_name");
 
-                    b.Property<byte[]>("CreatedAt")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.HasKey("AchievementId");
 
                     b.ToTable("achievements");
                 });
 
-            modelBuilder.Entity("Backend.Entities.Cities", b =>
+            modelBuilder.Entity("Backend.Entities.City", b =>
                 {
                     b.Property<int>("CityId")
                         .ValueGeneratedOnAdd()
@@ -95,7 +96,7 @@ namespace Backend.Migrations
                     b.ToTable("cities");
                 });
 
-            modelBuilder.Entity("Backend.Entities.Continents", b =>
+            modelBuilder.Entity("Backend.Entities.Continent", b =>
                 {
                     b.Property<int>("ContinentId")
                         .ValueGeneratedOnAdd()
@@ -123,7 +124,7 @@ namespace Backend.Migrations
                     b.ToTable("continents");
                 });
 
-            modelBuilder.Entity("Backend.Entities.Countries", b =>
+            modelBuilder.Entity("Backend.Entities.Country", b =>
                 {
                     b.Property<int>("CountryId")
                         .ValueGeneratedOnAdd()
@@ -166,11 +167,8 @@ namespace Backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("FriendsId"));
 
-                    b.Property<byte[]>("CreatedAt")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
                     b.Property<int>("FriendIdFk")
@@ -182,25 +180,29 @@ namespace Backend.Migrations
                         .HasColumnType("text")
                         .HasColumnName("status");
 
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("UserIdFk")
                         .HasColumnType("integer")
                         .HasColumnName("user_id");
-
-                    b.Property<int?>("UsersUserId")
-                        .HasColumnType("integer");
 
                     b.HasKey("FriendsId");
 
                     b.HasIndex("FriendIdFk");
 
-                    b.HasIndex("UserIdFk");
+                    b.HasIndex("UserId");
 
-                    b.HasIndex("UsersUserId");
+                    b.HasIndex("UserIdFk");
 
                     b.ToTable("friends");
                 });
 
-            modelBuilder.Entity("Backend.Entities.Games", b =>
+            modelBuilder.Entity("Backend.Entities.Game", b =>
                 {
                     b.Property<int>("GameId")
                         .ValueGeneratedOnAdd()
@@ -255,7 +257,7 @@ namespace Backend.Migrations
                     b.ToTable("games");
                 });
 
-            modelBuilder.Entity("Backend.Entities.Geolocations", b =>
+            modelBuilder.Entity("Backend.Entities.Geolocation", b =>
                 {
                     b.Property<int>("GeolocationId")
                         .ValueGeneratedOnAdd()
@@ -283,16 +285,17 @@ namespace Backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("LeaderBoardId"));
 
-                    b.Property<byte[]>("LastUpdate")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
-                        .HasColumnName("last_updated");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
 
                     b.Property<int>("TotalPoints")
                         .HasColumnType("integer")
                         .HasColumnName("total_points");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -355,6 +358,51 @@ namespace Backend.Migrations
                     b.ToTable("statistics");
                 });
 
+            modelBuilder.Entity("Backend.Entities.User", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("user_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(24)
+                        .HasColumnType("character varying(24)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("password");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(24)
+                        .HasColumnType("character varying(24)")
+                        .HasColumnName("username");
+
+                    b.Property<bool>("Verified")
+                        .HasColumnType("boolean")
+                        .HasColumnName("verified");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("users");
+                });
+
             modelBuilder.Entity("Backend.Entities.UserAchievements", b =>
                 {
                     b.Property<int>("UserAchievementId")
@@ -368,12 +416,13 @@ namespace Backend.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("achievement_id");
 
-                    b.Property<byte[]>("EarnedAt")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
-                        .HasColumnName("earned_at");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -391,64 +440,15 @@ namespace Backend.Migrations
                     b.ToTable("user_achievements");
                 });
 
-            modelBuilder.Entity("Backend.Entities.Users", b =>
+            modelBuilder.Entity("Backend.Entities.City", b =>
                 {
-                    b.Property<int>("UserId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("user_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
-
-                    b.Property<byte[]>("CreatedAt")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
-                        .HasColumnName("updated_at");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(24)
-                        .HasColumnType("character varying(24)")
-                        .HasColumnName("email");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("password");
-
-                    b.Property<byte[]>("UpdatedAt")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
-                        .HasColumnName("created_at");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(24)
-                        .HasColumnType("character varying(24)")
-                        .HasColumnName("username");
-
-                    b.Property<bool>("Verified")
-                        .HasColumnType("boolean")
-                        .HasColumnName("verified");
-
-                    b.HasKey("UserId");
-
-                    b.ToTable("users");
-                });
-
-            modelBuilder.Entity("Backend.Entities.Cities", b =>
-                {
-                    b.HasOne("Backend.Entities.Countries", "Country")
+                    b.HasOne("Backend.Entities.Country", "Country")
                         .WithMany("Cities")
                         .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Backend.Entities.Geolocations", "Geolocation")
+                    b.HasOne("Backend.Entities.Geolocation", "Geolocation")
                         .WithMany()
                         .HasForeignKey("GeolocationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -459,9 +459,9 @@ namespace Backend.Migrations
                     b.Navigation("Geolocation");
                 });
 
-            modelBuilder.Entity("Backend.Entities.Continents", b =>
+            modelBuilder.Entity("Backend.Entities.Continent", b =>
                 {
-                    b.HasOne("Backend.Entities.Geolocations", "Geolocation")
+                    b.HasOne("Backend.Entities.Geolocation", "Geolocation")
                         .WithMany()
                         .HasForeignKey("GeolocationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -470,15 +470,15 @@ namespace Backend.Migrations
                     b.Navigation("Geolocation");
                 });
 
-            modelBuilder.Entity("Backend.Entities.Countries", b =>
+            modelBuilder.Entity("Backend.Entities.Country", b =>
                 {
-                    b.HasOne("Backend.Entities.Continents", "Continent")
+                    b.HasOne("Backend.Entities.Continent", "Continent")
                         .WithMany("Countries")
                         .HasForeignKey("ContinentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Backend.Entities.Geolocations", "Geolocation")
+                    b.HasOne("Backend.Entities.Geolocation", "Geolocation")
                         .WithMany()
                         .HasForeignKey("GeolocationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -491,30 +491,30 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Entities.Friends", b =>
                 {
-                    b.HasOne("Backend.Entities.Users", "Friend")
+                    b.HasOne("Backend.Entities.User", "Friend")
                         .WithMany()
                         .HasForeignKey("FriendIdFk")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Backend.Entities.Users", "User")
+                    b.HasOne("Backend.Entities.User", null)
+                        .WithMany("Friends")
+                        .HasForeignKey("UserId");
+
+                    b.HasOne("Backend.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserIdFk")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("Backend.Entities.Users", null)
-                        .WithMany("Friends")
-                        .HasForeignKey("UsersUserId");
 
                     b.Navigation("Friend");
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Backend.Entities.Games", b =>
+            modelBuilder.Entity("Backend.Entities.Game", b =>
                 {
-                    b.HasOne("Backend.Entities.Users", "User")
+                    b.HasOne("Backend.Entities.User", "User")
                         .WithMany("Games")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -525,7 +525,7 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Entities.Leaderboard", b =>
                 {
-                    b.HasOne("Backend.Entities.Users", "User")
+                    b.HasOne("Backend.Entities.User", "User")
                         .WithMany("Leaderboards")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -536,7 +536,7 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Entities.Statistics", b =>
                 {
-                    b.HasOne("Backend.Entities.Users", "User")
+                    b.HasOne("Backend.Entities.User", "User")
                         .WithMany("Statistics")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -547,13 +547,13 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Entities.UserAchievements", b =>
                 {
-                    b.HasOne("Backend.Entities.Achievements", "Achievement")
+                    b.HasOne("Backend.Entities.Achievement", "Achievement")
                         .WithMany()
                         .HasForeignKey("AchievementId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Backend.Entities.Users", "User")
+                    b.HasOne("Backend.Entities.User", "User")
                         .WithMany("UserAchievements")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -564,17 +564,17 @@ namespace Backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Backend.Entities.Continents", b =>
+            modelBuilder.Entity("Backend.Entities.Continent", b =>
                 {
                     b.Navigation("Countries");
                 });
 
-            modelBuilder.Entity("Backend.Entities.Countries", b =>
+            modelBuilder.Entity("Backend.Entities.Country", b =>
                 {
                     b.Navigation("Cities");
                 });
 
-            modelBuilder.Entity("Backend.Entities.Users", b =>
+            modelBuilder.Entity("Backend.Entities.User", b =>
                 {
                     b.Navigation("Friends");
 

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Backend.Entities;
 
 [Table("games")]
-public class Games
+public class Game
 {
     [Key]
     [Required]
@@ -16,7 +16,7 @@ public class Games
     [Column("user_id")]
     public int UserIdFk { get; set; }
     
-    public Users User { get; set; }
+    public User User { get; set; }
     
     [Required]
     [Column("start_latitude")]

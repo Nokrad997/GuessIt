@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Backend.Entities;
     [Table("cities")]
-    public class Cities
+    public class City
     {
         [Key]
         [Required]
@@ -19,12 +19,12 @@ namespace Backend.Entities;
         [Column("country_id")]
         public int CountryIdFk { get; set; }
         
-        public Countries Country { get; set; }
+        public Country Country { get; set; }
 
         [Required]
         [ForeignKey("GeolocationIdFk")]
         [Column("geolocation_id")]
         public int GeolocationIdFk { get; set; }
         
-        public Geolocations Geolocation { get; set; }
+        public Geolocation Geolocation { get; set; }
 }
