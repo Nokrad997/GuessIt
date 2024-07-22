@@ -6,23 +6,22 @@ namespace Backend.Dtos;
 
 public class AuthUserDto : IUserDto
 {
-    public string? Username { get; set; }
+    public string Username { get; set; }
 
     [EmailAddress]
-    public  string? Email { get; set; }
+    public  string Email { get; set; }
     
     [Required]
     // [MinLength(8)]
-    public  string Password { get; set; }
+    public string Password { get; set; }
     
     public User ConvertToEntity()
     {
-        var usr = new User();
-
-        usr.Username = Username;
-        usr.Email = Email;
-        usr.Password = Password;
-
-        return usr;
+        return new User
+        {
+            Username = Username,
+            Email = Email,
+            Password = Password,
+        };
     }
 }

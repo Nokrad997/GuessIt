@@ -37,22 +37,22 @@ public class TokenUtil
 
     public Dictionary<string, string> RefreshAccessToken(string refreshToken)
     {
-        if (ValidateToken(refreshToken))
+        if (!ValidateToken(refreshToken))
         {
-            var jwtToken = _handler.ReadToken(refreshToken) as JwtSecurityToken;
-            if (jwtToken == null)
-            {
-                throw new NoTokenProvidedException("No refresh token provided");
-            }
-            
-            var claims = jwtToken.Claims;
-            var accessTokenDescriptor = CreateToken(true, new ClaimsIdentity(claims));
-            var newAccessToken = _handler.CreateToken(accessTokenDescriptor);
-            
-            return new Dictionary<string, string>{{"access", _handler.WriteToken(newAccessToken)}};
+            throw new TokenNotValidException("Provided token is no longer valid");
         }
-
-        throw new TokenNotValidException("Provided token is no longer valid");
+        
+        var jwtToken = (JwtSecurityToken) _handler.ReadToken(refreshToken);
+        if (jwtToken == null)
+        {
+            throw new NoTokenProvidedException("No refresh token provided");
+        }
+            
+        var claims = jwtToken.Claims;
+        var accessTokenDescriptor = CreateToken(true, new ClaimsIdentity(claims));
+        var newAccessToken = _handler.CreateToken(accessTokenDescriptor);
+            
+        return new Dictionary<string, string>{{"access", _handler.WriteToken(newAccessToken)}};
     }
     
     public bool ValidateToken(string jwt)
@@ -85,7 +85,7 @@ public class TokenUtil
         }
         catch (Exception ex)
         {
-            throw new TokenNotValidException("Provided token couldn't be validated");
+            return false;
         }
     }
 
@@ -95,7 +95,7 @@ public class TokenUtil
         
         ci.AddClaim(new Claim("id", user.UserId.ToString()));
         ci.AddClaim(new Claim(ClaimTypes.Email, user.Email));
-        ci.AddClaim(new Claim(ClaimTypes.Role, user.isAdmin ? "Admin" : "User"));
+        ci.AddClaim(new Claim(ClaimTypes.Role, user.IsAdmin ? "Admin" : "User"));
 
         return ci;
     }

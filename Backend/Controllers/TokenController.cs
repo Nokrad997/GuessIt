@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 namespace Backend.Controllers;
 
-[Route("token")]
+[Route("api/token")]
 [ApiController]
 public class TokenController : ControllerBase
 {
@@ -21,17 +21,24 @@ public class TokenController : ControllerBase
     [Consumes("application/json")]
     public IActionResult ValidateToken()
     {
-        var token = Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+        var token = Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
         if (token == null)
         {
             return BadRequest("Token is missing");
         }
 
-        if (_tokenService.Validate(token))
+        try
         {
-            return Ok("Valid token");
+            if (_tokenService.Validate(token))
+            {
+                return Ok("Token is valid");
+            }
         }
-
+        catch (Exception e)
+        {
+            BadRequest(e.Message);
+        }
+        
         return BadRequest("Invalid token");
     }
 
@@ -46,13 +53,13 @@ public class TokenController : ControllerBase
             return BadRequest("refresh token is empty");
         }
 
-        var newToken = _tokenService.RefreshToken(tokens.RefreshToken);
-
-        if (!newToken.IsNullOrEmpty())
+        try
         {
-            return Ok(newToken);
+            return Ok(_tokenService.RefreshToken(tokens.RefreshToken));
         }
-
-        return BadRequest("token no longer valid");
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 }

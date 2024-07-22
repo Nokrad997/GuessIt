@@ -7,7 +7,6 @@ using Backend.Utility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Configuration = System.Configuration.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +17,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<PasswordHasher>();
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddTransient<TokenUtil>();

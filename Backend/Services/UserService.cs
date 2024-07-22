@@ -1,5 +1,7 @@
+using System.Reflection;
 using Backend.Dtos;
 using Backend.Entities;
+using Backend.Exceptions;
 using Backend.Repositories;
 using Backend.Utility;
 
@@ -7,43 +9,108 @@ namespace Backend.Services;
 
 public class UserService
 {
+    private readonly TokenUtil _tokenUtil;
     private readonly UserRepository _userRepository;
     private readonly PasswordHasher _passwordHasher;
-    private readonly TokenUtil _tokenUtil;
 
-    public UserService(UserRepository userRepository, PasswordHasher passwordHasher, TokenUtil tokenUtil)
+    public UserService(TokenUtil tokenUtil, UserRepository userRepository, PasswordHasher passwordHasher)
     {
+        _tokenUtil = tokenUtil;
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
-        _tokenUtil = tokenUtil;
     }
 
-    public async Task<bool> RegisterUser(AuthUserDto authUserDto)
+    public async Task<IEnumerable<UserDto>> Retrieve()
     {
-        var existingUser = await _userRepository.GetUserByEmailOrUsername(authUserDto.Email, authUserDto.Username);
-        if (!existingUser.Equals(null))
+        var retrievedUsers = await _userRepository.GetAllUsers();
+        var usersDtos = retrievedUsers.Select(user => user.ConvertToDto()).ToList();
+
+        return usersDtos;
+    }
+    
+    public async Task<UserDto> Retrieve(int id)
+    {
+        var user = await _userRepository.GetUserById(id);
+        if (user is null)
         {
-            return false;
+            throw new ArgumentException("No user with provided id");
+        }
+
+        return user.ConvertToDto();
+    }
+
+    public async Task AddUserAsUser(AuthUserDto userDto)
+    {
+        var existingUser = await _userRepository.GetUserByEmail(userDto.Email);
+        if (existingUser is not null)
+        {
+            throw new BadCredentialsException("User with provided email already exists");
         }
         
-        authUserDto.Password = _passwordHasher.HashPassword(authUserDto.Password);
-        User user = authUserDto.ConvertToEntity();
+        userDto.Password = _passwordHasher.HashPassword(userDto.Password);
+        User user = userDto.ConvertToEntity();
         
         await _userRepository.AddUser(user);
-
-        return true;
+    }
+    public async Task AddUserAsAdmin(UserDto userDto)
+    {
+        var existingUser = await _userRepository.GetUserByEmail(userDto.Email);
+        if (existingUser is not null)
+        {
+            throw new BadCredentialsException("User with provided email already exists");
+        }
+        
+        userDto.Password = _passwordHasher.HashPassword(userDto.Password);
+        User user = userDto.ConvertToEntity();
+        
+        await _userRepository.AddUser(user);
     }
 
-    public async Task<Dictionary<string, string>?> LoginUser(AuthUserDto authUserDto)
+    public async Task<UserDto> EditUserAsUser(int id, AuthUserDto userDto)
     {
-        var existingUser = await _userRepository.GetUserByEmailOrUsername(authUserDto.Email, authUserDto.Username);
-        if (existingUser.Equals(null))
+        var existingUser = await _userRepository.GetUserById(id);
+        if (existingUser is null)
         {
-            return null;
+            throw new ArgumentException("User with provided id doesn't exist");
         }
-    
-        bool passwordMatches = _passwordHasher.VerifyPassword(authUserDto.Password, existingUser.Password);
+        
+        var excludedProperties = new[] { "UserId", "Verified", "IsAdmin", "CreatedAt", "UpdatedAt" };
+        UpdatePropertiesIfNeeded(existingUser, userDto, excludedProperties);
 
-        return passwordMatches ? _tokenUtil.CreateTokenPair(existingUser) : null;
+        return existingUser.ConvertToDto();
+    }
+    public async Task<UserDto> EditUserAsAdmin(int id, UserDto userDto)
+    {
+        var existingUser = await _userRepository.GetUserById(id);
+        if (existingUser is null)
+        {
+            throw new ArgumentException("User with provided id doesn't exist");
+        }
+        
+        var excludedProperties = new[] { "UserId", "CreatedAt", "UpdatedAt" };
+        UpdatePropertiesIfNeeded(existingUser, userDto, excludedProperties);
+
+        return existingUser.ConvertToDto();
+    }
+
+    public async Task DeleteUser(int id)
+    {
+        await _userRepository.DeleteUserById(id);
+    }
+
+    private static void UpdatePropertiesIfNeeded<T>(User user, T userDto, string[] excludedProperties)
+    {
+        var userProperties = typeof(User).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(prop => prop.CanRead && prop.CanWrite && !excludedProperties.Contains(prop.Name));
+
+        foreach (var prop in userProperties)
+        {
+            var sourceValue = prop.GetValue(userDto);
+            var targetValue = prop.GetValue(user);
+            if (!Equals(sourceValue, targetValue))
+            {
+                prop.SetValue(user, sourceValue);
+            }
+        }
     }
 }
