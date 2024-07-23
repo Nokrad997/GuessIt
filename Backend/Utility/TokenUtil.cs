@@ -88,6 +88,37 @@ public class TokenUtil
             return false;
         }
     }
+    public int GetIdFromToken(string token)
+    {
+        if (string.IsNullOrWhiteSpace(token))
+            throw new ArgumentException("Token is empty");
+
+        if (token.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            token = token.Substring("Bearer ".Length).Trim();
+
+        var key = Encoding.ASCII.GetBytes(_privateKey);
+        var validationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+
+        try
+        {
+            var principal = _handler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+            var idClaim = principal.Claims.FirstOrDefault(c => c.Type == "id");
+            return int.Parse(idClaim?.Value);
+
+        }
+        catch
+        {
+            throw new SecurityTokenValidationException("Invalid token");
+        }
+    }
 
     private static ClaimsIdentity GenerateClaims(User user)
     {
@@ -110,7 +141,7 @@ public class TokenUtil
         return new SecurityTokenDescriptor
         {
             SigningCredentials = credentials,
-            Expires = isAccessToken ? DateTime.Now.AddMinutes(5) : DateTime.Now.AddHours(1),
+            Expires = isAccessToken ? DateTime.Now.AddMinutes(120) : DateTime.Now.AddHours(1),
             Subject = claims
         };
     }

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Backend.Entities;
 using Backend.Entities.Interfaces;
+using Backend.Utility;
 
 namespace Backend.Context;
 
@@ -26,6 +27,7 @@ namespace Backend.Context;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            new DbInitializer(modelBuilder, new PasswordHasher()).seed();
             
             modelBuilder.Entity<User>(entity =>
             {

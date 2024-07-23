@@ -10,4 +10,5 @@ public interface IUserRepository
     Task AddUser(User user);
     Task SaveChanges();
     Task DeleteUserById(int id);
+    Task EditUser(User user);
 }

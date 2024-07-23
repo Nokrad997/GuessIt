@@ -1,5 +1,4 @@
 using Backend.Dtos;
-using Backend.Entities;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +31,7 @@ public class UserController : ControllerBase
     
     [HttpGet]
     [Route("{id:int}")]
-    public async Task<IActionResult> GetAllUsers(int id)
+    public async Task<IActionResult> GetUser(int id)
     {
         try
         {
@@ -43,26 +42,9 @@ public class UserController : ControllerBase
             return BadRequest(e.Message);
         }
     }
-
+    
     [HttpPost]
-    [Authorize(Roles = "User")]
-    public async Task<IActionResult> AddUserAsAUser(AuthUserDto authUserDto)
-    {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-        try
-        {
-            await _userService.AddUserAsUser(authUserDto);
-            return Ok("User added successfully");
-        }
-        catch (Exception e)
-        {
-            return BadRequest(e.Message);
-        }
-    }
-    [HttpPost]
+    [Route("admin")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> AddUserAsAdmin(UserDto userDto)
     {
@@ -84,7 +66,7 @@ public class UserController : ControllerBase
     [HttpPut]
     [Route("{id:int}")]
     [Authorize(Roles = "User")]
-    public async Task<IActionResult> EditUserAsUser(int id, AuthUserDto authUserDto)
+    public async Task<IActionResult> EditUserAsUser(int id, EditUserDto editUserDto)
     {
         if (!ModelState.IsValid)
         {
@@ -92,8 +74,8 @@ public class UserController : ControllerBase
         }
         try
         {
-            await _userService.EditUserAsUser(id, authUserDto);
-            return Ok("User added successfully");
+            var token = HttpContext.Request.Headers.Authorization.FirstOrDefault().Split(" ").Last();
+            return Ok(await _userService.EditUserAsUser(id, editUserDto, token));
         }
         catch (Exception e)
         {
@@ -101,7 +83,7 @@ public class UserController : ControllerBase
         }
     }
     [HttpPut]
-    [Route("{id:int}")]
+    [Route("admin/{id:int}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> EditUserAsAdmin(int id, UserDto userDto)
     {
@@ -111,22 +93,23 @@ public class UserController : ControllerBase
         }
         try
         {
-            await _userService.EditUserAsAdmin(id, userDto);
-            return Ok("User added successfully");
+            return Ok(await _userService.EditUserAsAdmin(id, userDto));
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return BadRequest(e.Message + "\n" + e.StackTrace);
         }
     }
 
     [HttpDelete]
     [Route("{id:int}")]
+    [Authorize(Roles = "Admin,User")]
     public async Task<IActionResult> DeleteUser(int id)
     {
         try
         {
-            await _userService.DeleteUser(id);
+            var token = HttpContext.Request.Headers.Authorization.FirstOrDefault().Split(" ").Last();
+            await _userService.DeleteUser(id, token);
             return Ok("User deleted successfully");
         }
         catch (Exception e)

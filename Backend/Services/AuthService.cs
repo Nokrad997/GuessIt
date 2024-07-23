@@ -19,16 +19,16 @@ public class AuthService
         _tokenUtil = tokenUtil;
     }
 
-    public async Task<bool> RegisterUser(AuthUserDto authUserDto)
+    public async Task<bool> RegisterUser(EditUserDto registerUserDto)
     {
-        var existingUser = await _userRepository.GetUserByEmail(authUserDto.Email);
+        var existingUser = await _userRepository.GetUserByEmail(registerUserDto.Email);
         if (existingUser is not null)
         {
             throw new BadCredentialsException("User with provided email already exists");
         }
         
-        authUserDto.Password = _passwordHasher.HashPassword(authUserDto.Password);
-        User user = authUserDto.ConvertToEntity();
+        registerUserDto.Password = _passwordHasher.HashPassword(registerUserDto.Password);
+        User user = registerUserDto.ConvertToEntity();
         
         await _userRepository.AddUser(user);
 

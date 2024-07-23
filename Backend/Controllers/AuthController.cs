@@ -18,7 +18,7 @@ public class AuthController : ControllerBase
     [Route("register")]
     [HttpPost]
     [Consumes("application/json")]
-    public async Task<IActionResult> RegisterUser(AuthUserDto authUserDto)
+    public async Task<IActionResult> RegisterUser(EditUserDto registerUserDto)
     {
         if (!ModelState.IsValid)
         {
@@ -27,7 +27,7 @@ public class AuthController : ControllerBase
 
         try
         {
-            if (await _authService.RegisterUser(authUserDto))
+            if (await _authService.RegisterUser(registerUserDto))
             {
                 return Ok("User Registered successfully");
             }

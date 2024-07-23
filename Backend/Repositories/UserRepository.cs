@@ -39,6 +39,16 @@ public class UserRepository : IUserRepository
         await _context.SaveChangesAsync();
     }
 
+    public async Task EditUser(User user)
+    {
+        var editedUser = await _context.User.FindAsync(user.UserId);
+        if (editedUser is not null)
+        {
+            editedUser = user;
+            await SaveChanges();    
+        }
+    }
+
     public async Task DeleteUserById(int id)
     {
         var user = await _context.User.FindAsync(id);
