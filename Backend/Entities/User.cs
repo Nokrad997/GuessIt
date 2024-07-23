@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Dtos;
 using Backend.Entities.Interfaces;
 
 namespace Backend.Entities;
@@ -33,7 +34,7 @@ public class User : IHasTimeStamp
 
     [Column("is_admin")] 
     [DefaultValue(false)]
-    public bool isAdmin { get; set; }
+    public bool IsAdmin { get; set; }
 
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
@@ -43,4 +44,18 @@ public class User : IHasTimeStamp
     public ICollection<Game> Games { get; set; }
     public ICollection<Leaderboard> Leaderboards { get; set; }
     public ICollection<UserAchievements> UserAchievements { get; set; }
+
+    public UserDto ConvertToDto()
+    {
+        return new UserDto
+        {
+            UserId = UserId,
+            Username = Username,
+            Email = Email,
+            Verified = Verified,
+            IsAdmin = IsAdmin,
+            CreatedAt = CreatedAt,
+            UpdatedAt = UpdatedAt
+        };
+    }
 }

@@ -3,6 +3,7 @@ using System;
 using Backend.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.Migrations
 {
     [DbContext(typeof(GuessItContext))]
-    partial class GuessItContextModelSnapshot : ModelSnapshot
+    [Migration("20240722182804_MinorChangesToEntities")]
+    partial class MinorChangesToEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -402,19 +405,6 @@ namespace Backend.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("users");
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = -1,
-                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "admin@admin.com",
-                            IsAdmin = true,
-                            Password = "$2a$11$tbZ.6GZkalk5Ctx9fMQSwuD25mo6UWDJAS8LHXdvCZcLc9fQE0zm6",
-                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Username = "admin",
-                            Verified = true
-                        });
                 });
 
             modelBuilder.Entity("Backend.Entities.UserAchievements", b =>

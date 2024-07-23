@@ -37,22 +37,22 @@ public class TokenUtil
 
     public Dictionary<string, string> RefreshAccessToken(string refreshToken)
     {
-        if (ValidateToken(refreshToken))
+        if (!ValidateToken(refreshToken))
         {
-            var jwtToken = _handler.ReadToken(refreshToken) as JwtSecurityToken;
-            if (jwtToken == null)
-            {
-                throw new NoTokenProvidedException("No refresh token provided");
-            }
-            
-            var claims = jwtToken.Claims;
-            var accessTokenDescriptor = CreateToken(true, new ClaimsIdentity(claims));
-            var newAccessToken = _handler.CreateToken(accessTokenDescriptor);
-            
-            return new Dictionary<string, string>{{"access", _handler.WriteToken(newAccessToken)}};
+            throw new TokenNotValidException("Provided token is no longer valid");
         }
-
-        throw new TokenNotValidException("Provided token is no longer valid");
+        
+        var jwtToken = (JwtSecurityToken) _handler.ReadToken(refreshToken);
+        if (jwtToken == null)
+        {
+            throw new NoTokenProvidedException("No refresh token provided");
+        }
+            
+        var claims = jwtToken.Claims;
+        var accessTokenDescriptor = CreateToken(true, new ClaimsIdentity(claims));
+        var newAccessToken = _handler.CreateToken(accessTokenDescriptor);
+            
+        return new Dictionary<string, string>{{"access", _handler.WriteToken(newAccessToken)}};
     }
     
     public bool ValidateToken(string jwt)
@@ -85,7 +85,38 @@ public class TokenUtil
         }
         catch (Exception ex)
         {
-            throw new TokenNotValidException("Provided token couldn't be validated");
+            return false;
+        }
+    }
+    public int GetIdFromToken(string token)
+    {
+        if (string.IsNullOrWhiteSpace(token))
+            throw new ArgumentException("Token is empty");
+
+        if (token.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            token = token.Substring("Bearer ".Length).Trim();
+
+        var key = Encoding.ASCII.GetBytes(_privateKey);
+        var validationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+
+        try
+        {
+            var principal = _handler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+            var idClaim = principal.Claims.FirstOrDefault(c => c.Type == "id");
+            return int.Parse(idClaim?.Value);
+
+        }
+        catch
+        {
+            throw new SecurityTokenValidationException("Invalid token");
         }
     }
 
@@ -95,7 +126,7 @@ public class TokenUtil
         
         ci.AddClaim(new Claim("id", user.UserId.ToString()));
         ci.AddClaim(new Claim(ClaimTypes.Email, user.Email));
-        ci.AddClaim(new Claim(ClaimTypes.Role, user.isAdmin ? "Admin" : "User"));
+        ci.AddClaim(new Claim(ClaimTypes.Role, user.IsAdmin ? "Admin" : "User"));
 
         return ci;
     }
@@ -110,7 +141,7 @@ public class TokenUtil
         return new SecurityTokenDescriptor
         {
             SigningCredentials = credentials,
-            Expires = isAccessToken ? DateTime.Now.AddMinutes(5) : DateTime.Now.AddHours(1),
+            Expires = isAccessToken ? DateTime.Now.AddMinutes(120) : DateTime.Now.AddHours(1),
             Subject = claims
         };
     }

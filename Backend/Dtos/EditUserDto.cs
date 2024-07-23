@@ -4,8 +4,10 @@ using Backend.Entities;
 
 namespace Backend.Dtos;
 
-public class AuthUserDto : IUserDto
+public class EditUserDto : IUserDto
 {
+    public string Username { get; set; }
+
     [EmailAddress]
     public  string Email { get; set; }
     
@@ -17,6 +19,7 @@ public class AuthUserDto : IUserDto
     {
         return new User
         {
+            Username = Username,
             Email = Email,
             Password = Password,
         };

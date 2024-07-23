@@ -1,33 +1,40 @@
 using Backend.Dtos;
 using Backend.Services;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc; 
 
 namespace Backend.Controllers;
 
-[Route("auth")]
+[Route("api/auth")]
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly UserService _userService;
+    private readonly AuthService _authService;
 
-    public AuthController(UserService userService)
+    public AuthController(AuthService authService)
     {
-        _userService = userService;
+        _authService = authService;
     }
     
     [Route("register")]
     [HttpPost]
     [Consumes("application/json")]
-    public async Task<IActionResult> RegisterUser(AuthUserDto authUserDto)
+    public async Task<IActionResult> RegisterUser(EditUserDto registerUserDto)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
-        
-        if (await _userService.RegisterUser(authUserDto))
+
+        try
         {
-            return Ok("User Registered successfully");
+            if (await _authService.RegisterUser(registerUserDto))
+            {
+                return Ok("User Registered successfully");
+            }
+        }
+        catch(Exception e)
+        {
+            return BadRequest(e.Message);
         }
         
         return BadRequest("User with provided email or username already exists");
@@ -43,12 +50,14 @@ public class AuthController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var jwtToken = _userService.LoginUser(authUserDto).Result;
-        if (jwtToken != null)
+        try
         {
+            var jwtToken = await _authService.LoginUser(authUserDto);
             return Ok(jwtToken);
         }
-        
-        return BadRequest("Wrong email or password");
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 }
