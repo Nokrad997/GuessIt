@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Dtos;
 using Backend.Entities.Interfaces;
 
 namespace Backend.Entities;
@@ -19,4 +20,15 @@ public class Achievement : IHasTimeStamp
     [Required]
     [Column("achievement_description")]
     public string AchievementDescription { get; set; }
+
+
+    public AchievementDto ConvertToDto()
+    {
+        return new AchievementDto
+        {
+            AchievementId = AchievementId,
+            AchievementName = AchievementName,
+            AchievementDescription = AchievementDescription
+        };
+    }
 }

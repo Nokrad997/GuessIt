@@ -17,9 +17,11 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<PasswordHasher>();
 builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<AchievementRepository>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<AchievementService>();
 builder.Services.AddTransient<TokenUtil>();
 builder.Services.Configure<Config>(builder.Configuration.GetSection("Keys"));
 // Add DbContext configuration

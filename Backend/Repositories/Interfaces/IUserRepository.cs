@@ -1,6 +1,6 @@
 using Backend.Entities;
 
-namespace Backend.Repositories;
+namespace Backend.Repositories.Interfaces;
 
 public interface IUserRepository
 {
