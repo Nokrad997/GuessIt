@@ -23,9 +23,8 @@ public class UserService
     public async Task<IEnumerable<UserDto>> Retrieve()
     {
         var retrievedUsers = await _userRepository.GetAllUsers();
-        var usersDtos = retrievedUsers.Select(user => user.ConvertToDto()).ToList();
 
-        return usersDtos;
+        return retrievedUsers.Select(user => user.ConvertToDto()).ToList();
     }
     public async Task<UserDto> Retrieve(int id)
     {
@@ -102,7 +101,7 @@ public class UserService
             throw new ArgumentException("User doesn't exist");
         }
         var idFromRequest = _tokenUtil.GetIdFromToken(token);
-        System.Diagnostics.Debug.WriteLine(idFromRequest);
+        
         var userFromRequest = await _userRepository.GetUserById(idFromRequest);
         if (userFromRequest.IsAdmin || idFromRequest == id)
         {
