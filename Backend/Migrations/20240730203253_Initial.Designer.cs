@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.Migrations
 {
     [DbContext(typeof(GuessItContext))]
-    [Migration("20240722182804_MinorChangesToEntities")]
-    partial class MinorChangesToEntities
+    [Migration("20240730203253_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,432 +31,466 @@ namespace Backend.Migrations
                 {
                     b.Property<int>("AchievementId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("achievement_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("AchievementId"));
 
                     b.Property<string>("AchievementDescription")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasColumnType("varchar(255)")
                         .HasColumnName("achievement_description");
 
                     b.Property<string>("AchievementName")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasColumnType("varchar(24)")
                         .HasColumnName("achievement_name");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-                    b.HasKey("AchievementId");
+                    b.HasKey("AchievementId")
+                        .HasName("PK_achievements");
 
-                    b.ToTable("achievements");
+                    b.HasIndex("AchievementName")
+                        .IsUnique()
+                        .HasDatabaseName("UQ_achievements_achievement_name");
+
+                    b.ToTable("achievements", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Entities.City", b =>
                 {
                     b.Property<int>("CityId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("city_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CityId"));
 
                     b.Property<string>("CityName")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasColumnType("varchar(255)")
                         .HasColumnName("city_name");
 
-                    b.Property<int>("CountryId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("CountryIdFk")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("country_id");
 
-                    b.Property<int>("GeolocationId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("GeolocationIdFk")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("geolocation_id");
 
-                    b.HasKey("CityId");
+                    b.HasKey("CityId")
+                        .HasName("PK_cities");
 
-                    b.HasIndex("CountryId");
+                    b.HasIndex("CountryIdFk");
 
-                    b.HasIndex("GeolocationId");
+                    b.HasIndex("GeolocationIdFk");
 
-                    b.ToTable("cities");
+                    b.ToTable("cities", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Entities.Continent", b =>
                 {
                     b.Property<int>("ContinentId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("continent_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ContinentId"));
 
                     b.Property<string>("ContinentName")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasColumnType("varchar(255)")
                         .HasColumnName("continent_name");
 
-                    b.Property<int>("GeolocationId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("GeolocationIdFk")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("geolocation_id");
 
-                    b.HasKey("ContinentId");
+                    b.HasKey("ContinentId")
+                        .HasName("PK_continents");
 
-                    b.HasIndex("GeolocationId");
+                    b.HasIndex("GeolocationIdFk");
 
-                    b.ToTable("continents");
+                    b.ToTable("continents", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Entities.Country", b =>
                 {
                     b.Property<int>("CountryId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("country_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("CountryId"));
 
-                    b.Property<int>("ContinentId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("ContinentIdFk")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("continent_id");
 
                     b.Property<string>("CountryName")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasColumnType("varchar(255)")
                         .HasColumnName("country_name");
 
-                    b.Property<int>("GeolocationId")
-                        .HasColumnType("integer")
+                    b.Property<int>("GeolocationIdFk")
+                        .HasColumnType("int")
                         .HasColumnName("geolocation_id");
 
-                    b.HasKey("CountryId");
+                    b.HasKey("CountryId")
+                        .HasName("PK_countries");
 
-                    b.HasIndex("ContinentId");
+                    b.HasIndex("ContinentIdFk");
 
-                    b.HasIndex("GeolocationId");
+                    b.HasIndex("GeolocationIdFk");
 
-                    b.ToTable("countries");
+                    b.ToTable("countries", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Entities.Friends", b =>
                 {
                     b.Property<int>("FriendsId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("friends_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("FriendsId"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("FriendIdFk")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("friend_id");
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("varchar(50)")
+                        .HasDefaultValue("Pending")
                         .HasColumnName("status");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<int?>("UserId")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("UserIdFk")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("user_id");
 
-                    b.HasKey("FriendsId");
+                    b.HasKey("FriendsId")
+                        .HasName("PK_friends");
 
                     b.HasIndex("FriendIdFk");
 
-                    b.HasIndex("UserId");
-
                     b.HasIndex("UserIdFk");
 
-                    b.ToTable("friends");
+                    b.ToTable("friends", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Entities.Game", b =>
                 {
                     b.Property<int>("GameId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("game_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("GameId"));
 
                     b.Property<decimal>("DistanceToStartingLocation")
-                        .HasColumnType("numeric")
+                        .HasColumnType("decimal(10, 2)")
                         .HasColumnName("distance_to_starting_location");
 
                     b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("interval")
+                        .HasColumnType("time")
                         .HasColumnName("end_time");
 
-                    b.Property<decimal>("GuessedLatitude")
-                        .HasColumnType("numeric")
-                        .HasColumnName("guessed_latitude");
-
-                    b.Property<decimal>("GuessedLongitude")
-                        .HasColumnType("numeric")
-                        .HasColumnName("guessed_longitude");
+                    b.Property<Point>("GuessedLocation")
+                        .IsRequired()
+                        .HasColumnType("geometry")
+                        .HasColumnName("guessed_location");
 
                     b.Property<int>("Score")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("score");
 
-                    b.Property<decimal>("StartLatitude")
-                        .HasColumnType("numeric")
-                        .HasColumnName("start_latitude");
-
-                    b.Property<decimal>("StartLongitude")
-                        .HasColumnType("numeric")
-                        .HasColumnName("start_longitude");
+                    b.Property<Point>("StartLocation")
+                        .IsRequired()
+                        .HasColumnType("geometry")
+                        .HasColumnName("start_location");
 
                     b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("interval")
+                        .HasColumnType("time")
                         .HasColumnName("start_time");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("UserIdFk")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("user_id");
 
-                    b.HasKey("GameId");
+                    b.HasKey("GameId")
+                        .HasName("PK_games");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserIdFk");
 
-                    b.ToTable("games");
+                    b.ToTable("games", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Entities.Geolocation", b =>
                 {
                     b.Property<int>("GeolocationId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("geolocation_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("GeolocationId"));
 
                     b.Property<Polygon>("Area")
                         .IsRequired()
-                        .HasColumnType("geometry")
+                        .HasColumnType("geometry(Polygon)")
                         .HasColumnName("area");
 
-                    b.HasKey("GeolocationId");
+                    b.HasKey("GeolocationId")
+                        .HasName("PK_Geolocations");
 
-                    b.ToTable("geolocations");
+                    b.ToTable("geolocations", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Entities.Leaderboard", b =>
                 {
                     b.Property<int>("LeaderBoardId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("leaderboard_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("LeaderBoardId"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("TotalPoints")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("total_points");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("UserIdFk")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("user_id");
 
-                    b.HasKey("LeaderBoardId");
+                    b.HasKey("LeaderBoardId")
+                        .HasName("PK_Leaderboard");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserIdFk");
 
-                    b.ToTable("leaderboard");
+                    b.ToTable("leaderboard", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Entities.Statistics", b =>
                 {
                     b.Property<int>("StatisticId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("statistic_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("StatisticId"));
 
                     b.Property<double>("AverageScore")
-                        .HasColumnType("double precision")
+                        .HasColumnType("decimal(10, 2)")
                         .HasColumnName("average_score");
 
                     b.Property<int>("HighestScore")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("highest_score");
 
                     b.Property<double>("LowestTimeInSeconds")
-                        .HasColumnType("double precision")
+                        .HasColumnType("decimal(10, 2)")
                         .HasColumnName("lowest_time_in_seconds");
 
                     b.Property<int>("TotalGames")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("total_games");
 
                     b.Property<int>("TotalPoints")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("total_points");
 
                     b.Property<double>("TotalTraveledDistanceInMeters")
-                        .HasColumnType("double precision")
+                        .HasColumnType("decimal(10, 2)")
                         .HasColumnName("total_traveled_distance_in_meters");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("UserIdFk")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("user_id");
 
-                    b.HasKey("StatisticId");
+                    b.HasKey("StatisticId")
+                        .HasName("PK_Statistics");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserIdFk");
 
-                    b.ToTable("statistics");
+                    b.ToTable("statistics", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Entities.User", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("user_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserId"));
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("timestamp")
+                        .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(24)
-                        .HasColumnType("character varying(24)")
+                        .HasColumnType("varchar(50)")
                         .HasColumnName("email");
 
                     b.Property<bool>("IsAdmin")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(false)
                         .HasColumnName("is_admin");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasColumnType("varchar(255)")
                         .HasColumnName("password");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp")
+                        .HasColumnName("updated_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasMaxLength(24)
-                        .HasColumnType("character varying(24)")
+                        .HasColumnType("varchar(24)")
                         .HasColumnName("username");
 
                     b.Property<bool>("Verified")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(false)
                         .HasColumnName("verified");
 
-                    b.HasKey("UserId");
+                    b.HasKey("UserId")
+                        .HasName("PK_users");
 
-                    b.ToTable("users");
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("UQ_users_email");
+
+                    b.ToTable("users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = -1,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "admin@admin.com",
+                            IsAdmin = true,
+                            Password = "$2a$11$DsDGtCHkeJIgJ9onRDu44.7V5cYVmitn0BhuWnl.iQ2cQGCGCxH2e",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Username = "admin",
+                            Verified = true
+                        },
+                        new
+                        {
+                            UserId = -2,
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "user@user.com",
+                            IsAdmin = false,
+                            Password = "$2a$11$Q0F9Q4VWM5SntI2TVfDh1uXbabLKtIM8NNPYng9iI7l5o.LS0GFTG",
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Username = "user",
+                            Verified = true
+                        });
                 });
 
             modelBuilder.Entity("Backend.Entities.UserAchievements", b =>
                 {
                     b.Property<int>("UserAchievementId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("user_achievement_id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserAchievementId"));
 
-                    b.Property<int>("AchievementId")
-                        .HasColumnType("integer")
+                    b.Property<int>("AchievementIdFk")
+                        .HasColumnType("int")
                         .HasColumnName("achievement_id");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp")
+                        .HasColumnName("created_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp")
+                        .HasColumnName("updated_at")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<int>("UserIdFk")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("user_id");
 
-                    b.HasKey("UserAchievementId");
+                    b.HasKey("UserAchievementId")
+                        .HasName("PK_UserAchievements");
 
-                    b.HasIndex("AchievementId");
+                    b.HasIndex("AchievementIdFk");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserIdFk");
 
-                    b.ToTable("user_achievements");
+                    b.ToTable("user_achievements", (string)null);
                 });
 
             modelBuilder.Entity("Backend.Entities.City", b =>
                 {
                     b.HasOne("Backend.Entities.Country", "Country")
                         .WithMany("Cities")
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CountryIdFk")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_cities_countries");
 
                     b.HasOne("Backend.Entities.Geolocation", "Geolocation")
-                        .WithMany()
-                        .HasForeignKey("GeolocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Cities")
+                        .HasForeignKey("GeolocationIdFk")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Cities_Geolocations");
 
                     b.Navigation("Country");
 
@@ -466,10 +500,11 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Entities.Continent", b =>
                 {
                     b.HasOne("Backend.Entities.Geolocation", "Geolocation")
-                        .WithMany()
-                        .HasForeignKey("GeolocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Continents")
+                        .HasForeignKey("GeolocationIdFk")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Continents_Geolocations");
 
                     b.Navigation("Geolocation");
                 });
@@ -478,15 +513,17 @@ namespace Backend.Migrations
                 {
                     b.HasOne("Backend.Entities.Continent", "Continent")
                         .WithMany("Countries")
-                        .HasForeignKey("ContinentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ContinentIdFk")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_countries_continents");
 
                     b.HasOne("Backend.Entities.Geolocation", "Geolocation")
-                        .WithMany()
-                        .HasForeignKey("GeolocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Countries")
+                        .HasForeignKey("GeolocationIdFk")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Countries_Geolocations");
 
                     b.Navigation("Continent");
 
@@ -499,17 +536,15 @@ namespace Backend.Migrations
                         .WithMany()
                         .HasForeignKey("FriendIdFk")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Backend.Entities.User", null)
-                        .WithMany("Friends")
-                        .HasForeignKey("UserId");
+                        .IsRequired()
+                        .HasConstraintName("FK_friends_users_friend");
 
                     b.HasOne("Backend.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("Friends")
                         .HasForeignKey("UserIdFk")
                         .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_friends_users");
 
                     b.Navigation("Friend");
 
@@ -520,8 +555,8 @@ namespace Backend.Migrations
                 {
                     b.HasOne("Backend.Entities.User", "User")
                         .WithMany("Games")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("UserIdFk")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -531,9 +566,10 @@ namespace Backend.Migrations
                 {
                     b.HasOne("Backend.Entities.User", "User")
                         .WithMany("Leaderboards")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserIdFk")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Leaderboard_Users");
 
                     b.Navigation("User");
                 });
@@ -542,8 +578,8 @@ namespace Backend.Migrations
                 {
                     b.HasOne("Backend.Entities.User", "User")
                         .WithMany("Statistics")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("UserIdFk")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -552,20 +588,27 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Entities.UserAchievements", b =>
                 {
                     b.HasOne("Backend.Entities.Achievement", "Achievement")
-                        .WithMany()
-                        .HasForeignKey("AchievementId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("UserAchievements")
+                        .HasForeignKey("AchievementIdFk")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_UserAchievements_Achievements");
 
                     b.HasOne("Backend.Entities.User", "User")
                         .WithMany("UserAchievements")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserIdFk")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_UserAchievements_Users");
 
                     b.Navigation("Achievement");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Backend.Entities.Achievement", b =>
+                {
+                    b.Navigation("UserAchievements");
                 });
 
             modelBuilder.Entity("Backend.Entities.Continent", b =>
@@ -576,6 +619,15 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Entities.Country", b =>
                 {
                     b.Navigation("Cities");
+                });
+
+            modelBuilder.Entity("Backend.Entities.Geolocation", b =>
+                {
+                    b.Navigation("Cities");
+
+                    b.Navigation("Continents");
+
+                    b.Navigation("Countries");
                 });
 
             modelBuilder.Entity("Backend.Entities.User", b =>

@@ -41,7 +41,4 @@ public class Statistics
     [Required]
     [Column("average_score")]
     public double AverageScore { get; set; }
-    
-    
-    
 }
