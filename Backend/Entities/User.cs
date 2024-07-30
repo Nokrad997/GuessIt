@@ -36,9 +36,6 @@ public class User : IHasTimeStamp
     [DefaultValue(false)]
     public bool IsAdmin { get; set; }
 
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
-
     public ICollection<Statistics> Statistics { get; set; }
     public ICollection<Friends> Friends { get; set; }
     public ICollection<Game> Games { get; set; }

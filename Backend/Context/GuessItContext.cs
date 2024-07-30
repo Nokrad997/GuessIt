@@ -1,3 +1,5 @@
+using Backend.Context.Configurations;
+using Backend.Controllers;
 using Microsoft.EntityFrameworkCore;
 using Backend.Entities;
 using Backend.Entities.Interfaces;
@@ -28,6 +30,18 @@ namespace Backend.Context;
         {
             base.OnModelCreating(modelBuilder);
             new DbInitializer(modelBuilder, new PasswordHasher()).seed();
+
+            modelBuilder.ApplyConfiguration(new FriendsConfiguration());
+            modelBuilder.ApplyConfiguration(new GameConfiguration());
+            modelBuilder.ApplyConfiguration(new LeaderboardConfiguration());
+            modelBuilder.ApplyConfiguration(new AchievementsConfiguration());
+            modelBuilder.ApplyConfiguration(new UserAchievementsConfiguration());
+            modelBuilder.ApplyConfiguration(new ContinentConfiguration());
+            modelBuilder.ApplyConfiguration(new CountryConfiguration());
+            modelBuilder.ApplyConfiguration(new CityConfiguration());
+            modelBuilder.ApplyConfiguration(new GeolocationConfiguration());
+            modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new StatisticsConfiguration());
             
             modelBuilder.Entity<User>(entity =>
             {
@@ -37,21 +51,6 @@ namespace Backend.Context;
                 entity.Property(e => e.UpdatedAt)
                     .HasDefaultValueSql("CURRENT_TIMESTAMP");
             });
-            
-            modelBuilder.Entity<Friends>()
-                .HasKey(f => f.FriendsId);
-
-            modelBuilder.Entity<Friends>()
-                .HasOne(f => f.User)
-                .WithMany()
-                .HasForeignKey(f => f.UserIdFk)
-                .OnDelete(DeleteBehavior.Restrict);
-            
-            modelBuilder.Entity<Friends>()
-                .HasOne(f => f.Friend)
-                .WithMany()
-                .HasForeignKey(f => f.FriendIdFk)
-                .OnDelete(DeleteBehavior.Restrict);
         }
         
         public override int SaveChanges()

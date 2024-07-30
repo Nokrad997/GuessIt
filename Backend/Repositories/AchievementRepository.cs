@@ -20,11 +20,11 @@ public class AchievementRepository : IAchievementRepository
         await SaveChanges();
     }
 
-    public async Task<Achievement> GetAchievementById(int id)
+    public async Task<Achievement?> GetAchievementById(int id)
     {
         return await _context.Achievement.FirstOrDefaultAsync(achievement => achievement.AchievementId == id); 
     }
-    public async Task<Achievement> GetAchievementByName(string name)
+    public async Task<Achievement?> GetAchievementByName(string name)
     {
         return await _context.Achievement.FirstOrDefaultAsync(achievement => achievement.AchievementName == name); 
     }
