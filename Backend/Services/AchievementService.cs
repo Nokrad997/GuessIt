@@ -1,5 +1,6 @@
 using System.Reflection;
 using Backend.Dtos;
+using Backend.Dtos.EditDtos;
 using Backend.Entities;
 using Backend.Repositories;
 
@@ -40,7 +41,7 @@ public class AchievementService
 
         await _achievementRepository.AddAchievement(dto.ConvertToEntity());
     }
-    public async Task<AchievementDto> EditAchievement(int id, AchievementDto dto)
+    public async Task<AchievementDto> EditAchievement(int id, EditAchievementDto dto)
     {
         var retrievedAchievement = await _achievementRepository.GetAchievementById(id);
         if (retrievedAchievement is null)
@@ -51,7 +52,7 @@ public class AchievementService
         Console.WriteLine(dto);
         var excludedProperties = new[] { "AchievementId", "CreatedAt", "UpdatedAt" };
         UpdatePropertiesIfNeeded(retrievedAchievement, dto, excludedProperties);
-        await _achievementRepository.EditAchievement(dto.ConvertToEntity());
+        await _achievementRepository.EditAchievement(retrievedAchievement);
 
         return retrievedAchievement.ConvertToDto();
     }
@@ -80,9 +81,8 @@ public class AchievementService
             
             var sourceValue = dtoProp.GetValue(achievementDto);
             var targetValue = userProp.GetValue(achievement);
-            System.Diagnostics.Debug.WriteLine(sourceValue);
-            System.Diagnostics.Debug.WriteLine(targetValue);
-            if (!Equals(sourceValue, targetValue))
+
+            if (!Equals(sourceValue, targetValue) && sourceValue != null)
             {
                 userProp.SetValue(achievement, sourceValue);
             }

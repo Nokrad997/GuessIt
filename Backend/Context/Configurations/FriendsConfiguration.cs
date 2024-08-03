@@ -30,8 +30,7 @@ public class FriendsConfiguration : IEntityTypeConfiguration<Friends>
             .HasColumnName("friend_id");
         builder.Property(f => f.Status)
             .IsRequired()
-            .HasColumnType("varchar(50)")
-            .HasDefaultValue("Pending")
+            .HasConversion<string>()
             .HasColumnName("status");
         builder.Property(x => x.CreatedAt)
             .HasColumnName("created_at")

@@ -1,11 +1,13 @@
 using Backend.Dtos;
+using Backend.Dtos.EditDtos;
 using Backend.Services;
+using Backend.Utility;
 using Microsoft.AspNetCore.Mvc; 
 
 namespace Backend.Controllers;
 
 [Route("api/auth")]
-[ApiController]
+[Controller]
 public class AuthController : ControllerBase
 {
     private readonly AuthService _authService;
@@ -18,38 +20,36 @@ public class AuthController : ControllerBase
     [Route("register")]
     [HttpPost]
     [Consumes("application/json")]
-    public async Task<IActionResult> RegisterUser(EditUserDto registerUserDto)
+    public async Task<IActionResult> RegisterUser([FromBody] EditUserDto registerUserDto)
     {
-        if (!ModelState.IsValid)
+        if (!DtoValidator.ValidateObject(registerUserDto, out var messages))
         {
-            return BadRequest(ModelState);
+            return BadRequest(messages);
         }
-
         try
         {
             if (await _authService.RegisterUser(registerUserDto))
             {
-                return Ok("User Registered successfully");
+                return Ok(new { message = "User registered successfully" });;
             }
         }
         catch(Exception e)
         {
-            return BadRequest(e.Message);
+            return BadRequest(new { message = e.Message });
         }
         
-        return BadRequest("User with provided email or username already exists");
+        return BadRequest(new { message = "User already exists" });
     }
 
     [Route("login")]
     [HttpPost]
     [Consumes("application/json")]
-    public async Task<IActionResult> LoginUser(AuthUserDto authUserDto)
+    public async Task<IActionResult> LoginUser([FromBody] AuthUserDto authUserDto)
     {
-        if (!ModelState.IsValid)
+        if(!DtoValidator.ValidateObject(authUserDto, out var messages))
         {
-            return BadRequest(ModelState);
+            return BadRequest(messages);
         }
-
         try
         {
             var jwtToken = await _authService.LoginUser(authUserDto);
@@ -57,7 +57,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return BadRequest(new { message = e.Message });
         }
     }
 }

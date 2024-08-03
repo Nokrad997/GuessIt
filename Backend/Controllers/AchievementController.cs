@@ -1,12 +1,13 @@
 using Backend.Dtos;
 using Backend.Services;
+using Backend.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
-[ApiController]
 [Route("api/achievement")]
+[Controller]
 public class AchievementController : ControllerBase
 {
     private readonly AchievementService _achievementService;
@@ -25,7 +26,7 @@ public class AchievementController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return BadRequest(new { message = e.Message });
         }
     }
     
@@ -39,37 +40,37 @@ public class AchievementController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return BadRequest(new { message = e.Message });
         }
     }
     
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> AddAchievement(AchievementDto dto)
+    public async Task<IActionResult> AddAchievement([FromBody] AchievementDto dto)
     {
-        if (!ModelState.IsValid)
+        if (!DtoValidator.ValidateObject(dto, out var message))
         {
-            return BadRequest(ModelState);
+            return BadRequest(message);
         }
         try
         {
             await _achievementService.AddAchievement(dto);
-            return Ok("Achievement added successfully");
+            return BadRequest(new { message = "Achievement added successfully" });
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return BadRequest(new { message = e.Message });
         }
     }
     
     [HttpPut]
     [Route("{id:int}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> EditAchievement(int id, AchievementDto dto)
+    public async Task<IActionResult> EditAchievement(int id, [FromBody] EditAchievementDto dto)
     {
-        if (!ModelState.IsValid)
+        if (!DtoValidator.ValidateObject(dto, out var message))
         {
-            return BadRequest(ModelState);
+            return BadRequest(message);
         }
         try
         {
@@ -77,7 +78,7 @@ public class AchievementController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message + "\n" + e.StackTrace);
+            return BadRequest(new { message = e.Message });
         }
     }
 
@@ -89,11 +90,11 @@ public class AchievementController : ControllerBase
         try
         {
             await _achievementService.DeleteAchievement(id);
-            return Ok("Achievement deleted successfully");
+            return Ok(new { message = "Achievement deleted successfully" });
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return BadRequest(new { message = e.Message });
         }
     }
 }

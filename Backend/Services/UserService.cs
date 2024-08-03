@@ -1,5 +1,6 @@
 using System.Reflection;
 using Backend.Dtos;
+using Backend.Dtos.EditDtos;
 using Backend.Entities;
 using Backend.Exceptions;
 using Backend.Repositories;
@@ -73,7 +74,7 @@ public class UserService
 
         return existingUser.ConvertToDto();
     }
-    public async Task<UserDto> EditUserAsAdmin(int id, UserDto userDto)
+    public async Task<UserDto> EditUserAsAdmin(int id, EditUserDto userDto)
     {
         var existingUser = await _userRepository.GetUserById(id);
         var emailCheck = await _userRepository.GetUserByEmail(userDto.Email);
@@ -132,9 +133,8 @@ public class UserService
             {
                 sourceValue = _passwordHasher.HashPassword(sourceValue.ToString()); 
             }
-            if (!Equals(sourceValue, targetValue))
+            if (!Equals(sourceValue, targetValue) && sourceValue != null)
             {
-                
                 userProp.SetValue(user, sourceValue);
             }
         }
