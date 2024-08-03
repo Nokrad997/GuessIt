@@ -5,35 +5,14 @@ using Backend.Dtos;
 using Backend.Entities.Interfaces;
 
 namespace Backend.Entities;
-[Table("users")]
+
 public class User : IHasTimeStamp
 {
-    [Key]
-    [Column("user_id")]
     public int UserId { get; set; }
-    
-    [Required]
-    [MaxLength(24)]
-    [Column("username")]
-    [Index(IsUnique = true)]
     public string Username { get; set; }
-    
-    [Required]
-    [MaxLength(24)]
-    [Column("email")]
-    [Index(IsUnique = true)]
     public string Email { get; set; }
-    
-    [Required]
-    [Column("password")]
     public string Password { get; set; }
-    
-    [Column("verified")]
-    [DefaultValue(false)]
     public bool Verified { get; set; }
-
-    [Column("is_admin")] 
-    [DefaultValue(false)]
     public bool IsAdmin { get; set; }
 
     public ICollection<Statistics> Statistics { get; set; }

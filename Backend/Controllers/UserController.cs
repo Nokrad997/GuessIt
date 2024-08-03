@@ -1,19 +1,25 @@
+using System.ComponentModel.DataAnnotations;
 using Backend.Dtos;
+using Backend.Dtos.EditDtos;
 using Backend.Services;
+using Backend.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Backend.Controllers;
 
 [Route("api/user")]
-[ApiController]
+[Controller]
 public class UserController : ControllerBase
 {
     private readonly UserService _userService;
+    private readonly DtoValidator _dtoValidator;
 
     public UserController(UserService userService)
     {
         _userService = userService;
+        _dtoValidator = new DtoValidator();
     }
 
     [HttpGet]
@@ -25,7 +31,7 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return BadRequest(new { message = e.Message });
         }
     }
     
@@ -39,38 +45,38 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return BadRequest(new { message = e.Message });
         }
     }
     
     [HttpPost]
     [Route("admin")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> AddUserAsAdmin(UserDto userDto)
+    public async Task<IActionResult> AddUserAsAdmin([FromBody] UserDto userDto)
     {
-        if (!ModelState.IsValid)
+        if(!DtoValidator.ValidateObject(userDto, out var messages))
         {
-            return BadRequest(ModelState);
+            return BadRequest(messages);
         }
         try
         {
             await _userService.AddUserAsAdmin(userDto);
-            return Ok("User added successfully");
+            return Ok(new {message = "User added successfully"});
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return BadRequest(new { message = e.Message });
         }
     }
 
     [HttpPut]
     [Route("{id:int}")]
     [Authorize(Roles = "User")]
-    public async Task<IActionResult> EditUserAsUser(int id, EditUserDto editUserDto)
+    public async Task<IActionResult> EditUserAsUser(int id, [FromBody] EditUserDto editUserDto)
     {
-        if (!ModelState.IsValid)
+        if(!DtoValidator.ValidateObject(editUserDto, out var messages))
         {
-            return BadRequest(ModelState);
+            return BadRequest(messages);
         }
         try
         {
@@ -79,25 +85,25 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return BadRequest(new { message = e.Message });
         }
     }
     [HttpPut]
     [Route("admin/{id:int}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> EditUserAsAdmin(int id, UserDto userDto)
+    public async Task<IActionResult> EditUserAsAdmin(int id, [FromBody] EditUserDto editUserDto)
     {
-        if (!ModelState.IsValid)
+        if(!DtoValidator.ValidateObject(editUserDto, out var messages))
         {
-            return BadRequest(ModelState);
+            return BadRequest(messages);
         }
         try
         {
-            return Ok(await _userService.EditUserAsAdmin(id, userDto));
+            return Ok(await _userService.EditUserAsAdmin(id, editUserDto));
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message + "\n" + e.StackTrace);
+            return BadRequest(new { message = e.Message });
         }
     }
 
@@ -110,11 +116,13 @@ public class UserController : ControllerBase
         {
             var token = HttpContext.Request.Headers.Authorization.FirstOrDefault().Split(" ").Last();
             await _userService.DeleteUser(id, token);
-            return Ok("User deleted successfully");
+            return Ok(new { messsage = "User deleted successfully" });
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return BadRequest(new { message = e.Message });
         }
     }
+    
+    
 }

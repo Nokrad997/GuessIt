@@ -3,10 +3,11 @@ using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+
 namespace Backend.Controllers;
 
 [Route("api/token")]
-[ApiController]
+[Controller]
 public class TokenController : ControllerBase
 {
     private readonly TokenService _tokenService;
@@ -24,33 +25,33 @@ public class TokenController : ControllerBase
         var token = Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
         if (token == null)
         {
-            return BadRequest("Token is missing");
+            return BadRequest(new { message = "Token is empty" });
         }
 
         try
         {
             if (_tokenService.Validate(token))
             {
-                return Ok("Token is valid");
+                return Ok(new { message = "Token is valid" });
             }
         }
         catch (Exception e)
         {
-            BadRequest(e.Message);
+            BadRequest(new { message = e.Message });
         }
         
-        return BadRequest("Invalid token");
+        return BadRequest(new { message = "Token is invalid" });
     }
 
     [Route("refresh")]
     [HttpPost]
     [Consumes("application/json")]
     [Authorize]
-    public IActionResult RefreshAccessToken(TokensDto tokens)
+    public IActionResult RefreshAccessToken([FromBody] TokensDto tokens)
     {
         if (tokens.RefreshToken.IsNullOrEmpty())
         {
-            return BadRequest("refresh token is empty");
+            return BadRequest(new { message = "Refresh token is empty" });
         }
 
         try
@@ -59,7 +60,7 @@ public class TokenController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            return BadRequest(new { message = e.Message });
         }
     }
 }

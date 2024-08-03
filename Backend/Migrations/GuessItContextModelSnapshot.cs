@@ -176,9 +176,7 @@ namespace Backend.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("varchar(50)")
-                        .HasDefaultValue("Pending")
+                        .HasColumnType("text")
                         .HasColumnName("status");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -367,7 +365,6 @@ namespace Backend.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(24)
                         .HasColumnType("varchar(50)")
                         .HasColumnName("email");
 
@@ -390,7 +387,6 @@ namespace Backend.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(24)
                         .HasColumnType("varchar(24)")
                         .HasColumnName("username");
 
@@ -416,7 +412,7 @@ namespace Backend.Migrations
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@admin.com",
                             IsAdmin = true,
-                            Password = "$2a$11$TTFiPzsckSjbQvgwoY7dPuH2PkwoPYOd8mu5sqowGUosRluTd4c82",
+                            Password = "$2a$11$yZraqfT0MKwgSbU6PkdI.O5hkYSoMKcjfxfpEd2yjLSktuveB8ZsK",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "admin",
                             Verified = true
@@ -427,7 +423,7 @@ namespace Backend.Migrations
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user@user.com",
                             IsAdmin = false,
-                            Password = "$2a$11$dsxiuA9.g.LAtXC4ceIbROAjfTJezF/4cEUY3YC/CCKaNgU48tn3i",
+                            Password = "$2a$11$Gk9mLnimzinSR8PlsEz0o.8BhIW1q93GzcOcjs01rfVB.SXPRkO4u",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "user",
                             Verified = true
