@@ -25,6 +25,8 @@ builder.Services.AddScoped<AchievementService>();
 builder.Services.AddScoped<AchievementRepository>();
 builder.Services.AddScoped<FriendsService>();
 builder.Services.AddScoped<FriendsRepository>();
+builder.Services.AddScoped<LeaderboardService>();
+builder.Services.AddScoped<LeaderboardRepository>();
 builder.Services.AddTransient<TokenUtil>();
 builder.Services.Configure<Config>(builder.Configuration.GetSection("Keys"));
 // Add DbContext configuration
