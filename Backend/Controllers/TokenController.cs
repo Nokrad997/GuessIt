@@ -6,8 +6,8 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Backend.Controllers;
 
-[Route("api/token")]
 [Controller]
+[Route("api/[controller]")]
 public class TokenController : ControllerBase
 {
     private readonly TokenService _tokenService;

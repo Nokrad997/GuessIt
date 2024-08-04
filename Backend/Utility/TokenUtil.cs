@@ -120,6 +120,38 @@ public class TokenUtil
         }
     }
 
+    public string GetRoleFromToken(string token)
+    {   
+        if (string.IsNullOrWhiteSpace(token))
+            throw new ArgumentException("Token is empty");
+
+        if (token.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+            token = token.Substring("Bearer ".Length).Trim();
+
+        var key = Encoding.ASCII.GetBytes(_privateKey);
+        var validationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero
+        };
+
+        try
+        {
+            var principal = _handler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+            var roleClaim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
+            return roleClaim?.Value;
+
+        }
+        catch
+        {
+            throw new SecurityTokenValidationException("Invalid token");
+        }
+    }
+
     private static ClaimsIdentity GenerateClaims(User user)
     {
         var ci = new ClaimsIdentity();

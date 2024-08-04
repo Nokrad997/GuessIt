@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers;
 
-[Route("api/achievement")]
 [Controller]
+[Route("api/[controller]")]
 public class AchievementController : ControllerBase
 {
     private readonly AchievementService _achievementService;
