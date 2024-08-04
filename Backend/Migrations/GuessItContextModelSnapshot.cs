@@ -170,20 +170,25 @@ namespace Backend.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
+                    b.Property<string>("FriendFriendshipStatus")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("friend_status");
+
                     b.Property<int>("FriendIdFk")
                         .HasColumnType("int")
                         .HasColumnName("friend_id");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("status");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamptz")
                         .HasColumnName("updated_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("UserFriendshipStatus")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("user_status");
 
                     b.Property<int>("UserIdFk")
                         .HasColumnType("int")
@@ -412,7 +417,7 @@ namespace Backend.Migrations
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@admin.com",
                             IsAdmin = true,
-                            Password = "$2a$11$yZraqfT0MKwgSbU6PkdI.O5hkYSoMKcjfxfpEd2yjLSktuveB8ZsK",
+                            Password = "$2a$11$kmyse0UGe4I36kcHZ23Wuugwez8eQzTB3COhNPaziyzSLmT5/xXBO",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "admin",
                             Verified = true
@@ -423,7 +428,7 @@ namespace Backend.Migrations
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user@user.com",
                             IsAdmin = false,
-                            Password = "$2a$11$Gk9mLnimzinSR8PlsEz0o.8BhIW1q93GzcOcjs01rfVB.SXPRkO4u",
+                            Password = "$2a$11$8q1u3XezVpFKJGY.uXwvN.5spTo.c1RI5XqlG07N437ZCCdlGz8Du",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "user",
                             Verified = true

@@ -2,6 +2,7 @@
 using System.Text;
 using Backend.Context;
 using Backend.Repositories;
+using Backend.Repositories.Interfaces;
 using Backend.Services;
 using Backend.Utility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -16,12 +17,14 @@ builder.Services.AddAuthorization();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<PasswordHasher>();
-builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<AchievementRepository>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<AchievementService>();
+builder.Services.AddScoped<AchievementRepository>();
+builder.Services.AddScoped<FriendsService>();
+builder.Services.AddScoped<FriendsRepository>();
 builder.Services.AddTransient<TokenUtil>();
 builder.Services.Configure<Config>(builder.Configuration.GetSection("Keys"));
 // Add DbContext configuration

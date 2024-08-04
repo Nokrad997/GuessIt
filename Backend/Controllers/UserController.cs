@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Backend.Controllers;
 
-[Route("api/user")]
 [Controller]
+[Route("api/[controller]")]
 public class UserController : ControllerBase
 {
     private readonly UserService _userService;

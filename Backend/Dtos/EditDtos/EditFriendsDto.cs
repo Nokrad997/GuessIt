@@ -1,43 +1,15 @@
 using System.ComponentModel.DataAnnotations;
-using Backend.Entities;
 using Backend.Utility.Enums;
 
-namespace Backend.Dtos;
+namespace Backend.Dtos.EditDtos;
 
-public class FriendsDto : IValidatableObject
+public class EditFriendsDto : IValidatableObject
 {
-    public int FriendsId { get; set; }
-    public int UserIdFk { get; set; }
-    public int FriendIdFk { get; set; }
     public FriendsStatusTypes UserFriendshipStatus { get; set; }
     public FriendsStatusTypes FriendFriendshipStatus { get; set; }
-
-    public Friends ConvertToEntity()
-    {
-        return new Friends
-        {
-            FriendsId = FriendsId,
-            UserIdFk = UserIdFk,
-            FriendIdFk = FriendIdFk,
-            UserFriendshipStatus = UserFriendshipStatus,
-            FriendFriendshipStatus = FriendFriendshipStatus
-        };
-    }
     
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if(UserIdFk == 0)
-        {
-            yield return new ValidationResult("UserIdFk cannot be 0", new []{ nameof(UserIdFk) });
-        }
-        if(FriendIdFk == 0)
-        {
-            yield return new ValidationResult("FriendIdFk cannot be 0", new []{ nameof(FriendIdFk) });
-        }
-        if (UserIdFk != 0 && FriendIdFk != 0 && UserIdFk == FriendIdFk)
-        {
-            yield return new ValidationResult("You cannot add yourself as a friend", new []{ nameof(UserIdFk), nameof(FriendIdFk) });
-        }
         if(UserFriendshipStatus is < FriendsStatusTypes.Pending or > FriendsStatusTypes.Blocked)
         {
             yield return new ValidationResult(

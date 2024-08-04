@@ -28,10 +28,14 @@ public class FriendsConfiguration : IEntityTypeConfiguration<Friends>
             .IsRequired()
             .HasColumnType("int")
             .HasColumnName("friend_id");
-        builder.Property(f => f.Status)
+        builder.Property(f => f.UserFriendshipStatus)
             .IsRequired()
             .HasConversion<string>()
-            .HasColumnName("status");
+            .HasColumnName("user_status");
+        builder.Property(f => f.FriendFriendshipStatus)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasColumnName("friend_status");
         builder.Property(x => x.CreatedAt)
             .HasColumnName("created_at")
             .HasColumnType("timestamptz")
