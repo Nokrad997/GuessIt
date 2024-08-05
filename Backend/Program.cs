@@ -27,8 +27,11 @@ builder.Services.AddScoped<FriendsService>();
 builder.Services.AddScoped<FriendsRepository>();
 builder.Services.AddScoped<LeaderboardService>();
 builder.Services.AddScoped<LeaderboardRepository>();
+builder.Services.AddScoped<StatisticsService>();
+builder.Services.AddScoped<StatisticsRepository>();
 builder.Services.AddTransient<TokenUtil>();
 builder.Services.Configure<Config>(builder.Configuration.GetSection("Keys"));
+
 // Add DbContext configuration
 builder.Services.AddDbContext<GuessItContext>(options =>
     options.UseNpgsql(

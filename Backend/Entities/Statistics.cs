@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Dtos;
 
 namespace Backend.Entities;
 
@@ -16,4 +17,19 @@ public class Statistics
     public double LowestTimeInSeconds { get; set; }
     public double TotalTraveledDistanceInMeters { get; set; }
     public double AverageScore { get; set; }
+
+    public StatisticsDto ConvertToDto()
+    {
+        return new StatisticsDto
+        {
+            StatisticId = StatisticId,
+            UserIdFk = UserIdFk,
+            TotalGames = TotalGames,
+            TotalPoints = TotalPoints,
+            HighestScore = HighestScore,
+            LowestTimeInSeconds = LowestTimeInSeconds,
+            TotalTraveledDistanceInMeters = TotalTraveledDistanceInMeters,
+            AverageScore = AverageScore
+        };
+    }
 }
