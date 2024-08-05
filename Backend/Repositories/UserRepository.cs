@@ -1,5 +1,6 @@
 using Backend.Context;
 using Backend.Entities;
+using Backend.Exceptions;
 using Backend.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,16 +17,27 @@ public class UserRepository : IUserRepository
 
     public async Task AddUser(User user)
     {
+        var existingUser = await GetUserByEmail(user.Email);
+        if (existingUser is not null)
+        {
+            throw new EntryAlreadyExistsException();
+        }
         await _context.User.AddAsync(user);
         await SaveChanges();
     }
 
-    public async Task<User> GetUserByEmail(string email)
+    public async Task<User?> GetUserByEmail(string email)
     {
-        return await _context.User.FirstOrDefaultAsync(user => user.Email == email);
+        var existingUser = await _context.User.FirstOrDefaultAsync(user => user.Email == email);
+        if (existingUser is null)
+        {
+            throw new KeyNotFoundException("User not found");
+        }
+        
+        return existingUser;
     }
 
-    public async Task<User> GetUserById(int id)
+    public async Task<User?> GetUserById(int id)
     {
        return await _context.User.FirstOrDefaultAsync(user => user.UserId == id); 
     }
