@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Dtos;
 using Backend.Entities.Interfaces;
 
 namespace Backend.Entities;
@@ -13,4 +14,14 @@ public class UserAchievements : IHasTimeStamp
     
     public int AchievementIdFk { get; set; }
     public Achievement Achievement { get; set; }
+
+    public UserAchievementsDtos ConvertToDto()
+    {
+        return new UserAchievementsDtos
+        {
+            UserAchievementId = UserAchievementId,
+            UserIdFk = UserIdFk,
+            AchievementIdFk = AchievementIdFk
+        };
+    }
 }
