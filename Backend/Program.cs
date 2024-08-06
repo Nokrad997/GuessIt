@@ -29,6 +29,8 @@ builder.Services.AddScoped<LeaderboardService>();
 builder.Services.AddScoped<LeaderboardRepository>();
 builder.Services.AddScoped<StatisticsService>();
 builder.Services.AddScoped<StatisticsRepository>();
+builder.Services.AddScoped<UserAchievementsService>();
+builder.Services.AddScoped<UserAchievementsRepository>();
 builder.Services.AddTransient<TokenUtil>();
 builder.Services.Configure<Config>(builder.Configuration.GetSection("Keys"));
 
