@@ -217,8 +217,8 @@ namespace Backend.Migrations
                         .HasColumnType("decimal(10, 2)")
                         .HasColumnName("distance_to_starting_location");
 
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("time")
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("end_time");
 
                     b.Property<Point>("GuessedLocation")
@@ -235,8 +235,8 @@ namespace Backend.Migrations
                         .HasColumnType("geometry")
                         .HasColumnName("start_location");
 
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("time")
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("timestamptz")
                         .HasColumnName("start_time");
 
                     b.Property<int>("UserIdFk")
@@ -417,7 +417,7 @@ namespace Backend.Migrations
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@admin.com",
                             IsAdmin = true,
-                            Password = "$2a$11$kmyse0UGe4I36kcHZ23Wuugwez8eQzTB3COhNPaziyzSLmT5/xXBO",
+                            Password = "$2a$11$m4qLXoqtrKsTkuhvpdZbEuBNG5s2M.Et0DBJi0dIZgeQjEdCvjtM6",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "admin",
                             Verified = true
@@ -428,7 +428,7 @@ namespace Backend.Migrations
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user@user.com",
                             IsAdmin = false,
-                            Password = "$2a$11$8q1u3XezVpFKJGY.uXwvN.5spTo.c1RI5XqlG07N437ZCCdlGz8Du",
+                            Password = "$2a$11$jVqxDoEYosp6U0en8nm0yu8D4atCeQ8x5F3UV2Zpsv2Hx658BcCRe",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "user",
                             Verified = true

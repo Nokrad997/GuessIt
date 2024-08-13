@@ -37,11 +37,11 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
             .HasColumnName("distance_to_starting_location");
         builder.Property(g => g.StartTime)
             .IsRequired()
-            .HasColumnType("time")
+            .HasColumnType("timestamptz")
             .HasColumnName("start_time");
         builder.Property(g => g.EndTime)
             .IsRequired()
-            .HasColumnType("time")
+            .HasColumnType("timestamptz")
             .HasColumnName("end_time");
         builder.Property(g => g.Score)
             .IsRequired()
