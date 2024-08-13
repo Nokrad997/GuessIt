@@ -29,10 +29,10 @@ public class UserRepository : IUserRepository
     public async Task<User?> GetUserByEmail(string email)
     {
         var existingUser = await _context.User.FirstOrDefaultAsync(user => user.Email == email);
-        if (existingUser is null)
-        {
-            throw new KeyNotFoundException("User not found");
-        }
+        // if (existingUser is null)
+        // {
+        //     throw new KeyNotFoundException("User not found");
+        // }
         
         return existingUser;
     }

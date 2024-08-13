@@ -31,6 +31,8 @@ builder.Services.AddScoped<StatisticsService>();
 builder.Services.AddScoped<StatisticsRepository>();
 builder.Services.AddScoped<UserAchievementsService>();
 builder.Services.AddScoped<UserAchievementsRepository>();
+builder.Services.AddScoped<GameService>();
+builder.Services.AddScoped<GameRepository>();
 builder.Services.AddTransient<TokenUtil>();
 builder.Services.Configure<Config>(builder.Configuration.GetSection("Keys"));
 
@@ -65,6 +67,10 @@ builder.Services.AddAuthentication(x =>
         };
     });
 
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new PointConverter());
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
