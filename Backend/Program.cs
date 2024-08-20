@@ -33,6 +33,8 @@ builder.Services.AddScoped<UserAchievementsService>();
 builder.Services.AddScoped<UserAchievementsRepository>();
 builder.Services.AddScoped<GameService>();
 builder.Services.AddScoped<GameRepository>();
+builder.Services.AddScoped<GeolocationService>();
+builder.Services.AddScoped<GeolocationRepository>();
 builder.Services.AddTransient<TokenUtil>();
 builder.Services.Configure<Config>(builder.Configuration.GetSection("Keys"));
 
