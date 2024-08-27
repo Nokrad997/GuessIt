@@ -26,21 +26,19 @@ public class CountryService
     
     public async Task<IEnumerable<CountryDto>> Retrieve()
     {
-        var countrys = await _countryRepository.GetCountries();
-        return countrys.Select(c => c.ConvertToDto());
+        var countries = await _countryRepository.GetCountries();
+        return countries.Select(c => c.ConvertToDto());
     }
     
-    public async Task<CountryDto> AddCountry(CountryDto countryDto)
+    public async Task AddCountry(CountryDto countryDto)
     {
-        var country = _countryRepository.GetCountryByGeolocationId(countryDto.GeolocationIdFk);
+        var country = await _countryRepository.GetCountryByGeolocationId(countryDto.GeolocationIdFk);
         if (country != null)
         {
             throw new ArgumentException("Country with provided geolocation id already exists");
         }
         
         await _countryRepository.AddCountry(countryDto.ConvertToEntity());
-        
-        return countryDto;
     }
     
     public async Task<CountryDto> EditCountry(int countryId, EditCountryDto editCountryDto)
@@ -59,7 +57,7 @@ public class CountryService
         return country.ConvertToDto();
     }
     
-    public async Task<CountryDto> DeleteCountry(int countryId)
+    public async Task DeleteCountry(int countryId)
     {
         var country = await _countryRepository.GetCountryById(countryId);
         if (country == null)
@@ -68,7 +66,5 @@ public class CountryService
         }
         
         await _countryRepository.DeleteCountry(country);
-        
-        return country.ConvertToDto();
     }
 }

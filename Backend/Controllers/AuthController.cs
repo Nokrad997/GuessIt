@@ -28,17 +28,13 @@ public class AuthController : ControllerBase
         }
         try
         {
-            if (await _authService.RegisterUser(registerUserDto))
-            {
-                return Ok(new { message = "User registered successfully" });;
-            }
+            await _authService.RegisterUser(registerUserDto);
+            return Ok(new { message = "User registered successfully" });;
         }
         catch(Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in registering", error = e.Message });
         }
-        
-        return BadRequest(new { message = "User already exists" });
     }
 
     [Route("login")]
@@ -53,11 +49,11 @@ public class AuthController : ControllerBase
         try
         {
             var jwtToken = await _authService.LoginUser(authUserDto);
-            return Ok(jwtToken);
+            return Ok(new { accessToken = jwtToken.AccessToken, refreshToken = jwtToken.RefreshToken });
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in logging in", error = e.Message });
         }
     }
 }

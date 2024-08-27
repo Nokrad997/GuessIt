@@ -18,7 +18,7 @@ public class CountryController : ControllerBase
         _countryService = countryService;
     }
     
-    [HttpGet("{countryId}")]
+    [HttpGet("{countryId:int}")]
     public async Task<IActionResult> GetCountryById(int countryId)
     {
         try
@@ -27,7 +27,7 @@ public class CountryController : ControllerBase
         }
         catch (ArgumentException e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in retrieving country", error = e.Message });
         }
     }
 
@@ -36,11 +36,11 @@ public class CountryController : ControllerBase
     {
         try
         {
-            return Ok(new {message = "Countries retrieved successfully", countrys = await _countryService.Retrieve()});
+            return Ok(new {message = "Countries retrieved successfully", countries = await _countryService.Retrieve()});
         }
         catch (Exception e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in retrieving country", error = e.Message });
         }
     }
     
@@ -54,15 +54,16 @@ public class CountryController : ControllerBase
         }
         try
         {
-            return Ok(new {message = "Country created successfully", country = await _countryService.AddCountry(countryDto)});
+            await _countryService.AddCountry(countryDto);
+            return Ok(new {message = "Country created successfully"});
         }
         catch (ArgumentException e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in adding country", error = e.Message });
         }
     }
     
-    [HttpPut("{countryId}")]
+    [HttpPut("{countryId:int}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateCountry(int countryId, [FromBody] EditCountryDto editCountryDto)
     {
@@ -76,21 +77,22 @@ public class CountryController : ControllerBase
         }
         catch (ArgumentException e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in editing country", error = e.Message });
         }
     }
     
-    [HttpDelete("{countryId}")]
+    [HttpDelete("{countryId:int}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteCountry(int countryId)
     {
         try
         {
-            return Ok(new {message = "Country deleted successfully", country = await _countryService.DeleteCountry(countryId)});
+            await _countryService.DeleteCountry(countryId);
+            return Ok(new {message = "Country deleted successfully"});
         }
         catch (ArgumentException e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in deleting country", error = e.Message });
         }
     }
 }

@@ -27,11 +27,15 @@ public class StatisticsService
     public async Task<StatisticsDto> Retrieve(int id)
     {
         var existingStatistics = await _statisticsRepository.GetStatisticsById(id);
-
+        if (existingStatistics is null)
+        {
+            throw new ArgumentException("Statistics not found");
+        }
+        
         return existingStatistics.ConvertToDto();
     }
     
-    public async Task<StatisticsDto> AddStatistics(StatisticsDto statisticsDto, string token)
+    public async Task AddStatistics(StatisticsDto statisticsDto, string token)
     { 
         if(_tokenUtil.GetIdFromToken(token) != statisticsDto.UserIdFk)
         {
@@ -41,8 +45,6 @@ public class StatisticsService
         
         var statistics = statisticsDto.ConvertToEntity();
         await _statisticsRepository.AddStatistics(statistics);
-
-        return statisticsDto;
     }
     
     public async Task<StatisticsDto> EditStatistics(int id, EditStatisticsDto statisticsDto, string token)
@@ -55,7 +57,11 @@ public class StatisticsService
         }
         
         var existingStatistics = await _statisticsRepository.GetStatisticsById(id);
-        UpdatePropertiesIfNeeded(existingStatistics, statisticsDto, new[] { "StatisticId", "UserIdFk" });
+        if (existingStatistics is null)
+        {
+            throw new ArgumentException("Statistics not found");
+        }
+        UpdatePropertiesIfNeeded(existingStatistics, statisticsDto, ["StatisticId", "UserIdFk"]);
         
         await _statisticsRepository.EditStatistics(existingStatistics);
 
@@ -64,7 +70,13 @@ public class StatisticsService
     
     public async Task DeleteStatistics(int id)
     {
-        await _statisticsRepository.DeleteStatistics(id);
+        var existingStatistics = await _statisticsRepository.GetStatisticsById(id);
+        if (existingStatistics is null)
+        {
+            throw new ArgumentException("Statistics not found");
+        }
+        
+        await _statisticsRepository.DeleteStatistics(existingStatistics);
     }
     
     private void UpdatePropertiesIfNeeded<T>(Statistics statistic, T statisticsDto, string[] excludedProperties)

@@ -4,13 +4,11 @@ using static System.String;
 
 namespace Backend.Dtos;
 
-public class AchievementDto : IValidatableObject
+public class AchievementDto : EditAchievementDto, IValidatableObject
 {
     public int AchievementId { get; set; }
-    public string AchievementName { get; set; }
-    public string AchievementDescription { get; set; }
 
-    public Achievement ConvertToEntity()
+    public new Achievement ConvertToEntity()
     {
         return new Achievement
         {
@@ -20,7 +18,7 @@ public class AchievementDto : IValidatableObject
         };
     }
 
-    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    public new IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         if (IsNullOrEmpty(AchievementName))
         {

@@ -1,16 +1,15 @@
 using System.ComponentModel.DataAnnotations;
+using Backend.Dtos.EditDtos;
 using Backend.Entities;
 using Backend.Utility.Enums;
 
 namespace Backend.Dtos;
 
-public class FriendsDto : IValidatableObject
+public class FriendsDto : EditFriendsDto, IValidatableObject
 {
     public int FriendsId { get; set; }
     public int UserIdFk { get; set; }
     public int FriendIdFk { get; set; }
-    public FriendsStatusTypes UserFriendshipStatus { get; set; }
-    public FriendsStatusTypes FriendFriendshipStatus { get; set; }
 
     public Friends ConvertToEntity()
     {
@@ -24,7 +23,7 @@ public class FriendsDto : IValidatableObject
         };
     }
     
-    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    public new IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         if(UserIdFk == 0)
         {

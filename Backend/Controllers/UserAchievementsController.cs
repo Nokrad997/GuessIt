@@ -27,7 +27,7 @@ public class UserAchievementsController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in retrieving userAchievements", error = e.Message });
         }
     }
     
@@ -41,7 +41,7 @@ public class UserAchievementsController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in retrieving userAchievements", error = e.Message });
         }
     }
     
@@ -55,11 +55,12 @@ public class UserAchievementsController : ControllerBase
         }
         try
         {
-            return Ok(new { message = "UserAchievement added successfully", userAchievement = await _userAchievementsService.AddUserAchievement(userAchievementsDto) });
+            await _userAchievementsService.AddUserAchievement(userAchievementsDto);
+            return Ok(new { message = "UserAchievement added successfully"});
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in adding userAchievements", error = e.Message });
         }
     }
     
@@ -78,7 +79,7 @@ public class UserAchievementsController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in editing userAchievements", error = e.Message });
         }
     }
     
@@ -89,11 +90,12 @@ public class UserAchievementsController : ControllerBase
     {
         try
         {
-            return Ok(new { message = "UserAchievement deleted successfully", userAchievement = await _userAchievementsService.DeleteUserAchievement(id) });
+            await _userAchievementsService.DeleteUserAchievement(id);
+            return Ok(new { message = "UserAchievement deleted successfully" });
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in deleting userAchievements", error = e.Message });
         }
     }
 }

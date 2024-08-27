@@ -18,7 +18,7 @@ public class CityController : ControllerBase
         _cityService = cityService;
     }
     
-    [HttpGet("{cityId}")]
+    [HttpGet("{cityId:int}")]
     public async Task<IActionResult> GetCityById(int cityId)
     {
         try
@@ -27,26 +27,26 @@ public class CityController : ControllerBase
         }
         catch (ArgumentException e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in retrieving city", error = e.Message });
         }
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAllCitys()
+    public async Task<IActionResult> GetAllCities()
     {
         try
         {
-            return Ok(new {message = "Citys retrieved successfully", citys = await _cityService.Retrieve()});
+            return Ok(new {message = "Cities retrieved successfully", cities = await _cityService.Retrieve()});
         }
         catch (Exception e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in retrieving city", error = e.Message });
         }
     }
     
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CreateCity([FromBody] CityDto cityDto)
+    public async Task<IActionResult> AddCity([FromBody] CityDto cityDto)
     {
         if(!DtoValidator.ValidateObject(cityDto, out var messages))
         {
@@ -54,17 +54,18 @@ public class CityController : ControllerBase
         }
         try
         {
-            return Ok(new {message = "City created successfully", city = await _cityService.AddCity(cityDto)});
+            await _cityService.AddCity(cityDto);
+            return Ok(new {message = "City created successfully"});
         }
         catch (ArgumentException e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in adding city", error = e.Message });
         }
     }
     
-    [HttpPut("{cityId}")]
+    [HttpPut("{cityId:int}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateCity(int cityId, [FromBody] EditCityDto editCityDto)
+    public async Task<IActionResult> EditCity(int cityId, [FromBody] EditCityDto editCityDto)
     {
         if(!DtoValidator.ValidateObject(editCityDto, out var messages))
         {
@@ -76,21 +77,22 @@ public class CityController : ControllerBase
         }
         catch (ArgumentException e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in editing city", error = e.Message });
         }
     }
     
-    [HttpDelete("{cityId}")]
+    [HttpDelete("{cityId:int}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteCity(int cityId)
     {
         try
         {
-            return Ok(new {message = "City deleted successfully", city = await _cityService.DeleteCity(cityId)});
+            await _cityService.DeleteCity(cityId);
+            return Ok(new { message = "City deleted successfully" });
         }
         catch (ArgumentException e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in deleting city", error = e.Message });
         }
     }
 }

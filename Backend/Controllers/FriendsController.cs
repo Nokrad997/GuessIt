@@ -23,11 +23,11 @@ public class FriendsController : ControllerBase
     {
         try
         {
-            return Ok(await _friendsService.Retreive());
+            return Ok(new { message = "Friends retrieved successfully", friends = await _friendsService.Retrieve() });
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in retrieving friends", error = e.Message });
         }
     }
     
@@ -37,11 +37,11 @@ public class FriendsController : ControllerBase
     {
         try
         {
-            return Ok(await _friendsService.Retreive(id));
+            return Ok(new { message = "Friends retrieved successfully", friends = await _friendsService.Retrieve(id) });
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in retrieving friends", error = e.Message });
         }
     }
     
@@ -56,11 +56,12 @@ public class FriendsController : ControllerBase
         try
         {
             var token = GetTokenFromRequest(HttpContext);
-            return Ok(new { message = "Friends added successfully", friends = await _friendsService.AddFriends(friendDto, token) });
+            await _friendsService.AddFriends(friendDto, token); 
+            return Ok(new { message = "Friends added successfully"});
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in adding friends", error = e.Message });
         }
     }
     
@@ -80,7 +81,7 @@ public class FriendsController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in editing friends", error = e.Message });
         }
     }
     
@@ -99,13 +100,13 @@ public class FriendsController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in editing friends", error = e.Message });
         }
     }
     
     [HttpDelete]
     [Route("{id:int}")]
-    [Authorize(Roles = ("Admin"))]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteFriends(int id)
     {
         try
@@ -115,7 +116,7 @@ public class FriendsController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in deleting friends", error = e.Message });
         }
     }
     

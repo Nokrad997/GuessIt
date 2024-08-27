@@ -20,7 +20,7 @@ public class AuthService
         _tokenUtil = tokenUtil;
     }
 
-    public async Task<bool> RegisterUser(EditUserDto registerUserDto)
+    public async Task RegisterUser(EditUserDto registerUserDto)
     {
         var existingUser = await _userRepository.GetUserByEmail(registerUserDto.Email);
         if (existingUser is not null)
@@ -32,8 +32,6 @@ public class AuthService
         User user = registerUserDto.ConvertToEntity();
         
         await _userRepository.AddUser(user);
-
-        return true;
     }
 
     public async Task<TokensDto> LoginUser(AuthUserDto authUserDto)

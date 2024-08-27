@@ -55,7 +55,8 @@ public class GeolocationController : ControllerBase
         }
         try
         {
-            return Ok(new {message = "Geolocation created successfully", geolocation = await _geolocationService.CreateGeolocation(geolocationDto)});
+            await _geolocationService.AddGeolocation(geolocationDto);
+            return Ok(new {message = "Geolocation created successfully"});
         }
         catch (ArgumentException e)
         {
@@ -63,7 +64,7 @@ public class GeolocationController : ControllerBase
         }
     }
     
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> EditGeolocation(int id, [FromBody] EditGeolocationDto editGeolocationDto)
     {
@@ -81,13 +82,14 @@ public class GeolocationController : ControllerBase
         }
     }
     
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteGeolocation(int id)
     {
         try
         {
-            return Ok(new {message = "Geolocation deleted successfully", geolocation = await _geolocationService.DeleteGeolocation(id)});
+            await _geolocationService.DeleteGeolocation(id);
+            return Ok(new {message = "Geolocation deleted successfully"});
         }
         catch (ArgumentException e)
         {

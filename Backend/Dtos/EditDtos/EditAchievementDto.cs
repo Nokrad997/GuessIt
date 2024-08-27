@@ -6,7 +6,6 @@ namespace Backend.Dtos;
 
 public class EditAchievementDto : IValidatableObject
 {
-    public int AchievementId { get; set; }
     public string AchievementName { get; set; }
     public string AchievementDescription { get; set; }
 
@@ -14,7 +13,6 @@ public class EditAchievementDto : IValidatableObject
     {
         return new Achievement
         {
-            AchievementId = AchievementId,
             AchievementName = AchievementName,
             AchievementDescription = AchievementDescription
         };

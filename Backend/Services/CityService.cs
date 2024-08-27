@@ -26,21 +26,19 @@ public class CityService
     
     public async Task<IEnumerable<CityDto>> Retrieve()
     {
-        var citys = await _cityRepository.GetCitys();
-        return citys.Select(c => c.ConvertToDto());
+        var cities = await _cityRepository.GetCitys();
+        return cities.Select(c => c.ConvertToDto());
     }
     
-    public async Task<CityDto> AddCity(CityDto cityDto)
+    public async Task AddCity(CityDto cityDto)
     {
-        var city = _cityRepository.GetCityByGeolocationId(cityDto.GeolocationIdFk);
+        var city = await _cityRepository.GetCityByGeolocationId(cityDto.GeolocationIdFk);
         if (city != null)
         {
             throw new ArgumentException("City with provided geolocation id already exists");
         }
         
         await _cityRepository.AddCity(cityDto.ConvertToEntity());
-        
-        return cityDto;
     }
     
     public async Task<CityDto> EditCity(int cityId, EditCityDto editCityDto)
@@ -59,7 +57,7 @@ public class CityService
         return city.ConvertToDto();
     }
     
-    public async Task<CityDto> DeleteCity(int cityId)
+    public async Task DeleteCity(int cityId)
     {
         var city = await _cityRepository.GetCityById(cityId);
         if (city == null)
@@ -68,7 +66,5 @@ public class CityService
         }
         
         await _cityRepository.DeleteCity(city);
-        
-        return city.ConvertToDto();
     }
 }

@@ -5,27 +5,14 @@ namespace Backend.Dtos.EditDtos;
 
 public class EditStatisticsDto : IValidatableObject
 {
-    public int UserIdFk { get; set; }
-    public int TotalGames { get; set; }
-    public int TotalPoints { get; set; }
-    public int HighestScore { get; set; }
-    public double LowestTimeInSeconds { get; set; }
-    public double TotalTraveledDistanceInMeters { get; set; }
-    public double AverageScore { get; set; }
-
-    public Statistics ConvertToEntity()
-    {
-        return new Statistics
-        {
-            UserIdFk = UserIdFk,
-            TotalGames = TotalGames,
-            TotalPoints = TotalPoints,
-            HighestScore = HighestScore,
-            LowestTimeInSeconds = LowestTimeInSeconds,
-            TotalTraveledDistanceInMeters = TotalTraveledDistanceInMeters,
-            AverageScore = AverageScore
-        };
-    }
+    public int UserIdFk { get; init; }
+    public int TotalGames { get; init; }
+    public int TotalPoints { get; init; }
+    public int HighestScore { get; init; }
+    public double LowestTimeInSeconds { get; init; }
+    public double TotalTraveledDistanceInMeters { get; init; }
+    public double AverageScore { get; init; }
+    
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {

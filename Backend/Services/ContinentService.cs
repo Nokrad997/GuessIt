@@ -30,17 +30,15 @@ public class ContinentService
         return continents.Select(c => c.ConvertToDto());
     }
     
-    public async Task<ContinentDto> AddContinent(ContinentDto continentDto)
+    public async Task AddContinent(ContinentDto continentDto)
     {
-        var continent = _continentRepository.GetContinentByGeolocationId(continentDto.GeolocationIdFk);
+        var continent = await _continentRepository.GetContinentByGeolocationId(continentDto.GeolocationIdFk);
         if (continent != null)
         {
             throw new ArgumentException("Continent with provided geolocation id already exists");
         }
         
         await _continentRepository.AddContinent(continentDto.ConvertToEntity());
-        
-        return continentDto;
     }
     
     public async Task<ContinentDto> EditContinent(int continentId, EditContinentDto editContinentDto)
@@ -59,7 +57,7 @@ public class ContinentService
         return continent.ConvertToDto();
     }
     
-    public async Task<ContinentDto> DeleteContinent(int continentId)
+    public async Task DeleteContinent(int continentId)
     {
         var continent = await _continentRepository.GetContinentById(continentId);
         if (continent == null)
@@ -68,7 +66,5 @@ public class ContinentService
         }
         
         await _continentRepository.DeleteContinent(continent);
-        
-        return continent.ConvertToDto();
     }
 }
