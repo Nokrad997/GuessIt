@@ -7,16 +7,18 @@ namespace Backend.Services;
 public class CountryService
 {
      private readonly CountryRepository _countryRepository;
-    
-    public CountryService(CountryRepository countryRepository)
+     private readonly GeolocationRepository _geolocationRepository; 
+     
+    public CountryService(CountryRepository countryRepository, GeolocationRepository geolocationRepository)
     {
         _countryRepository = countryRepository;
+        _geolocationRepository = geolocationRepository;
     }
     
     public async Task<CountryDto> Retrieve(int countryId)
     {
         var country = await _countryRepository.GetCountryById(countryId);
-        if (country == null)
+        if (country is null)
         {
             throw new ArgumentException("Country with provided id not found");
         }
@@ -33,9 +35,17 @@ public class CountryService
     public async Task AddCountry(CountryDto countryDto)
     {
         var country = await _countryRepository.GetCountryByGeolocationId(countryDto.GeolocationIdFk);
-        if (country != null)
+        if (country is not null)
         {
             throw new ArgumentException("Country with provided geolocation id already exists");
+        }
+        if(await _countryRepository.GetCountryByName(countryDto.CountryName) is not null)
+        {
+            throw new ArgumentException("Country with provided name already exists");
+        }
+        if(await _geolocationRepository.GetGeolocationById(countryDto.GeolocationIdFk) is null)
+        {
+            throw new ArgumentException("Geolocation with provided id not found");
         }
         
         await _countryRepository.AddCountry(countryDto.ConvertToEntity());
@@ -44,9 +54,17 @@ public class CountryService
     public async Task<CountryDto> EditCountry(int countryId, EditCountryDto editCountryDto)
     {
         var country = await _countryRepository.GetCountryById(countryId);
-        if (country == null)
+        if (country is null)
         {
             throw new ArgumentException("Country with provided id not found");
+        }
+        if(await _countryRepository.GetCountryByName(editCountryDto.CountryName) is not null)
+        {
+            throw new ArgumentException("Country with provided name already exists");
+        }
+        if(await _geolocationRepository.GetGeolocationById(editCountryDto.GeolocationIdFk) is null)
+        {
+            throw new ArgumentException("Geolocation with provided id not found");
         }
         
         country.CountryName = editCountryDto.CountryName;
@@ -60,7 +78,7 @@ public class CountryService
     public async Task DeleteCountry(int countryId)
     {
         var country = await _countryRepository.GetCountryById(countryId);
-        if (country == null)
+        if (country is null)
         {
             throw new ArgumentException("Country with provided id not found");
         }

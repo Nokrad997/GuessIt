@@ -39,6 +39,8 @@ builder.Services.AddScoped<ContinentService>();
 builder.Services.AddScoped<ContinentRepository>();
 builder.Services.AddScoped<CountryService>();
 builder.Services.AddScoped<CountryRepository>();
+builder.Services.AddScoped<CityService>();
+builder.Services.AddScoped<CityRepository>();
 builder.Services.AddTransient<TokenUtil>();
 builder.Services.Configure<Config>(builder.Configuration.GetSection("Keys"));
 

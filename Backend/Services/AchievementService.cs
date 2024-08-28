@@ -48,8 +48,11 @@ public class AchievementService
         {
             throw new ArgumentException("No achievement with provided id");
         }
-
-        Console.WriteLine(dto);
+        if(await _achievementRepository.GetAchievementByName(dto.AchievementName) is not null)
+        {
+            throw new ArgumentException("Achievement with provided name already exists");
+        }
+        
         var excludedProperties = new[] { "AchievementId", "CreatedAt", "UpdatedAt" };
         UpdatePropertiesIfNeeded(retrievedAchievement, dto, excludedProperties);
         await _achievementRepository.EditAchievement(retrievedAchievement);

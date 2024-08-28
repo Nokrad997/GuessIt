@@ -29,6 +29,11 @@ public class CountryRepository : ICountryRepository
         return await _context.Country.FirstOrDefaultAsync(c => c.GeolocationIdFk == geolocationId);
     }
 
+    public async Task<Country?> GetCountryByName(string countryName)
+    {
+        return await _context.Country.FirstOrDefaultAsync(c => c.CountryName == countryName);
+    }
+    
     public async Task AddCountry(Country country)
     {
         await _context.Country.AddAsync(country);

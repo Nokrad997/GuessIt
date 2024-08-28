@@ -27,10 +27,9 @@ public class EditUserDto : IValidatableObject
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        Console.WriteLine("?");
         if(IsNullOrEmpty(Username) && IsNullOrEmpty(Email) && IsNullOrEmpty(Password))
         {
-            yield return new ValidationResult("No changes detected", new[] { nameof(Username), nameof(Email), nameof(Password) });
+            yield return new ValidationResult("No changes detected", new[] { nameof(Username), nameof(Email), nameof(Password), nameof(Verified), nameof(IsAdmin) });
         }
         if(!IsNullOrEmpty(Password))
         {

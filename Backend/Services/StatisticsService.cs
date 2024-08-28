@@ -10,11 +10,13 @@ namespace Backend.Services;
 public class StatisticsService
 {
     private readonly StatisticsRepository _statisticsRepository;
+    private readonly UserRepository _userRepository;
     private readonly TokenUtil _tokenUtil;
     
-    public StatisticsService(StatisticsRepository statisticsRepository, TokenUtil tokenUtil)
+    public StatisticsService(StatisticsRepository statisticsRepository, UserRepository userRepository ,TokenUtil tokenUtil)
     {
         _statisticsRepository = statisticsRepository;
+        _userRepository = userRepository;
         _tokenUtil = tokenUtil;
     }
 
@@ -42,9 +44,16 @@ public class StatisticsService
             if(_tokenUtil.GetRoleFromToken(token) != "Admin")
                 throw new ArgumentException("User ID in token does not match user ID in statistics");
         }
+        if(await _userRepository.GetUserById(statisticsDto.UserIdFk) is null)
+        {
+            throw new ArgumentException("User not found");
+        }
+        if(await _statisticsRepository.GetStatisticsByUserId(statisticsDto.UserIdFk) is not null)
+        {
+            throw new ArgumentException("Statistics for user already exists");
+        }
         
-        var statistics = statisticsDto.ConvertToEntity();
-        await _statisticsRepository.AddStatistics(statistics);
+        await _statisticsRepository.AddStatistics(statisticsDto.ConvertToEntity());
     }
     
     public async Task<StatisticsDto> EditStatistics(int id, EditStatisticsDto statisticsDto, string token)
@@ -60,6 +69,14 @@ public class StatisticsService
         if (existingStatistics is null)
         {
             throw new ArgumentException("Statistics not found");
+        }
+        if(await _userRepository.GetUserById(statisticsDto.UserIdFk) is null)
+        {
+            throw new ArgumentException("User not found");
+        }
+        if(await _statisticsRepository.GetStatisticsByUserId(statisticsDto.UserIdFk) is not null)
+        {
+            throw new ArgumentException("Statistics for user already exists");
         }
         UpdatePropertiesIfNeeded(existingStatistics, statisticsDto, ["StatisticId", "UserIdFk"]);
         

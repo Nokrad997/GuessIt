@@ -50,7 +50,7 @@ public class UserAchievementsService
             throw new ArgumentException("User with given id does not exist");
         }
 
-        var existingAchievement = _achievementRepository.GetAchievementById(userAchievementsDto.AchievementIdFk);
+        var existingAchievement = await _achievementRepository.GetAchievementById(userAchievementsDto.AchievementIdFk);
         if (existingAchievement is null)
         {
             throw new ArgumentException("Achievement with given id does not exist");
@@ -73,7 +73,7 @@ public class UserAchievementsService
             throw new ArgumentException("User with given id does not exist");
         }
 
-        var existingAchievement = _achievementRepository.GetAchievementById(userAchievementsDto.AchievementIdFk);
+        var existingAchievement = await _achievementRepository.GetAchievementById(userAchievementsDto.AchievementIdFk);
         if (existingAchievement is null)
         {
             throw new ArgumentException("Achievement with given id does not exist");

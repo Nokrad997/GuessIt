@@ -55,7 +55,7 @@ public class AchievementController : ControllerBase
         try
         {
             await _achievementService.AddAchievement(dto);
-            return BadRequest(new { message = "Achievement added successfully" });
+            return Ok(new { message = "Achievement added successfully" });
         }
         catch (Exception e)
         {

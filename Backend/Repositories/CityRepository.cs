@@ -19,7 +19,7 @@ public class CityRepository : ICityRepository
         return await _context.City.FirstOrDefaultAsync(c => c.CityId == cityId);    
     }
 
-    public async Task<IEnumerable<City>> GetCitys()
+    public async Task<IEnumerable<City>> GetCities()
     {
         return await _context.City.ToListAsync();
     }
@@ -29,6 +29,11 @@ public class CityRepository : ICityRepository
         return await _context.City.FirstOrDefaultAsync(c => c.GeolocationIdFk == geolocationId);
     }
 
+    public async Task<City?> GetCityByName(string cityName)
+    {
+        return await _context.City.FirstOrDefaultAsync(c => c.CityName == cityName);
+    }
+    
     public async Task AddCity(City city)
     {
         await _context.City.AddAsync(city);

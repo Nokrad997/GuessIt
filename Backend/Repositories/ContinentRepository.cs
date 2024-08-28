@@ -28,6 +28,11 @@ public class ContinentRepository : IContinentRepository
     {
         return await _context.Continent.FirstOrDefaultAsync(c => c.GeolocationIdFk == geolocationId);
     }
+    
+    public async Task<Continent?> GetContinentByName(string continentName)
+    {
+        return await _context.Continent.FirstOrDefaultAsync(c => c.ContinentName == continentName);
+    }
 
     public async Task AddContinent(Continent continent)
     {
