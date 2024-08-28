@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using static System.String;
 
 namespace Backend.Dtos.EditDtos;
-public class EditUserDto : IUserDto, IValidatableObject
+public class EditUserDto : IValidatableObject
 {
     public string Username { get; set; }
     public  string Email { get; set; }
@@ -27,10 +27,9 @@ public class EditUserDto : IUserDto, IValidatableObject
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        Console.WriteLine("?");
         if(IsNullOrEmpty(Username) && IsNullOrEmpty(Email) && IsNullOrEmpty(Password))
         {
-            yield return new ValidationResult("No changes detected", new[] { nameof(Username), nameof(Email), nameof(Password) });
+            yield return new ValidationResult("No changes detected", new[] { nameof(Username), nameof(Email), nameof(Password), nameof(Verified), nameof(IsAdmin) });
         }
         if(!IsNullOrEmpty(Password))
         {

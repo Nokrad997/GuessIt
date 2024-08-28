@@ -28,7 +28,7 @@ public class StatisticsController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in retrieving statistics", error = e.Message });
         }
     }
     
@@ -42,7 +42,7 @@ public class StatisticsController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in retrieving statistics", error = e.Message });
         }
     }
     
@@ -56,11 +56,12 @@ public class StatisticsController : ControllerBase
         }
         try
         {
-            return Ok(new {message = "Successfully added statistics", statistics = await _statisticsService.AddStatistics(statisticsDto, GetTokenFromRequest(HttpContext))});
+            await _statisticsService.AddStatistics(statisticsDto, GetTokenFromRequest(HttpContext));
+            return Ok(new {message = "Successfully added statistics"});
         }
         catch (Exception e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in adding statistics", error = e.Message });
         }
     }
     
@@ -79,7 +80,7 @@ public class StatisticsController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in editing statistics", error = e.Message });
         }
     }
     
@@ -95,7 +96,7 @@ public class StatisticsController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in deleting statistics", error = e.Message });
         }
     }
     

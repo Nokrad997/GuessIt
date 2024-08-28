@@ -101,9 +101,14 @@ public class UserService
         {
             throw new ArgumentException("User doesn't exist");
         }
-        var idFromRequest = _tokenUtil.GetIdFromToken(token);
         
+        var idFromRequest = _tokenUtil.GetIdFromToken(token);
         var userFromRequest = await _userRepository.GetUserById(idFromRequest);
+        if (userFromRequest is null)
+        {
+            throw new ArgumentException("User doesn't exist");
+        }
+        
         if (userFromRequest.IsAdmin || idFromRequest == id)
         {
             await _userRepository.DeleteUserById(id);

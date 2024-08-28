@@ -13,13 +13,13 @@ public class LeaderboardService
         _leaderboardRepository = leaderboardRepository;
     }
     
-    public async Task<IEnumerable<LeaderboardDto>> GetWholeLeaderboard()
+    public async Task<IEnumerable<LeaderboardDto>> Retrieve()
     {
         var leaderboard = await _leaderboardRepository.GetWholeLeaderboard();
         return leaderboard.Select(x => x.ConvertToDto()).ToList();
     }
     
-    public async Task<LeaderboardDto> GetLeaderboardById(int id)
+    public async Task<LeaderboardDto> Retrieve(int id)
     {
         var leaderboard = await _leaderboardRepository.GetLeaderboardById(id);
         if (leaderboard is null)
@@ -30,7 +30,7 @@ public class LeaderboardService
         return leaderboard.ConvertToDto();
     }
     
-    public async Task<LeaderboardDto> AddLeaderboardEntry(LeaderboardDto leaderboardDto)
+    public async Task AddLeaderboardEntry(LeaderboardDto leaderboardDto)
     {
         var leaderboard = await _leaderboardRepository.GetLeaderboardByUserId(leaderboardDto.UserIdFk);
         if (leaderboard is not null)
@@ -39,8 +39,6 @@ public class LeaderboardService
         }
         
         await _leaderboardRepository.CreateLeaderboardEntry(leaderboardDto.ConvertToEntity());
-       
-        return leaderboardDto;
     }
 
     public async Task<LeaderboardDto> EditLeaderBoardEntry(int id, EditLeaderboardDto editLeaderboardDto)

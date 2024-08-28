@@ -10,11 +10,13 @@ namespace Backend.Services;
 public class StatisticsService
 {
     private readonly StatisticsRepository _statisticsRepository;
+    private readonly UserRepository _userRepository;
     private readonly TokenUtil _tokenUtil;
     
-    public StatisticsService(StatisticsRepository statisticsRepository, TokenUtil tokenUtil)
+    public StatisticsService(StatisticsRepository statisticsRepository, UserRepository userRepository ,TokenUtil tokenUtil)
     {
         _statisticsRepository = statisticsRepository;
+        _userRepository = userRepository;
         _tokenUtil = tokenUtil;
     }
 
@@ -27,22 +29,31 @@ public class StatisticsService
     public async Task<StatisticsDto> Retrieve(int id)
     {
         var existingStatistics = await _statisticsRepository.GetStatisticsById(id);
-
+        if (existingStatistics is null)
+        {
+            throw new ArgumentException("Statistics not found");
+        }
+        
         return existingStatistics.ConvertToDto();
     }
     
-    public async Task<StatisticsDto> AddStatistics(StatisticsDto statisticsDto, string token)
+    public async Task AddStatistics(StatisticsDto statisticsDto, string token)
     { 
         if(_tokenUtil.GetIdFromToken(token) != statisticsDto.UserIdFk)
         {
             if(_tokenUtil.GetRoleFromToken(token) != "Admin")
                 throw new ArgumentException("User ID in token does not match user ID in statistics");
         }
+        if(await _userRepository.GetUserById(statisticsDto.UserIdFk) is null)
+        {
+            throw new ArgumentException("User not found");
+        }
+        if(await _statisticsRepository.GetStatisticsByUserId(statisticsDto.UserIdFk) is not null)
+        {
+            throw new ArgumentException("Statistics for user already exists");
+        }
         
-        var statistics = statisticsDto.ConvertToEntity();
-        await _statisticsRepository.AddStatistics(statistics);
-
-        return statisticsDto;
+        await _statisticsRepository.AddStatistics(statisticsDto.ConvertToEntity());
     }
     
     public async Task<StatisticsDto> EditStatistics(int id, EditStatisticsDto statisticsDto, string token)
@@ -55,7 +66,19 @@ public class StatisticsService
         }
         
         var existingStatistics = await _statisticsRepository.GetStatisticsById(id);
-        UpdatePropertiesIfNeeded(existingStatistics, statisticsDto, new[] { "StatisticId", "UserIdFk" });
+        if (existingStatistics is null)
+        {
+            throw new ArgumentException("Statistics not found");
+        }
+        if(await _userRepository.GetUserById(statisticsDto.UserIdFk) is null)
+        {
+            throw new ArgumentException("User not found");
+        }
+        if(await _statisticsRepository.GetStatisticsByUserId(statisticsDto.UserIdFk) is not null)
+        {
+            throw new ArgumentException("Statistics for user already exists");
+        }
+        UpdatePropertiesIfNeeded(existingStatistics, statisticsDto, ["StatisticId", "UserIdFk"]);
         
         await _statisticsRepository.EditStatistics(existingStatistics);
 
@@ -64,7 +87,13 @@ public class StatisticsService
     
     public async Task DeleteStatistics(int id)
     {
-        await _statisticsRepository.DeleteStatistics(id);
+        var existingStatistics = await _statisticsRepository.GetStatisticsById(id);
+        if (existingStatistics is null)
+        {
+            throw new ArgumentException("Statistics not found");
+        }
+        
+        await _statisticsRepository.DeleteStatistics(existingStatistics);
     }
     
     private void UpdatePropertiesIfNeeded<T>(Statistics statistic, T statisticsDto, string[] excludedProperties)

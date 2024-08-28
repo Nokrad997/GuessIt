@@ -31,17 +31,15 @@ public class GeolocationService
         return geolocations.Select(g => g.ConvertToDto());
     }
     
-    public async Task<GeolocationDto> CreateGeolocation(GeolocationDto geolocationDto)
+    public async Task AddGeolocation(GeolocationDto geolocationDto)
     {
         var geolocation = await _geolocationRepository.GetGeolocationByArea(geolocationDto.Area);
-        if (geolocation != null)
+        if (geolocation is not null)
         {
             throw new ArgumentException("Geolocation with provided area already exists");
         }
         
         await _geolocationRepository.AddGeolocation(geolocationDto.ConvertToEntity());
-        
-        return geolocationDto;
     }
     
     public async Task<GeolocationDto> EditGeolocation(int geolocationId, EditGeolocationDto editGeolocationDto)
@@ -58,7 +56,7 @@ public class GeolocationService
         return geolocation.ConvertToDto();
     }
     
-    public async Task<GeolocationDto> DeleteGeolocation(int geolocationId)
+    public async Task DeleteGeolocation(int geolocationId)
     {
         var geolocation = await _geolocationRepository.GetGeolocationById(geolocationId);
         if (geolocation is null)
@@ -67,7 +65,5 @@ public class GeolocationService
         }
         
         await _geolocationRepository.DeleteGeolocation(geolocation);
-        
-        return geolocation.ConvertToDto();
     }
 }

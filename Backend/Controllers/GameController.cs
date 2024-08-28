@@ -28,7 +28,7 @@ public class GameController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in retrieving games", error = e.Message });
         }
     }
     
@@ -42,7 +42,7 @@ public class GameController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in retrieving game", error = e.Message });
         }
     }
     
@@ -57,12 +57,12 @@ public class GameController : ControllerBase
 
         try
         {
-            var addedGame = await _gameService.AddGame(gameDto);
-            return Ok(new { message = "Game added successfully", game = addedGame });
+            await _gameService.AddGame(gameDto);
+            return Ok(new { message = "Game added successfully" });
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message, innerException = e.InnerException?.Message });
+            return BadRequest(new { message = "Failed in adding game", error = e.Message });
         }
     }
     
@@ -81,7 +81,7 @@ public class GameController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in editing game", error = e.Message });
         }
     }
     
@@ -92,11 +92,12 @@ public class GameController : ControllerBase
     {
         try
         {
-            return Ok(new { message = "Game deleted successfully", game = await _gameService.DeleteGame(id) });
+            await _gameService.DeleteGame(id);
+            return Ok(new { message = "Game deleted successfully"});
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in deleting game", error = e.Message });
         }
     }
 }

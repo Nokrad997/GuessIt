@@ -27,11 +27,11 @@ public class UserController : ControllerBase
     {
         try
         {
-            return Ok(await _userService.Retrieve());
+            return Ok(new {message = "Users retrieved successfully", users = await _userService.Retrieve()});
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in retrieving user", error = e.Message });
         }
     }
     
@@ -41,11 +41,11 @@ public class UserController : ControllerBase
     {
         try
         {
-            return Ok(await _userService.Retrieve(id));
+            return Ok(new { message = "User retrieved successfully", user = await _userService.Retrieve(id) });
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in retrieving user", error = e.Message });
         }
     }
     
@@ -65,7 +65,7 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in adding user", error = e.Message });
         }
     }
 
@@ -81,11 +81,11 @@ public class UserController : ControllerBase
         try
         {
             var token = HttpContext.Request.Headers.Authorization.FirstOrDefault().Split(" ").Last();
-            return Ok(await _userService.EditUserAsUser(id, editUserDto, token));
+            return Ok(new { message = "User edited successfully", editedUser = await _userService.EditUserAsUser(id, editUserDto, token) });
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in editing user", error = e.Message });
         }
     }
     [HttpPut]
@@ -99,11 +99,11 @@ public class UserController : ControllerBase
         }
         try
         {
-            return Ok(await _userService.EditUserAsAdmin(id, editUserDto));
+            return Ok(new { message = "User edited successfully", editedUser = await _userService.EditUserAsAdmin(id, editUserDto) });
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in editing user", error = e.Message });
         }
     }
 
@@ -120,7 +120,7 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in deleting user", error = e.Message });
         }
     }
     

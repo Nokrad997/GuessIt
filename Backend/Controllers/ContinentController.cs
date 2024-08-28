@@ -18,7 +18,7 @@ public class ContinentController : ControllerBase
         _continentService = continentService;
     }
     
-    [HttpGet("{continentId}")]
+    [HttpGet("{continentId:int}")]
     public async Task<IActionResult> GetContinentById(int continentId)
     {
         try
@@ -27,7 +27,7 @@ public class ContinentController : ControllerBase
         }
         catch (ArgumentException e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in retrieving continent", error = e.Message });
         }
     }
 
@@ -40,13 +40,13 @@ public class ContinentController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in retrieving continent", error = e.Message });
         }
     }
     
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CreateContinent([FromBody] ContinentDto continentDto)
+    public async Task<IActionResult> AddContinent([FromBody] ContinentDto continentDto)
     {
         if(!DtoValidator.ValidateObject(continentDto, out var messages))
         {
@@ -54,17 +54,18 @@ public class ContinentController : ControllerBase
         }
         try
         {
-            return Ok(new {message = "Continent created successfully", continent = await _continentService.AddContinent(continentDto)});
+            await _continentService.AddContinent(continentDto);
+            return Ok(new {message = "Continent created successfully"});
         }
         catch (ArgumentException e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in adding continent", error = e.Message });
         }
     }
     
-    [HttpPut("{continentId}")]
+    [HttpPut("{continentId:int}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateContinent(int continentId, [FromBody] EditContinentDto editContinentDto)
+    public async Task<IActionResult> EditContinent(int continentId, [FromBody] EditContinentDto editContinentDto)
     {
         if(!DtoValidator.ValidateObject(editContinentDto, out var messages))
         {
@@ -76,21 +77,22 @@ public class ContinentController : ControllerBase
         }
         catch (ArgumentException e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in editing continent", error = e.Message });
         }
     }
     
-    [HttpDelete("{continentId}")]
+    [HttpDelete("{continentId:int}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteContinent(int continentId)
     {
         try
         {
-            return Ok(new {message = "Continent deleted successfully", continent = await _continentService.DeleteContinent(continentId)});
+            await _continentService.DeleteContinent(continentId);
+            return Ok(new {message = "Continent deleted successfully"});
         }
         catch (ArgumentException e)
         {
-            return BadRequest(new {message = e.Message});
+            return BadRequest(new { message = "Failed in deleting continent", error = e.Message });
         }
     }
 }

@@ -37,7 +37,7 @@ public class TokenController : ControllerBase
         }
         catch (Exception e)
         {
-            BadRequest(new { message = e.Message });
+            BadRequest(new { message = "Failed in validating token", error = e.Message });
         }
         
         return BadRequest(new { message = "Token is invalid" });
@@ -60,7 +60,7 @@ public class TokenController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in refreshing token", error = e.Message });
         }
     }
 }

@@ -5,7 +5,7 @@ using static System.String;
 
 namespace Backend.Dtos;
 
-public class AuthUserDto : IUserDto, IValidatableObject
+public class AuthUserDto : IValidatableObject
 {
     public  string Email { get; set; }
     public string Password { get; set; }

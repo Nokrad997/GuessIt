@@ -1,15 +1,15 @@
 using System.ComponentModel.DataAnnotations;
+using Backend.Dtos.EditDtos;
 using Backend.Entities;
 
 namespace Backend.Dtos.Interfaces;
 
-public class LeaderboardDto : IValidatableObject
+public class LeaderboardDto : EditLeaderboardDto, IValidatableObject
 {
-    public int LeaderBoardId { get; set; }
-    public int UserIdFk { get; set; }
-    public int TotalPoints { get; set; }
+    public int LeaderBoardId { get; init; }
+    public int UserIdFk { get; init; }
     
-    public Leaderboard ConvertToEntity()
+    public new Leaderboard ConvertToEntity()
     {
         return new Leaderboard
         {
@@ -19,7 +19,7 @@ public class LeaderboardDto : IValidatableObject
         };
     }
     
-    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    public new IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         if(UserIdFk < 0)
         {

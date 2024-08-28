@@ -5,15 +5,7 @@ namespace Backend.Dtos.EditDtos;
 
 public class EditLeaderboardDto : IValidatableObject
 {
-    public int TotalPoints { get; set; }
-    
-    public Leaderboard ConvertToEntity()
-    {
-        return new Leaderboard
-        {
-            TotalPoints = TotalPoints
-        };
-    }
+    public int TotalPoints { get; init; }
     
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {

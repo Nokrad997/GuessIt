@@ -23,11 +23,11 @@ public class LeaderboardController : ControllerBase
     {
         try
         {
-            return Ok(new {message = "Successfully retrieved leaderboard", leaderboard = await _leaderboardService.GetWholeLeaderboard()});
+            return Ok(new {message = "Successfully retrieved leaderboard", leaderboard = await _leaderboardService.Retrieve()});
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in retrieving leaderboard entry", error = e.Message });
         }
     }
     
@@ -37,11 +37,11 @@ public class LeaderboardController : ControllerBase
     {
         try
         {
-            return Ok(new {message = "Successfully retrieved leaderboard", leaderboard = await _leaderboardService.GetLeaderboardById(id)});
+            return Ok(new {message = "Successfully retrieved leaderboard", leaderboard = await _leaderboardService.Retrieve(id)});
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in retrieving leaderboard entry", error = e.Message });
         }
     }
     
@@ -55,11 +55,12 @@ public class LeaderboardController : ControllerBase
         }
         try
         {
-            return Ok(new {message = "Successfully added leaderboard entry", leaderboard = await _leaderboardService.AddLeaderboardEntry(leaderboardDto)});
+            await _leaderboardService.AddLeaderboardEntry(leaderboardDto);
+            return Ok(new {message = "Successfully added leaderboard entry"});
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in adding new leaderboard entry", error = e.Message });
         }
     }
     
@@ -78,7 +79,7 @@ public class LeaderboardController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in editing leaderboard entry", error = e.Message });
         }
     }
     
@@ -94,7 +95,7 @@ public class LeaderboardController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in deleting leaderboard entry", error = e.Message });
         }
     }
 }

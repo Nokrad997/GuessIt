@@ -1,29 +1,28 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using Backend.Dtos.EditDtos;
 using Backend.Dtos.Interfaces;
 using Backend.Entities;
 using static System.String;
 
 namespace Backend.Dtos;
 
-public class UserDto : IUserDto, IValidatableObject
+public class UserDto : EditUserDto, IValidatableObject
 {
-    public int UserId { get; set; }
-    public string Username { get; set; }
-    [EmailAddress]
-    public string Email { get; set; }
-    
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public string Password { get; set; }
-    
-    public bool Verified { get; set; }
-    public bool IsAdmin { get; set; }
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public DateTime CreatedAt { get; set; }
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-    public DateTime UpdatedAt { get; set; }
+    public int UserId { get; init; }
 
-    public User ConvertToEntity()
+    [EmailAddress]
+    public new string Email { get; init; }
+    
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public new string Password { get; set; }
+    
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public DateTime CreatedAt { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public DateTime UpdatedAt { get; init; }
+
+    public new User ConvertToEntity()
     {
         return new User
         {
@@ -38,7 +37,7 @@ public class UserDto : IUserDto, IValidatableObject
         };
     }
     
-    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    public new IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
         if (IsNullOrEmpty(Username))
         {

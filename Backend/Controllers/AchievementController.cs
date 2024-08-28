@@ -22,11 +22,11 @@ public class AchievementController : ControllerBase
     {
         try
         {
-            return Ok(await _achievementService.Retrieve());
+            return Ok(new { message = "Achievements retrieved successfully", achievements = await _achievementService.Retrieve() });
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in retrieving achievement", error = e.Message });
         }
     }
     
@@ -36,11 +36,11 @@ public class AchievementController : ControllerBase
     {
         try
         {
-            return Ok(await _achievementService.Retrieve(id));
+            return Ok(new { message = "Achievement retrieved successfully", achievement = await _achievementService.Retrieve(id) });
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in retrieving achievement", error = e.Message });
         }
     }
     
@@ -55,11 +55,11 @@ public class AchievementController : ControllerBase
         try
         {
             await _achievementService.AddAchievement(dto);
-            return BadRequest(new { message = "Achievement added successfully" });
+            return Ok(new { message = "Achievement added successfully" });
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in adding achievement", error = e.Message });
         }
     }
     
@@ -74,11 +74,11 @@ public class AchievementController : ControllerBase
         }
         try
         {
-            return Ok(await _achievementService.EditAchievement(id, dto));
+            return Ok(new { message = "Achievement edited successfully", achievement = await _achievementService.EditAchievement(id, dto) });
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in editing achievement", error = e.Message });
         }
     }
 
@@ -94,7 +94,7 @@ public class AchievementController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = e.Message });
+            return BadRequest(new { message = "Failed in deleting achievement", error = e.Message });
         }
     }
 }

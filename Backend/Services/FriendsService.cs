@@ -20,13 +20,13 @@ public class FriendsService
         _tokenUtil = tokenUtil;
     }
 
-    public async Task<IEnumerable<FriendsDto>> Retreive()
+    public async Task<IEnumerable<FriendsDto>> Retrieve()
     {
         var retrievedFriends = await _friendsRepository.GetAllFriends();
         return retrievedFriends.Select(f => f.ConvertToDto()).ToList();
     }
 
-    public async Task<FriendsDto> Retreive(int id)
+    public async Task<FriendsDto> Retrieve(int id)
     {
         var retrievedFriends = await _friendsRepository.GetFriendsById(id);
         if( retrievedFriends is null)
@@ -37,7 +37,7 @@ public class FriendsService
         return retrievedFriends.ConvertToDto();
     }
 
-    public async Task<FriendsDto> AddFriends(FriendsDto friendsDto, string token)
+    public async Task AddFriends(FriendsDto friendsDto, string token)
     {
         var requestUserId = _tokenUtil.GetIdFromToken(token);
         if(requestUserId != friendsDto.UserIdFk && requestUserId != friendsDto.FriendIdFk)
@@ -57,8 +57,6 @@ public class FriendsService
         if(_tokenUtil.GetRoleFromToken(token) != "Admin")
             friendsDto.UserFriendshipStatus = FriendsStatusTypes.Accepted;
         await _friendsRepository.AddFriends(friendsDto.ConvertToEntity());
-
-        return friendsDto;
     }
 
     public async Task<FriendsDto> EditFriendsAsUser(int id, EditFriendsDto editFriendsDto, string token)

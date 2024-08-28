@@ -34,39 +34,38 @@ public class GameService
         return existingGame.ConvertToDto();
     }
     
-    public async Task<GameDto> AddGame(GameDto gameDto)
+    public async Task AddGame(GameDto gameDto)
     {
         var user = await _userRepository.GetUserById(gameDto.UserIdFk);
-        if(user == null)
+        if(user is null)
         {
             throw new ArgumentException("User not found");
         }
         
-        var addedGame = await _gameRepository.AddGame(gameDto.ConvertToEntity());
-        return addedGame.ConvertToDto();
+        await _gameRepository.AddGame(gameDto.ConvertToEntity());
     }
     
     public async Task<GameDto> EditGame(int id, EditGameDto editGameDto)
     {
         var existingGame = await _gameRepository.GetGameById(id);
-        if(existingGame == null)
+        if(existingGame is null)
         {
             throw new ArgumentException("Game not found");
         }
         
-        var exisitingUser = await _userRepository.GetUserById(editGameDto.UserIdFk);
-        if(exisitingUser == null)
+        var existingUser = await _userRepository.GetUserById(editGameDto.UserIdFk);
+        if(existingUser is null)
         {
             throw new ArgumentException("User not found");
         }
         
-        UpdatePropertiesIfNeeded(existingGame, editGameDto, new [] { "GameId" });
+        UpdatePropertiesIfNeeded(existingGame, editGameDto, ["GameId"]);
         
         var updatedGame = await _gameRepository.EditGame(existingGame);
         return updatedGame.ConvertToDto();
     }
 
-    public async Task<GameDto> DeleteGame(int id)
+    public async Task DeleteGame(int id)
     {
         var existingGame = await _gameRepository.GetGameById(id);
         if(existingGame == null)
@@ -74,8 +73,7 @@ public class GameService
             throw new ArgumentException("Game not found");
         }
         
-        var deletedGame = await _gameRepository.DeleteGame(existingGame);
-        return deletedGame.ConvertToDto();
+        await _gameRepository.DeleteGame(existingGame);
     }
     
     private void UpdatePropertiesIfNeeded<T>(Game game, T gamesDto, string[] excludedProperties)
