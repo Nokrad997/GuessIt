@@ -79,6 +79,20 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new PointConverter());
 });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins",
+        corsPolicyBuilder =>
+        {
+            // Adjust these as needed
+            corsPolicyBuilder.WithOrigins("http://localhost:3000")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials(); // Optional: If you want to allow credentials (cookies, etc.)
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -93,6 +107,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseCors("AllowSpecificOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 

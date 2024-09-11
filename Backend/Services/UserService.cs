@@ -37,6 +37,18 @@ public class UserService
 
         return user.ConvertToDto();
     }
+    
+    public async Task<UserDto> Retrieve(string token)
+    {
+        var userId = _tokenUtil.GetIdFromToken(token);
+        var user = await _userRepository.GetUserById(userId);
+        if (user is null)
+        {
+            throw new ArgumentException("No user with provided id");
+        }
+
+        return user.ConvertToDto();
+    }
     public async Task AddUserAsAdmin(UserDto userDto)
     {
         var existingUser = await _userRepository.GetUserByEmail(userDto.Email);

@@ -1,0 +1,43 @@
+body {
+  overflow-y: hidden;
+}
+
+.App {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+}
+
+.Navbar {
+  top: 0;
+  width: 100%;
+  z-index: 1000; /* Navbar stays on top of other content */
+  background-color: #fff; /* Set a background color to prevent overlap visibility */
+  order: 1;
+}
+
+.Content {
+    height: 90vh;
+    width: 100vw;
+    order: 2;
+}
+
+.fade-enter {
+  opacity: 0;
+}
+
+.fade-enter-active {
+  opacity: 1;
+  transition: opacity 3s ease-in-out;
+}
+
+.fade-exit {
+  opacity: 1;
+}
+
+.fade-exit-active {
+  opacity: 0;
+  transition: opacity 3s ease-in-out;
+}
