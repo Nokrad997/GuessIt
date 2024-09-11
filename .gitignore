@@ -126,3 +126,33 @@ wwwroot/
 *.swp
 *.temp
 *.tmp
+
+# React specific ignores
+build/
+public/static/
+*.cache
+.cache/
+.eslintcache
+.next/
+out/
+dist/
+.serve/
+.pnp/
+.pnp.js
+yarn.lock
+.pnp.cjs
+.pnp.data.json
+
+# Storybook files
+.storybook/
+.storybook-build/
+
+# Ignore testing files
+coverage/
+.nyc_output/
+*.lcov
+
+# Ignore package manager lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

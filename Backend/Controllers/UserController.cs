@@ -123,6 +123,20 @@ public class UserController : ControllerBase
             return BadRequest(new { message = "Failed in deleting user", error = e.Message });
         }
     }
-    
-    
+
+    [HttpGet]
+    [Route("user-data-based-on-token")]
+    [Authorize(Roles = "Admin,User")]
+    public async Task<IActionResult> GetUserDataBasedOnToken()
+    {
+        try
+        {
+            var token = HttpContext.Request.Headers.Authorization.FirstOrDefault().Split(" ").Last();
+            return Ok(new { messsage = "User retrieved successfully", user = await _userService.Retrieve(token) });
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new { message = "Failed in fetching user data", error = e.Message });
+        }
+    }
 }

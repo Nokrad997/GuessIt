@@ -1,0 +1,40 @@
+.image-wrapper .image-container {
+  max-width: 100% !important;  /* Ensures the image does not exceed the width of its container */
+  height: auto !important;     /* Maintains the aspect ratio */
+  display: block !important;   /* Makes sure the image does not have unwanted space */
+  margin: 0 auto !important;   /* Centers the image horizontally */
+}
+
+.animated-text-container {
+  text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+.animated-text {
+  display: inline-block;
+  font-weight: bold;
+  color: white !important;
+  text-transform: uppercase;
+  font-family: 'Arial Black', sans-serif !important;
+  text-align: center;
+  text-shadow: 
+      -1px -1px 0 #1B3D86,  
+       1px -1px 0 #1B3D86,
+      -1px  1px 0 #1B3D86,
+       1px  1px 0 #1B3D86,
+       3px 3px 5px #1B3D86;
+}
+
+/* Style for the main heading */
+.animated-text.main-heading {
+  font-size: 48px !important;
+}
+
+/* Style for subheadings */
+.animated-text.subheading {
+  font-size: 24px !important;
+}

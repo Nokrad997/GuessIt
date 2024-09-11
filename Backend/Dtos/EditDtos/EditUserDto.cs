@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using static System.String;
 
 namespace Backend.Dtos.EditDtos;
-public class EditUserDto : IValidatableObject
+public class  EditUserDto : IValidatableObject
 {
     public string Username { get; set; }
     public  string Email { get; set; }
