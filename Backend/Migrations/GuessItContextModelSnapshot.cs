@@ -213,7 +213,7 @@ namespace Backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("GameId"));
 
-                    b.Property<decimal>("DistanceToStartingLocation")
+                    b.Property<double>("DistanceToStartingLocation")
                         .HasColumnType("decimal(10, 2)")
                         .HasColumnName("distance_to_starting_location");
 
@@ -260,9 +260,9 @@ namespace Backend.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("GeolocationId"));
 
-                    b.Property<Polygon>("Area")
+                    b.Property<MultiPolygon>("Area")
                         .IsRequired()
-                        .HasColumnType("geometry(Polygon)")
+                        .HasColumnType("geometry(MultiPolygon)")
                         .HasColumnName("area");
 
                     b.HasKey("GeolocationId")
@@ -417,7 +417,7 @@ namespace Backend.Migrations
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@admin.com",
                             IsAdmin = true,
-                            Password = "$2a$11$m4qLXoqtrKsTkuhvpdZbEuBNG5s2M.Et0DBJi0dIZgeQjEdCvjtM6",
+                            Password = "$2a$11$tgAsCs.Gnwn4S8X30xSQn.g5P6VfQ1Mw7e8YwrbBdhLgFeqTmXRSq",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "admin",
                             Verified = true
@@ -428,7 +428,7 @@ namespace Backend.Migrations
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user@user.com",
                             IsAdmin = false,
-                            Password = "$2a$11$jVqxDoEYosp6U0en8nm0yu8D4atCeQ8x5F3UV2Zpsv2Hx658BcCRe",
+                            Password = "$2a$11$Erjca9S3hekv/UBUo2WcvuX2eB2kAYoLGJslEiuBzRQkLGWs0x9Ri",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "user",
                             Verified = true

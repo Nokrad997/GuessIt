@@ -7,8 +7,8 @@ namespace Backend.Dtos.EditDtos;
 
 public class EditGeolocationDto : IValidatableObject
 {
-    [JsonConverter(typeof(PolygonConverter))]
-    public Polygon Area { get; set; }
+    [JsonConverter(typeof(MultiPolygonConverter))]
+    public MultiPolygon Area { get; set; }
     
     public Geolocation ConvertToEntity()
     {

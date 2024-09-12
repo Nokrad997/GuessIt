@@ -7,7 +7,7 @@ public interface IGeolocationRepository
 {
     Task<IEnumerable<Geolocation>> GetGeolocations();
     Task<Geolocation?> GetGeolocationById(int id);
-    Task<Geolocation?> GetGeolocationByArea(Polygon area);
+    Task<Geolocation?> GetGeolocationByArea(MultiPolygon area);
     Task AddGeolocation(Geolocation geolocation);
     Task EditGeolocation(Geolocation geolocation);
     Task DeleteGeolocation(Geolocation geolocation);
