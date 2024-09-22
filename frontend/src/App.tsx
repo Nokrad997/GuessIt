@@ -13,7 +13,7 @@ import Game from './pages/Game/Game';
 function App() {
   return (
     <LoadScriptNext
-      googleMapsApiKey="AIzaSyB2mbuR4LbvGpVT5uAoftZbQkb72hhfY1g" // Replace with your API key
+      googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ''} // Replace with your API key
       libraries={['places', 'geometry']} // Include any additional libraries if needed
       loadingElement={<div>Loading Google Maps...</div>} // Loading placeholder
     >
