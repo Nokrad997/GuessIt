@@ -26,6 +26,13 @@ public class CityService
         return city.ConvertToDto();
     }
     
+    public async Task<IEnumerable<CityDto>> RetrieveByCountryId(int countryId)
+    {
+        var cities = await _cityRepository.GetCitiesByCountryId(countryId);
+        
+        return cities.Select(c => c.ConvertToDto()).ToList();
+    }
+    
     public async Task<IEnumerable<CityDto>> Retrieve()
     {
         var cities = await _cityRepository.GetCities();

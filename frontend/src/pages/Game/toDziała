@@ -1,0 +1,61 @@
+import React, { useEffect, useRef } from 'react';
+import './Game.css';
+import useLocation from '../../hooks/useLocation';
+import { useLocation as useRouterLocation } from 'react-router-dom';
+
+const Game = () => {
+    const panoramaRef = useRef<HTMLDivElement | null>(null);
+    // const { fetchGeolocation, geolocation } = useLocation();
+    // const routerLocation = useRouterLocation();
+
+    // useEffect(() => {
+    //     // Initialize the panorama after the component mounts
+    //     generateRandomPoint();
+    // }, []);
+
+    // useEffect(() => {
+    //     const queryParams = new URLSearchParams(routerLocation.search);
+    //     const geolocationId = queryParams.get('geolocationId');
+    //     if (geolocationId) {
+    //         fetchGeolocation(parseInt(geolocationId));
+    //     }
+    // }, []);
+
+    const generateRandomPoint = () => {
+        const sv = new window.google.maps.StreetViewService();
+        console.log(sv);
+        const randomLat = Math.random() * 180 - 90;
+        const randomLng = Math.random() * 360 - 180;
+        const randomPoint = new window.google.maps.LatLng(randomLat, randomLng);
+
+        sv.getPanorama({ location: randomPoint, radius: 500 }, processSVData);
+    };
+
+    // Define the parameter types for processSVData
+    const processSVData = (data: google.maps.StreetViewPanoramaData | null, status: google.maps.StreetViewStatus) => {
+        if (status === window.google.maps.StreetViewStatus.OK && panoramaRef.current && data?.location?.latLng) {
+            const panorama = new window.google.maps.StreetViewPanorama(
+                panoramaRef.current, // Use the ref to get the panorama container
+                {
+                    position: data.location.latLng,
+                    pov: {
+                        heading: 34,
+                        pitch: 10,
+                    },
+                    disableDefaultUI: true,
+                }
+            );
+        } else {
+            // Retry with a new random point if no panorama is found
+            generateRandomPoint();
+        }
+    };
+
+    return (
+        <div id="panoramamap" ref={panoramaRef} style={{ width: '100%', height: '100vh' }}>
+            {/* The panorama will be rendered inside this div */}
+        </div>
+    );
+};
+
+export default Game;

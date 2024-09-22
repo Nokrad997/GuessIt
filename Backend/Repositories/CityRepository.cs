@@ -18,6 +18,11 @@ public class CityRepository : ICityRepository
     {
         return await _context.City.FirstOrDefaultAsync(c => c.CityId == cityId);    
     }
+    
+    public async Task<IEnumerable<City>> GetCitiesByCountryId(int countryId)
+    {
+        return await _context.City.Where(c => c.CountryIdFk == countryId).ToListAsync();    
+    }
 
     public async Task<IEnumerable<City>> GetCities()
     {

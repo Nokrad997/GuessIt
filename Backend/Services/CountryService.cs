@@ -26,6 +26,13 @@ public class CountryService
         return country.ConvertToDto();
     }
     
+    public async Task<IEnumerable<CountryDto>> RetrieveByContinentId(int continentId)
+    {
+        var countries = await _countryRepository.GetCountriesByContinentId(continentId);
+        
+        return countries.Select(c => c.ConvertToDto()).ToList();
+    }
+    
     public async Task<IEnumerable<CountryDto>> Retrieve()
     {
         var countries = await _countryRepository.GetCountries();

@@ -4,7 +4,8 @@ namespace Backend.Repositories.Interfaces;
 
 public interface ICountryRepository
 {
-    Task<Country?> GetCountryById(int countryId); 
+    Task<Country?> GetCountryById(int countryId);
+    Task<IEnumerable<Country>> GetCountriesByContinentId(int continentId);
     Task<IEnumerable<Country>> GetCountries();
     Task<Country?> GetCountryByGeolocationId(int geolocationId);
     Task<Country?> GetCountryByName(string countryName);
