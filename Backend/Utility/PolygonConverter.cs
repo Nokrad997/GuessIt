@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using NetTopologySuite.Geometries;
 
-public class PolygonConverter : JsonConverter<Polygon>
+public class PolygonConverter : JsonConverter<Geometry>
 {
     public override Polygon Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
@@ -52,20 +52,34 @@ public class PolygonConverter : JsonConverter<Polygon>
         return new Polygon(linearRings[0], linearRings.Length > 1 ? linearRings[1..] : null);
     }
 
-    public override void Write(Utf8JsonWriter writer, Polygon value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, Geometry value, JsonSerializerOptions options)
     {
         writer.WriteStartObject();
-        writer.WriteString("type", "Polygon");
+        writer.WriteString("type", value is MultiPolygon ? "MultiPolygon" : "Polygon");
+
         writer.WritePropertyName("coordinates");
         writer.WriteStartArray();
 
-        // Write the exterior ring
-        WriteLinearRing(writer, value.ExteriorRing);
-
-        // Write each interior ring (holes)
-        foreach (var interiorRing in value.InteriorRings)
+        if (value is Polygon polygon)
         {
-            WriteLinearRing(writer, interiorRing);
+            WriteLinearRing(writer, polygon.ExteriorRing);
+            foreach (var interiorRing in polygon.InteriorRings)
+            {
+                WriteLinearRing(writer, interiorRing);
+            }
+        }
+        else if (value is MultiPolygon multiPolygon)
+        {
+            foreach (var polygon2 in multiPolygon.Geometries.OfType<Polygon>())
+            {
+                writer.WriteStartArray();
+                WriteLinearRing(writer, polygon2.ExteriorRing);
+                foreach (var interiorRing in polygon2.InteriorRings)
+                {
+                    WriteLinearRing(writer, interiorRing);
+                }
+                writer.WriteEndArray();
+            }
         }
 
         writer.WriteEndArray();

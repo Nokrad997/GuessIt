@@ -1,12 +1,11 @@
 .custom-navbar {
-    min-height: 10vh; /* Minimum height of 10% of the viewport */
-    background-color: #2e2e2e; /* Dark background color */
+    min-height: 10vh; 
+    background-color: #2e2e2e; 
     display: flex;
-    align-items: center; /* Vertically center the content */
+    align-items: center; 
 }
 
-/* Ensuring proper alignment of content within the navbar */
 .custom-navbar .navbar-brand,
 .custom-navbar .nav-link {
-    line-height: 10vh; /* Vertically align text with the height of the navbar */
+    line-height: 10vh;
 }

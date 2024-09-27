@@ -1,8 +1,8 @@
 .image-wrapper .image-container {
-  max-width: 100% !important;  /* Ensures the image does not exceed the width of its container */
-  height: auto !important;     /* Maintains the aspect ratio */
-  display: block !important;   /* Makes sure the image does not have unwanted space */
-  margin: 0 auto !important;   /* Centers the image horizontally */
+  max-width: 100% !important;  
+  height: auto !important;     
+  display: block !important;   
+  margin: 0 auto !important;   
 }
 
 .animated-text-container {
@@ -29,12 +29,10 @@
        3px 3px 5px #1B3D86;
 }
 
-/* Style for the main heading */
 .animated-text.main-heading {
   font-size: 48px !important;
 }
 
-/* Style for subheadings */
 .animated-text.subheading {
   font-size: 24px !important;
 }

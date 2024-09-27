@@ -71,8 +71,8 @@ const Location = () => {
     };
 
     const renderCards = (
-        items: Array<{ id: number; name: string; geolocation: number }>, // Ensure geolocationId is available
-        onClick: (id: number | null, geolocationId: number) => void, // Accept geolocationId in onClick
+        items: Array<{ id: number; name: string; geolocation: number }>, 
+        onClick: (id: number | null, geolocationId: number) => void,
         wholeLabel: string,
         showWholeOption: boolean,
         continentId: number | null = null,
@@ -116,7 +116,7 @@ const Location = () => {
                 {paginatedItems.map(item => (
                     <Col xs={12} sm={6} md={4} lg={3} key={item.id} className="mb-4 d-flex justify-content-center">
                         <Card 
-                            onClick={() => onClick(item.id, item.geolocation)} // Pass geolocationId
+                            onClick={() => onClick(item.id, item.geolocation)}
                             style={{ 
                                 cursor: 'pointer', 
                                 minWidth: '200px',  

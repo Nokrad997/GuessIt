@@ -10,7 +10,11 @@ const CustomNavbar = () => {
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
     useEffect(() => {
-        setLoggedIn(checkIfLoggedIn());
+        const checkUserSession = async () => {
+            setLoggedIn(await checkIfLoggedIn());
+        };
+
+        checkUserSession()
     }, [checkIfLoggedIn]);
 
     const handleLogout = () => {

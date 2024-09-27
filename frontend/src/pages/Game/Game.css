@@ -1,6 +1,3 @@
-/* Game.css */
-
-/* Main container setup */
 .game-page {
     position: relative;
     height: 100vh;
@@ -8,7 +5,6 @@
     display: flex;
 }
 
-/* Street view container takes up full space */
 .street-view-container {
     flex: 1;
     height: 100%;
@@ -17,7 +13,6 @@
     z-index: 1;
 }
 
-/* Animated map container */
 .map-container-animated {
     position: absolute;
     top: 0;
@@ -34,29 +29,26 @@
     transform: translateX(0);
 }
 
-/* Toggle button */
 .vertical-button {
     position: absolute;
     top: 50%;
-    left: 100%; /* Place it just outside the right side of the map container */
+    left: 100%; 
     transform: translateY(-50%);
     transform-origin: left top;
     z-index: 3;
-    transition: left 0.5s ease; /* Animate the button position */
-    
-    /* Adjust the button's size and appearance */
-    width: 30px;  /* Narrow width */
-    height: 120px; /* Fixed height */
-    padding: 5px;  /* Adjust padding */
-    font-size: 12px; /* Adjust font size */
-    writing-mode: vertical-lr; /* Rotate text for vertical display */
-    text-align: center; /* Center text */
-    background-color: #007bff; /* Ensure a visible background */
-    color: white; /* Set text color to white for visibility */
-    border: 1px solid #007bff; /* Add a border with the same color */
+    transition: left 0.5s ease; 
+
+    width: 30px;  
+    height: 120px; 
+    padding: 5px;  
+    font-size: 12px; 
+    writing-mode: vertical-lr; 
+    text-align: center; 
+    background-color: #007bff; 
+    color: white; 
+    border: 1px solid #007bff; 
 }
 
-/* When the map is shown, adjust the button's position */
 .map-container-animated.show .vertical-button {
-    left: calc(100% + 5px); /* Adjust to stay just outside the container */
+    left: calc(100% + 5px); 
 }

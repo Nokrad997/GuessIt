@@ -14,8 +14,8 @@ body {
 .Navbar {
   top: 0;
   width: 100vw;
-  z-index: 1000; /* Navbar stays on top of other content */
-  background-color: #fff; /* Set a background color to prevent overlap visibility */
+  z-index: 1000; 
+  background-color: #fff; 
   position: fixed;
 }
 

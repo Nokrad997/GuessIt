@@ -21,7 +21,7 @@ public class GeolocationConfiguration : IEntityTypeConfiguration<Geolocation>
             .HasColumnName("geolocation_id");
         builder.Property(g => g.Area)
             .IsRequired()
-            .HasColumnType("geometry(Polygon)")
+            .HasColumnType("geometry")
             .HasColumnName("area");
         
         //relations
