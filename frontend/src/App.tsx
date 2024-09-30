@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
-import { LoadScriptNext } from '@react-google-maps/api'; // Import LoadScriptNext
+import { LoadScriptNext } from '@react-google-maps/api'; 
 import LoginPage from './pages/Login/Login';
 import RegisterPage from './pages/Register/Register';
 import HomePage from './pages/Home/Home';
@@ -13,9 +13,9 @@ import Game from './pages/Game/Game';
 function App() {
   return (
     <LoadScriptNext
-      googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ''} // Replace with your API key
-      libraries={['places', 'geometry']} // Include any additional libraries if needed
-      loadingElement={<div>Loading Google Maps...</div>} // Loading placeholder
+      googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ''} 
+      libraries={['places', 'geometry']}
+      loadingElement={<div>Loading Google Maps...</div>} 
     >
       <div className="App">
         <div className="Navbar">

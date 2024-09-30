@@ -10,12 +10,14 @@ interface Location {
 interface ResultsProps {
   score: number;
   distance: number;
+  startTime: Date;
+  endTime: Date;
   timeElapsed: number;
   selectedLocation: Location;
   guessedLocation: Location;
 }
 
-const Results: React.FC<ResultsProps> = ({ score, distance, timeElapsed, selectedLocation, guessedLocation }) => {
+const Results: React.FC<ResultsProps> = ({ score, distance, startTime, endTime, timeElapsed, selectedLocation, guessedLocation }) => {
   const selectedMarkerRef = useRef<any>(null);
   const guessedMarkerRef = useRef<any>(null);
 
@@ -30,9 +32,9 @@ const Results: React.FC<ResultsProps> = ({ score, distance, timeElapsed, selecte
 
   return (
     <div>
-      <h1>Wynik: {score} punktów</h1>
-      <p>Dystans: {distance} km</p>
-      <p>Czas: {timeElapsed.toFixed(2)} sekund</p>
+      <h1>Score: {score} points</h1>
+      <p>Distance: {distance.toFixed(2)} km</p>
+      <p>Time: {timeElapsed.toFixed(2)} s</p>
       <MapContainer
         center={[selectedLocation.lat, selectedLocation.lng]}
         zoom={2}

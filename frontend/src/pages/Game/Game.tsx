@@ -36,7 +36,9 @@ const Game = () => {
 	const [generatedLocation, setGeneratedLocation] = useState<LatLng | null>(null);
 	const [selectedLocation, setSelectedLocation] = useState<LatLng | null>(null);
 	const [guessedLocation, setGuessedLocation] = useState<LatLng | null>(null);
+	const [tempGuessedLocation, setTempGuessedLocation] = useState<LatLng | null>(null);
 	const [panoramaFound, setPanoramaFound] = useState(false);
+	const [isProcessing, setIsProcessing] = useState(false);
 	const [attempts, setAttempts] = useState(0);
 	const [distance, setDistance] = useState(0);
 	const [score, setScore] = useState(0);
@@ -68,9 +70,18 @@ const Game = () => {
 
 	useEffect(() => {
 		if (generatedLocation) {
-			generateRandomPoint();
+			generatePanorama();
 		}
 	}, [generatedLocation]);
+
+	useEffect(() =>{
+		console.log("Attempts: ", attempts);
+		if (attempts < MAX_ATTEMPTS && !panoramaFound) {
+			findLatAndLngFromGeolocation();
+		} else {
+			alert('Could not find a suitable location. Please try again.');
+		}
+	}, [attempts]);
 
 	const getMinMaxOfGeolocation = (): minMaxOfGeolocation => {
 		const coordinates = geolocation!.area.coordinates[0][0];
@@ -113,13 +124,14 @@ const Game = () => {
 		}
 	};
 
-	const generateRandomPoint = () => {
+	const generatePanorama = () => {
 		const sv = new window.google.maps.StreetViewService();
-		if (generatedLocation) {
+		if (generatedLocation && !isProcessing) {
+			setIsProcessing(true);
+
 			const randomPoint = new window.google.maps.LatLng(generatedLocation.lat, generatedLocation.lng);
 			console.log("Using LatLng: ", randomPoint.lat(), randomPoint.lng());
 
-			setAttempts(prev => prev + 1);
 			sv.getPanorama({ location: randomPoint, radius: 500 }, processSVData);
 		}
 	};
@@ -140,12 +152,10 @@ const Game = () => {
 			setStartTime(new Date());
 			setPanoramaFound(true);
 		} else {
-			if (attempts < MAX_ATTEMPTS && !panoramaFound) {
-				findLatAndLngFromGeolocation();
-			} else {
-				alert('Could not find a suitable location. Please try again.');
-			}
+			setAttempts(prev => prev + 1);
 		}
+
+		setIsProcessing(false);
 	};
 
 	const calculateDistanceAndScore = () => {
@@ -191,16 +201,19 @@ const Game = () => {
 		if (guessedLocation) {
 			calculateDistanceAndScore();
 			setEndTime(new Date());
+			
 			setShowResult(true);
 		}
 	}, [guessedLocation]);
 
 	const handleMapClick = (event: any) => {
-		setGuessedLocation(event.latlng);
+		setTempGuessedLocation(event.latlng);
 		setShowModal(true);
 	};
 
 	const handleConfirmLocation = () => {
+		panoramaRef.current = null;
+		setGuessedLocation(tempGuessedLocation);
 		setShowModal(false);
 	};
 
@@ -278,6 +291,8 @@ const Game = () => {
 				<Results
 					score={score!}
 					distance={distance!}
+					startTime={startTime!}
+					endTime={endTime!}
 					timeElapsed={timeElapsed}
 					selectedLocation={selectedLocation!}
 					guessedLocation={guessedLocation!}

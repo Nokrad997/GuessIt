@@ -93,8 +93,11 @@ export async function validateToken(triggerError: (message: string) => void): Pr
         const response = await api.post("Token/validate");
         return response.status === 200;
     } catch (error: any) {
-        const errorMessage = "Error validating token";
-        triggerError(errorMessage);
+        if(error.response.data !== "Token is invalid"){
+            const errorMessage = "Error validating token";
+            triggerError(errorMessage);
+        }
+        
         return false;
     }
 }

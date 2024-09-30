@@ -34,6 +34,8 @@ public class TokenController : ControllerBase
             {
                 return Ok(new { message = "Token is valid" });
             }
+            
+            return BadRequest("Token is invalid");
         }
         catch (Exception e)
         {

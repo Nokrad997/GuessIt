@@ -35,7 +35,7 @@ public class EditGameDto : IValidatableObject
     
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if (UserIdFk <= 0)
+        if (UserIdFk < 0)
         {
             yield return new ValidationResult("UserIdFk must be greater than 0", new[] { nameof(UserIdFk) });
         }
