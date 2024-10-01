@@ -74,7 +74,7 @@ const Game = () => {
 		}
 	}, [generatedLocation]);
 
-	useEffect(() =>{
+	useEffect(() => {
 		console.log("Attempts: ", attempts);
 		if (attempts < MAX_ATTEMPTS && !panoramaFound) {
 			findLatAndLngFromGeolocation();
@@ -163,12 +163,12 @@ const Game = () => {
 			const from = turf.point([selectedLocation.lng, selectedLocation.lat]);
 			const to = turf.point([guessedLocation.lng, guessedLocation.lat]);
 			const dist = turf.distance(from, to, { units: 'kilometers' });
-			
+
 			setDistance(dist);
 
 			const queryParams = new URLSearchParams(routerLocation.search);
 			const gameType = queryParams.get('type');
-			
+
 			let calculatedScore = 0;
 			if (gameType === 'country') {
 				if (dist <= 50) {
@@ -201,7 +201,7 @@ const Game = () => {
 		if (guessedLocation) {
 			calculateDistanceAndScore();
 			setEndTime(new Date());
-			
+
 			setShowResult(true);
 		}
 	}, [guessedLocation]);
@@ -254,7 +254,9 @@ const Game = () => {
 							ref={mapRef}
 						>
 							<TileLayer
-								url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+								// url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+								// attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+								url="https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png?lang=en"
 								attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 							/>
 							<MapClickHandler />
@@ -296,6 +298,7 @@ const Game = () => {
 					timeElapsed={timeElapsed}
 					selectedLocation={selectedLocation!}
 					guessedLocation={guessedLocation!}
+					gameType={new URLSearchParams(routerLocation.search).get('type')!}
 				/>
 			)}
 

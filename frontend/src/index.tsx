@@ -8,11 +8,9 @@ import { ErrorProvider } from './components/ErrorContext/ErrorContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-  <React.StrictMode>
     <ErrorProvider>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </ErrorProvider>
-  </React.StrictMode>
 );

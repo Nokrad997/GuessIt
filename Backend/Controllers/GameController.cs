@@ -67,7 +67,7 @@ public class GameController : ControllerBase
     }
     
     [HttpPost]
-    [Authorize("User")]
+    [Authorize(Roles = "User")]
     [Route("after-game-statistics/{gameType}")]
     public async Task<IActionResult> AddAfterGameStatistics([FromBody] GameDto gameDto, string gameType)
     {

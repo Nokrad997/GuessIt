@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Polyline, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import useGame from '../../hooks/useGame';
 
 interface Location {
   lat: number;
@@ -15,20 +16,31 @@ interface ResultsProps {
   timeElapsed: number;
   selectedLocation: Location;
   guessedLocation: Location;
+  gameType: string;
 }
 
-const Results: React.FC<ResultsProps> = ({ score, distance, startTime, endTime, timeElapsed, selectedLocation, guessedLocation }) => {
-  const selectedMarkerRef = useRef<any>(null);
-  const guessedMarkerRef = useRef<any>(null);
+const Results: React.FC<ResultsProps> = ({ score, distance, startTime, endTime, timeElapsed, selectedLocation, guessedLocation, gameType }) => {
+  const { sendGameResults } = useGame();
 
   useEffect(() => {
-    if (selectedMarkerRef.current) {
-      selectedMarkerRef.current.openPopup();
-    }
-    if (guessedMarkerRef.current) {
-      guessedMarkerRef.current.openPopup();
-    }
-  }, [selectedLocation, guessedLocation]);
+    const passGameResults = async () => {
+      await sendGameResults({
+        StartLocation: {
+          type: 'Point',
+          coordinates: [selectedLocation.lat, selectedLocation.lng]
+        },
+        GuessedLocation: {
+          type: 'Point',
+          coordinates: [guessedLocation.lat, guessedLocation.lng]
+        },
+        DistanceToStartingLocation: distance,
+        StartTime: startTime,
+        EndTime: endTime
+      }, gameType)
+    };
+
+    passGameResults();
+  }, []);
 
   return (
     <div>
@@ -41,17 +53,19 @@ const Results: React.FC<ResultsProps> = ({ score, distance, startTime, endTime, 
         style={{ height: '400px', width: '100%' }}
       >
         <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          // url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          // attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png?lang=en"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
 
-        <Marker position={[selectedLocation.lat, selectedLocation.lng]} ref={selectedMarkerRef}>
+        <Marker position={[selectedLocation.lat, selectedLocation.lng]}>
           <Popup>
             Selected Location
           </Popup>
         </Marker>
 
-        <Marker position={[guessedLocation.lat, guessedLocation.lng]} ref={guessedMarkerRef}>
+        <Marker position={[guessedLocation.lat, guessedLocation.lng]}>
           <Popup>
             Guessed Location
           </Popup>

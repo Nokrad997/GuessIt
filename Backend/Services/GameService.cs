@@ -122,8 +122,8 @@ public class GameService
     {
         var gameTypeFactor = gameType switch
         {
-            "Country" => 1,
-            "Continent" => 2,
+            "country" => 1,
+            "continent" => 2,
             _ => throw new ArgumentException("Invalid game type")
         };
 

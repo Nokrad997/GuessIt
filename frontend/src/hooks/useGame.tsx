@@ -1,37 +1,21 @@
-import { useState } from 'react';
-
-interface LatLng {
-	lat: number;
-	lng: number;
-}
+import GameResults from "../interfaces/GameResults";
+import { sendGameStatistics } from "../api/gameApi";
+import { useError } from "../components/ErrorContext/ErrorContext";
 
 const useGame = () => {
-    const [generatedLocation, setGeneratedLocation] = useState<LatLng | null>(null);
-    const [selectedLocation, setSelectedLocation] = useState<LatLng | null>(null);
-    const [guessedLocation, setGuessedLocation] = useState<LatLng | null>(null);
-    const [panoramaFound, setPanoramaFound] = useState(false);
-    const [distance, setDistance] = useState(0);
-    const [score, setScore] = useState(0);
-    const [startTime, setStartTime] = useState<Date | null>(null);
-    const [endTime, setEndTime] = useState<Date | null>(null);
-    
+    const { triggerError } = useError();
+    const sendGameResults = async (gameResults: GameResults, gameType: string) => {
+        try{
+            const response = await sendGameStatistics(gameResults, gameType);
+            return response;
+        } catch(error: any){
+            triggerError('Failed to send game results.');
+            console.log(error);
+        }
+    };
+
     return {
-        generatedLocation,
-        setGeneratedLocation,
-        selectedLocation,
-        setSelectedLocation,
-        guessedLocation,
-        setGuessedLocation,
-        panoramaFound,
-        setPanoramaFound,
-        distance,
-        setDistance,
-        score,
-        setScore,
-        startTime,
-        setStartTime,
-        endTime,
-        setEndTime,
+        sendGameResults
     };
 };
 
