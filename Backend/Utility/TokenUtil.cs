@@ -144,7 +144,6 @@ public class TokenUtil
             var principal = _handler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
             var roleClaim = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
             return roleClaim?.Value;
-
         }
         catch
         {
@@ -173,7 +172,7 @@ public class TokenUtil
         return new SecurityTokenDescriptor
         {
             SigningCredentials = credentials,
-            Expires = isAccessToken ? DateTime.Now.AddMinutes(120) : DateTime.Now.AddHours(1),
+            Expires = isAccessToken ? DateTime.Now.AddHours(2) : DateTime.Now.AddHours(3),
             Subject = claims
         };
     }

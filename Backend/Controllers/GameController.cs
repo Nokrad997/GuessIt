@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using static System.String;
 using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Services;
@@ -66,6 +66,28 @@ public class GameController : ControllerBase
         }
     }
     
+    [HttpPost]
+    [Authorize(Roles = "User")]
+    [Route("after-game-statistics/{gameType}")]
+    public async Task<IActionResult> AddAfterGameStatistics([FromBody] GameDto gameDto, string gameType)
+    {
+        if (!DtoValidator.ValidateObject(gameDto, out var messages))
+        {
+            return BadRequest(messages);
+        }
+
+        try
+        {
+            var token = GetTokenFromRequest(HttpContext);
+            await _gameService.AddAfterGameStatistics(gameDto, gameType, token);
+            return Ok(new { message = "Game statistics added successfully" });
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new { message = "Failed in adding game statistics", error = e.Message });
+        }
+    }
+    
     [HttpPut]
     [Route("{id:int}")]
     [Authorize(Roles = "Admin")]
@@ -99,5 +121,16 @@ public class GameController : ControllerBase
         {
             return BadRequest(new { message = "Failed in deleting game", error = e.Message });
         }
+    }
+    
+    private static string GetTokenFromRequest(HttpContext context)
+    {
+        var retrievedToken = context.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
+        if(IsNullOrEmpty(retrievedToken))
+        {
+            throw new Exception("Token not found");
+        }
+
+        return retrievedToken;
     }
 }

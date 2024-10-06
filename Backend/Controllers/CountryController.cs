@@ -30,6 +30,19 @@ public class CountryController : ControllerBase
             return BadRequest(new { message = "Failed in retrieving country", error = e.Message });
         }
     }
+    
+    [HttpGet("by-continent/{continentId:int}")]
+    public async Task<IActionResult> GetCountryByContinentId(int continentId)
+    {
+        try
+        {
+            return Ok(new {message = "Countries retrieved successfully", countries = await _countryService.RetrieveByContinentId(continentId)});
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { message = "Failed in retrieving countries", error = e.Message });
+        }
+    }
 
     [HttpGet]
     public async Task<IActionResult> GetAllCountries()

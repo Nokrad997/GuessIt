@@ -4,7 +4,8 @@ namespace Backend.Repositories.Interfaces;
 
 public interface ICityRepository
 {
-    Task<City?> GetCityById(int cityId); 
+    Task<City?> GetCityById(int cityId);
+    Task<IEnumerable<City>> GetCitiesByCountryId(int countryId);
     Task<IEnumerable<City>> GetCities();
     Task<City?> GetCityByGeolocationId(int geolocationId);
     Task<City?> GetCityByName(string cityName);

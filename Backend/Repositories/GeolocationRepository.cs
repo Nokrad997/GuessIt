@@ -25,7 +25,7 @@ public class GeolocationRepository : IGeolocationRepository
         return await _context.Geolocation.FirstOrDefaultAsync(g => g.GeolocationId == id);
     }
 
-    public async Task<Geolocation?> GetGeolocationByArea(Polygon area)
+    public async Task<Geolocation?> GetGeolocationByArea(Geometry area)
     {
         return await _context.Geolocation.FirstOrDefaultAsync(g => g.Area == area);
     }

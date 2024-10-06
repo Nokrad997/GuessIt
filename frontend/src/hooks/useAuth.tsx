@@ -1,4 +1,4 @@
-import { registration, login, isAdmin, saveTokens, clearTokens, isLoggedIn, logout } from '../api/auth';
+import { registration, login, isAdmin, saveTokens, clearTokens, isLoggedIn, logout, validateToken } from '../api/auth';
 import RegistrationData from '../interfaces/RegistrationData';
 import LoginData from '../interfaces/LoginData';
 import { useError } from '../components/ErrorContext/ErrorContext';
@@ -6,7 +6,6 @@ import { useError } from '../components/ErrorContext/ErrorContext';
 const useAuth = () => {
     const { triggerError } = useError();
 
-    // Rejestracja użytkownika
     const registerCustomer = async (userData: RegistrationData) => {
         try {
             await registration(userData, triggerError);
@@ -17,7 +16,6 @@ const useAuth = () => {
         }
     };
 
-    // Logowanie użytkownika
     const loginCustomer = async (userData: LoginData) => {
         try {
             const response = await login(userData, triggerError);
@@ -30,7 +28,6 @@ const useAuth = () => {
         }
     };
 
-    // Sprawdzanie, czy użytkownik jest administratorem
     const checkIfAdmin = async () => {
         try {
             const response = await isAdmin(triggerError);
@@ -40,14 +37,22 @@ const useAuth = () => {
         }
     };
 
-    // Sprawdzanie, czy użytkownik jest zalogowany
-    const checkIfLoggedIn = () => {
-        return isLoggedIn(); // Zwraca true, jeśli użytkownik ma token
+    const checkIfLoggedIn = async () => {
+        try {
+            if (isLoggedIn() && await validateToken(triggerError)) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (error: any) {
+            console.error("Token validation failed:", error);
+            clearTokens();
+            return false
+        }
     };
 
-    // Wylogowanie użytkownika
     const logoutCustomer = () => {
-        logout(); // Usuwa tokeny z localStorage
+        logout();
     };
 
     return {

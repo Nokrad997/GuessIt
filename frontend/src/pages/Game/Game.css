@@ -1,0 +1,54 @@
+.game-page {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+}
+
+.street-view-container {
+    flex: 1;
+    height: 100%;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.map-container-animated {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 40%;
+    background-color: white;
+    transform: translateX(-100%);
+    transition: transform 0.5s ease;
+    z-index: 2;
+}
+
+.map-container-animated.show {
+    transform: translateX(0);
+}
+
+.vertical-button {
+    position: absolute;
+    top: 50%;
+    left: 100%; 
+    transform: translateY(-50%);
+    transform-origin: left top;
+    z-index: 3;
+    transition: left 0.5s ease; 
+
+    width: 30px;  
+    height: 120px; 
+    padding: 5px;  
+    font-size: 12px; 
+    writing-mode: vertical-lr; 
+    text-align: center; 
+    background-color: #007bff; 
+    color: white; 
+    border: 1px solid #007bff; 
+}
+
+.map-container-animated.show .vertical-button {
+    left: calc(100% + 5px); 
+}

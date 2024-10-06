@@ -19,6 +19,11 @@ public class CountryRepository : ICountryRepository
         return await _context.Country.FirstOrDefaultAsync(c => c.CountryId == countryId);    
     }
 
+    public async Task<IEnumerable<Country>> GetCountriesByContinentId(int continentId)
+    {
+        return await _context.Country.Where(c => c.ContinentIdFk == continentId).ToListAsync();    
+    }
+    
     public async Task<IEnumerable<Country>> GetCountries()
     {
         return await _context.Country.ToListAsync();

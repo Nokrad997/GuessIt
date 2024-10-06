@@ -5,7 +5,7 @@ interface ErrorContextProps {
 }
 
 interface ErrorProviderProps {
-  children: ReactNode;  // Define the children prop
+  children: ReactNode;
 }
 
 const ErrorContext = createContext<ErrorContextProps | undefined>(undefined);
@@ -24,17 +24,14 @@ export const ErrorProvider: React.FC<ErrorProviderProps> = ({ children }) => {
   const triggerError = (message: string) => {
     setErrorMessage(message);
 
-    // Hide the error after 5 seconds
     setTimeout(() => {
       setErrorMessage(null);
-    }, 10000);
+    }, 5000);
   };
 
   return (
     <ErrorContext.Provider value={{ triggerError }}>
       {children}
-
-      {/* Popup Component for displaying errors */}
       {errorMessage && (
         <div style={popupStyle}>
           {errorMessage}

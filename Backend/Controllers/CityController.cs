@@ -30,6 +30,19 @@ public class CityController : ControllerBase
             return BadRequest(new { message = "Failed in retrieving city", error = e.Message });
         }
     }
+    
+    [HttpGet("by-country/{countryId:int}")]
+    public async Task<IActionResult> GetCityByCountryId(int countryId)
+    {
+        try
+        {
+            return Ok(new {message = "Cities retrieved successfully", city = await _cityService.RetrieveByCountryId(countryId)});
+        }
+        catch (ArgumentException e)
+        {
+            return BadRequest(new { message = "Failed in retrieving cities", error = e.Message });
+        }
+    }
 
     [HttpGet]
     public async Task<IActionResult> GetAllCities()

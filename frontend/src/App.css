@@ -1,4 +1,5 @@
 body {
+  margin: 0;
   overflow-y: hidden;
 }
 
@@ -12,32 +13,17 @@ body {
 
 .Navbar {
   top: 0;
-  width: 100%;
-  z-index: 1000; /* Navbar stays on top of other content */
-  background-color: #fff; /* Set a background color to prevent overlap visibility */
-  order: 1;
+  width: 100vw;
+  z-index: 1000; 
+  background-color: #fff; 
+  position: fixed;
 }
 
 .Content {
-    height: 90vh;
+    height: 100vh;
     width: 100vw;
-    order: 2;
-}
-
-.fade-enter {
-  opacity: 0;
-}
-
-.fade-enter-active {
-  opacity: 1;
-  transition: opacity 3s ease-in-out;
-}
-
-.fade-exit {
-  opacity: 1;
-}
-
-.fade-exit-active {
-  opacity: 0;
-  transition: opacity 3s ease-in-out;
+    order: 1;
+    margin-top: 60px;
+    overflow-y: hidden;
+    overflow-x: hidden;
 }

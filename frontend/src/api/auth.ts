@@ -17,7 +17,7 @@ type LoginPromise = {
 
 export async function registration(
     customerData: RegistrationData,
-    triggerError: (message: string) => void 
+    triggerError: (message: string) => void
 ): Promise<RegistrationPromise> {
     try {
         console.log("customerData", customerData);
@@ -84,6 +84,20 @@ export async function isAdmin(triggerError: (message: string) => void): Promise<
     } catch (error: any) {
         const errorMessage = "Error checking admin status";
         triggerError(errorMessage);
+        return false;
+    }
+}
+
+export async function validateToken(triggerError: (message: string) => void): Promise<boolean> {
+    try {
+        const response = await api.post("Token/validate");
+        return response.status === 200;
+    } catch (error: any) {
+        if(error.response.data !== "Token is invalid"){
+            const errorMessage = "Error validating token";
+            triggerError(errorMessage);
+        }
+        
         return false;
     }
 }

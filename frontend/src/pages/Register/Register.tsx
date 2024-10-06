@@ -45,7 +45,6 @@ const RegisterPage = () => {
                         <Card.Body>
                             <h2 className="text-center mb-4">Register</h2>
                             <Form onSubmit={handleRegister}>
-                                {/* Name field */}
                                 <Form.Group controlId="formName" className="mb-3">
                                     <Form.Label>Username</Form.Label>
                                     <Form.Control
@@ -57,7 +56,6 @@ const RegisterPage = () => {
                                     />
                                 </Form.Group>
 
-                                {/* Email field */}
                                 <Form.Group controlId="formEmail" className="mb-3">
                                     <Form.Label>Email address</Form.Label>
                                     <Form.Control
@@ -69,7 +67,6 @@ const RegisterPage = () => {
                                     />
                                 </Form.Group>
 
-                                {/* Password field */}
                                 <Form.Group controlId="formPassword" className="mb-3">
                                     <Form.Label>Password</Form.Label>
                                     <Form.Control
@@ -81,7 +78,6 @@ const RegisterPage = () => {
                                     />
                                 </Form.Group>
 
-                                {/* Confirm password field */}
                                 <Form.Group controlId="formConfirmPassword" className="mb-3">
                                     <Form.Label>Confirm Password</Form.Label>
                                     <Form.Control
@@ -93,7 +89,6 @@ const RegisterPage = () => {
                                     />
                                 </Form.Group>
 
-                                {/* Register Button */}
                                 <Button variant="primary" type="submit" className="w-100">
                                     Register
                                 </Button>

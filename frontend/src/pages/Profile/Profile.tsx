@@ -14,7 +14,7 @@ const ProfilePage = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordError, setPasswordError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
-    const [showDeleteModal, setShowDeleteModal] = useState(false); // State for showing delete confirmation
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     useEffect(() => {
         fetchUserData();
@@ -69,7 +69,6 @@ const ProfilePage = () => {
         }
     };
 
-    // Handle delete account
     const handleDeleteAccount = async () => {
         try {
             await removeUserAccount();
@@ -156,7 +155,6 @@ const ProfilePage = () => {
                                     Save Changes
                                 </Button>
 
-                                {/* Delete Account Button */}
                                 <Button
                                     variant="danger"
                                     className="w-100 mt-3"
@@ -171,7 +169,6 @@ const ProfilePage = () => {
                 </Col>
             </Row>
 
-            {/* Modal for confirming account deletion */}
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Confirm Account Deletion</Modal.Title>
