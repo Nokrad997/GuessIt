@@ -76,3 +76,72 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION check_single_achievement(
+    p_user_id INT, 
+    p_achievement RECORD, 
+    p_achievement_criteria JSON, 
+    p_user_stat RECORD
+)
+RETURNS VOID AS $$
+DECLARE
+    meets_criteria BOOLEAN := TRUE; 
+BEGIN
+    IF p_achievement_criteria ? 'total_games' AND 
+       (p_user_stat."total_games" < (p_achievement_criteria->>'total_games')::int) THEN
+        meets_criteria := FALSE;
+    END IF;
+
+    IF p_achievement_criteria ? 'total_points' AND 
+       (p_user_stat."total_points" < (p_achievement_criteria->>'total_points')::int) THEN
+        meets_criteria := FALSE;
+    END IF;
+
+    IF p_achievement_criteria ? 'highest_score' AND 
+       (p_user_stat."highest_score" < (p_achievement_criteria->>'highest_score')::int) THEN
+        meets_criteria := FALSE;
+    END IF;
+
+    IF p_achievement_criteria ? 'lowest_time_in_seconds' AND 
+       (p_user_stat."lowest_time_in_seconds" > (p_achievement_criteria->>'lowest_time_in_seconds')::int) THEN
+        meets_criteria := FALSE;
+    END IF;
+
+    IF p_achievement_criteria ? 'total_traveled_distance_in_meters' AND 
+       (p_user_stat."total_traveled_distance_in_meters" < (p_achievement_criteria->>'total_traveled_distance_in_meters')::int) THEN
+        meets_criteria := FALSE;
+    END IF;
+
+    IF p_achievement_criteria ? 'average_score' AND 
+       (p_user_stat."average_score" < (p_achievement_criteria->>'average_score')::int) THEN
+        meets_criteria := FALSE;
+    END IF;
+
+    IF meets_criteria THEN
+        IF NOT EXISTS (SELECT 1 FROM user_achievements WHERE "user_id" = p_user_id AND "achievement_id" = p_achievement."achievement_id") THEN
+            INSERT INTO user_achievements("user_id", "achievement_id") 
+            VALUES (p_user_id, p_achievement."achievement_id");
+        END IF;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION check_achievements() 
+RETURNS TRIGGER AS $$
+DECLARE
+    achievement RECORD;
+    user_stat RECORD;
+    achievement_criteria JSON;
+BEGIN
+    SELECT * INTO user_stat FROM statistics WHERE "user_id" = NEW."user_id";
+
+    FOR achievement IN SELECT * FROM achievements LOOP
+        achievement_criteria := achievement."achievement_criteria"::json;
+
+        PERFORM check_single_achievement(NEW."user_id", achievement, achievement_criteria, user_stat);
+    END LOOP;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;

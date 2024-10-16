@@ -8,13 +8,15 @@ public class EditAchievementDto : IValidatableObject
 {
     public string AchievementName { get; set; }
     public string AchievementDescription { get; set; }
+    public Dictionary<string, object> AchievementCriteria { get; set; }
 
     public Achievement ConvertToEntity()
     {
         return new Achievement
         {
             AchievementName = AchievementName,
-            AchievementDescription = AchievementDescription
+            AchievementDescription = AchievementDescription,
+            AchievementCriteria = AchievementCriteria
         };
     }
 

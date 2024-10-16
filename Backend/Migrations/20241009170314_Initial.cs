@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -24,6 +25,7 @@ namespace Backend.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     achievement_name = table.Column<string>(type: "varchar(24)", nullable: false),
                     achievement_description = table.Column<string>(type: "varchar(255)", nullable: false),
+                    achievement_criteria = table.Column<Dictionary<string, object>>(type: "jsonb", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamptz", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP"),
                     updated_at = table.Column<DateTime>(type: "timestamptz", nullable: false, defaultValueSql: "CURRENT_TIMESTAMP")
                 },
@@ -38,7 +40,7 @@ namespace Backend.Migrations
                 {
                     geolocation_id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    area = table.Column<Polygon>(type: "geometry(Polygon)", nullable: false)
+                    area = table.Column<Geometry>(type: "geometry", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -123,7 +125,7 @@ namespace Backend.Migrations
                     user_id = table.Column<int>(type: "int", nullable: false),
                     start_location = table.Column<Point>(type: "geometry", nullable: false),
                     guessed_location = table.Column<Point>(type: "geometry", nullable: false),
-                    distance_to_starting_location = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
+                    distance_to_starting_location = table.Column<double>(type: "numeric(10,2)", nullable: false),
                     start_time = table.Column<DateTime>(type: "timestamptz", nullable: false),
                     end_time = table.Column<DateTime>(type: "timestamptz", nullable: false),
                     score = table.Column<int>(type: "int", nullable: false)
@@ -271,12 +273,12 @@ namespace Backend.Migrations
             migrationBuilder.InsertData(
                 table: "users",
                 columns: new[] { "user_id", "email", "password", "username", "verified" },
-                values: new object[] { -2, "user@user.com", "$2a$11$jVqxDoEYosp6U0en8nm0yu8D4atCeQ8x5F3UV2Zpsv2Hx658BcCRe", "user", true });
+                values: new object[] { -2, "user@user.com", "$2a$11$AbEHplHmeYTIoWzsM2FTz.3UwAz/gl8X6QCOu0t2m4g/fkwN4gbXS", "user", true });
 
             migrationBuilder.InsertData(
                 table: "users",
                 columns: new[] { "user_id", "email", "is_admin", "password", "username", "verified" },
-                values: new object[] { -1, "admin@admin.com", true, "$2a$11$m4qLXoqtrKsTkuhvpdZbEuBNG5s2M.Et0DBJi0dIZgeQjEdCvjtM6", "admin", true });
+                values: new object[] { -1, "admin@admin.com", true, "$2a$11$AcRTAU40ViqK/8EMKYyCIurHwOsQ.TaSf3atWL7Zg4uUwK6YCcesy", "admin", true });
 
             migrationBuilder.CreateIndex(
                 name: "UQ_achievements_achievement_name",

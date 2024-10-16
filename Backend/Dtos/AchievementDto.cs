@@ -14,7 +14,8 @@ public class AchievementDto : EditAchievementDto, IValidatableObject
         {
             AchievementId = AchievementId,
             AchievementName = AchievementName,
-            AchievementDescription = AchievementDescription
+            AchievementDescription = AchievementDescription,
+            AchievementCriteria = AchievementCriteria
         };
     }
 
@@ -27,6 +28,11 @@ public class AchievementDto : EditAchievementDto, IValidatableObject
         if (IsNullOrEmpty(AchievementDescription))
         {
             yield return new ValidationResult("Achievement description is required", new[] { nameof(AchievementDescription) });
+        }
+
+        if (AchievementCriteria == null || !AchievementCriteria.Any())
+        {
+            yield return new ValidationResult("Achievement criteria is required", new[] { nameof(AchievementCriteria) });
         }
     }
 }
