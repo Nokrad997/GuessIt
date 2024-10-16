@@ -2,6 +2,7 @@ using Backend.Context;
 using Backend.Entities;
 using Backend.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Backend.Repositories;
 
@@ -20,6 +21,11 @@ public class AchievementRepository : IAchievementRepository
         await SaveChanges();
     }
 
+    public async Task AddAchievementsInBulk(IEnumerable<Achievement> achievements){
+        await _context.AddRangeAsync(achievements);
+        await SaveChanges();
+    }
+
     public async Task<Achievement?> GetAchievementById(int id)
     {
         return await _context.Achievement.FirstOrDefaultAsync(achievement => achievement.AchievementId == id); 
@@ -31,6 +37,13 @@ public class AchievementRepository : IAchievementRepository
     public async Task<IEnumerable<Achievement>> GetAllAchievements()
     {
         return await _context.Achievement.ToListAsync();
+    }
+    public async Task<Achievement?> GetAchievementByCriteria(Dictionary<string, object> criteria)
+    {
+        var criteriaJson = JsonConvert.SerializeObject(criteria);
+        
+        return await _context.Achievement
+            .FirstOrDefaultAsync(a => EF.Functions.JsonContains(a.AchievementCriteria, criteriaJson));
     }
 
     public async Task SaveChanges()

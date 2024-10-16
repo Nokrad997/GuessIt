@@ -27,6 +27,10 @@ public class AchievementsConfiguration : IEntityTypeConfiguration<Achievement>
             .IsRequired()
             .HasColumnType("varchar(255)")
             .HasColumnName("achievement_description");
+        builder.Property(a => a.AchievementCriteria)
+            .IsRequired()
+            .HasColumnType("jsonb")
+            .HasColumnName("achievement_criteria");
         builder.Property(x => x.CreatedAt)
             .HasColumnName("created_at")
             .HasColumnType("timestamptz")

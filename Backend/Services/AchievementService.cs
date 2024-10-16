@@ -39,8 +39,35 @@ public class AchievementService
             throw new ArgumentException("Achievement with provided name already exists");
         }
 
+        existingAchievement = await _achievementRepository.GetAchievementByCriteria(dto.AchievementCriteria);
+        if(existingAchievement is not null){
+            throw new ArgumentException($"Achievement with provided criteria already exists: {existingAchievement.AchievementCriteria}");
+        }
+
         await _achievementRepository.AddAchievement(dto.ConvertToEntity());
     }
+
+    public async Task AddAchievementsInBulk(IEnumerable<AchievementDto> achievementsDtos){
+        foreach (var achievementDto in achievementsDtos)
+        {
+            var existingAchievement = await _achievementRepository.GetAchievementByName(achievementDto.AchievementName);
+            if (existingAchievement is not null)
+            {
+                throw new ArgumentException("Achievement with provided name already exists");
+            }
+
+            existingAchievement = await _achievementRepository.GetAchievementByCriteria(achievementDto.AchievementCriteria);
+            if(existingAchievement is not null){
+                if (AreDictionariesEqual(existingAchievement.AchievementCriteria, achievementDto.AchievementCriteria))
+                {
+                    throw new ArgumentException($"Achievement with the provided criteria already exists: {FormatCriteria(existingAchievement.AchievementCriteria)}");
+                }
+            }
+        }
+
+        await _achievementRepository.AddAchievementsInBulk(achievementsDtos.Select(ad => ad.ConvertToEntity()).ToList());
+    }
+
     public async Task<AchievementDto> EditAchievement(int id, EditAchievementDto dto)
     {
         var retrievedAchievement = await _achievementRepository.GetAchievementById(id);
@@ -91,4 +118,25 @@ public class AchievementService
             }
         }
     }
+    
+    private bool AreDictionariesEqual(Dictionary<string, object> dict1, Dictionary<string, object> dict2)
+    {
+        if (dict1.Count != dict2.Count)
+            return false;
+
+        foreach (var pair in dict1)
+        {
+            if (!dict2.TryGetValue(pair.Key, out var value) || !Equals(pair.Value, value))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private string FormatCriteria(Dictionary<string, object> criteria)
+    {
+        return string.Join(", ", criteria.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
+    }
+
 }

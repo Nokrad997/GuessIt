@@ -14,6 +14,8 @@ public class Achievement : IHasTimeStamp
     public string AchievementName { get; set; }
 
     public string AchievementDescription { get; set; }
+    
+    public Dictionary<string, object> AchievementCriteria { get; set; }
 
     public ICollection<UserAchievements> UserAchievements { get; set; }
 
@@ -23,7 +25,8 @@ public class Achievement : IHasTimeStamp
         {
             AchievementId = AchievementId,
             AchievementName = AchievementName,
-            AchievementDescription = AchievementDescription
+            AchievementDescription = AchievementDescription,
+            AchievementCriteria = AchievementCriteria
         };
     }
 }
