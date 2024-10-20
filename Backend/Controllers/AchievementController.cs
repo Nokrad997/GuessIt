@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Backend.Dtos;
 using Backend.Services;
 using Backend.Utility;
@@ -59,16 +60,17 @@ public class AchievementController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new { message = "Failed in adding achievement", error = e.Message });
+            return BadRequest(new { message = "Failed in adding achievement", error = e.InnerException.Message });
         }
     }
 
     [HttpPost]
     [Route("add-bulk")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> AddBulkAchievements([FromBody] IEnumerable<AchievementDto> achievementsDtos){
+    public async Task<IActionResult> AddBulkAchievements(List<AchievementDto> achievementsDtos){
         foreach (var achievementDto in achievementsDtos)
         {
+            Console.WriteLine(achievementDto.AchievementName);
             if(!DtoValidator.ValidateObject(achievementDto, out var message)){
                 return BadRequest(message);
             }

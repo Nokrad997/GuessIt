@@ -36,6 +36,24 @@ public class StatisticsService
         
         return existingStatistics.ConvertToDto();
     }
+
+    public async Task<StatisticsDto> GetUserStats(string token)
+    {
+        var userId = _tokenUtil.GetIdFromToken(token);
+        var existingUser = await _userRepository.GetUserById(userId);
+        if (existingUser is null)
+        {
+            throw new ArgumentException("User not found");
+        }
+
+        var userStats = await _statisticsRepository.GetStatisticsByUserId(existingUser.UserId);
+        if (userStats is null)
+        {
+            return GetEmptyStatistics();
+        }
+
+        return userStats.ConvertToDto();
+    }
     
     public async Task AddStatistics(StatisticsDto statisticsDto, string token)
     { 
@@ -116,5 +134,18 @@ public class StatisticsService
                 userProp.SetValue(statistic, sourceValue);
             }
         }
+    }
+
+    private StatisticsDto GetEmptyStatistics()
+    {
+        return new StatisticsDto
+        {
+            AverageScore = 0,
+            HighestScore = 0,
+            LowestTimeInSeconds = 0,
+            TotalGames = 0,
+            TotalPoints = 0,
+            TotalTraveledDistanceInMeters = 0
+        };
     }
 }

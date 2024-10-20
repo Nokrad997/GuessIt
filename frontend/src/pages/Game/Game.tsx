@@ -64,6 +64,7 @@ const Game = () => {
 
 	useEffect(() => {
 		if (geolocation) {
+			console.log(geolocation)
 			findLatAndLngFromGeolocation();
 		}
 	}, [geolocation]);
@@ -84,7 +85,11 @@ const Game = () => {
 	}, [attempts]);
 
 	const getMinMaxOfGeolocation = (): minMaxOfGeolocation => {
-		const coordinates = geolocation!.area.coordinates[0][0];
+		if (!geolocation || !geolocation.area || !geolocation.area.coordinates) {
+			throw new Error("Invalid geolocation data");
+		}
+		const coordinates = geolocation!.area.coordinates[0];
+		console.log(coordinates)
 		let minLat = 90;
 		let maxLat = -90;
 		let minLng = 180;

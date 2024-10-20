@@ -1,6 +1,7 @@
 using Backend.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Newtonsoft.Json;
 
 namespace Backend.Controllers;
 
@@ -29,6 +30,10 @@ public class AchievementsConfiguration : IEntityTypeConfiguration<Achievement>
             .HasColumnName("achievement_description");
         builder.Property(a => a.AchievementCriteria)
             .IsRequired()
+            .HasConversion(
+                v => JsonConvert.SerializeObject(v),
+                v => JsonConvert.DeserializeObject<Dictionary<string, object>>(v)
+            )
             .HasColumnType("jsonb")
             .HasColumnName("achievement_criteria");
         builder.Property(x => x.CreatedAt)

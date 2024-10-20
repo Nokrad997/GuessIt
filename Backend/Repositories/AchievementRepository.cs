@@ -30,6 +30,11 @@ public class AchievementRepository : IAchievementRepository
     {
         return await _context.Achievement.FirstOrDefaultAsync(achievement => achievement.AchievementId == id); 
     }
+
+    public async Task<IEnumerable<Achievement>> GetAchievementsByIds(IEnumerable<int> ids)
+    {
+        return await _context.Achievement.Where(a => ids.Contains(a.AchievementId)).ToListAsync();
+    }
     public async Task<Achievement?> GetAchievementByName(string name)
     {
         return await _context.Achievement.FirstOrDefaultAsync(achievement => achievement.AchievementName == name); 
