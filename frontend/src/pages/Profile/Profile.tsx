@@ -60,6 +60,7 @@ const ProfilePage = () => {
         if (password) {
             (updatedData as any).password = password;
         }
+        updatedData.userId = user?.userId
 
         try {
             await editUserData(updatedData);
@@ -112,6 +113,7 @@ const ProfilePage = () => {
                                         value={email || ''}
                                         onChange={handleEmailChange}
                                         placeholder="Enter new email"
+                                        autoComplete="disabled"
                                         required
                                     />
                                 </Form.Group>
@@ -123,6 +125,7 @@ const ProfilePage = () => {
                                         value={username || ''}
                                         onChange={handleUsernameChange}
                                         placeholder="Enter new username"
+                                        autoComplete="disabled"
                                         required
                                     />
                                 </Form.Group>
@@ -134,6 +137,7 @@ const ProfilePage = () => {
                                         value={password || ''}
                                         onChange={handlePasswordChange}
                                         placeholder="Enter new password"
+                                        autoComplete="disabled"
                                     />
                                 </Form.Group>
 
@@ -145,6 +149,7 @@ const ProfilePage = () => {
                                             value={confirmPassword || ''}
                                             onChange={handleConfirmPasswordChange}
                                             placeholder="Confirm new password"
+                                            autoComplete="disabled"
                                         />
                                     </Form.Group>
                                 )}

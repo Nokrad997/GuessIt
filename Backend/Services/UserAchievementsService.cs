@@ -4,6 +4,7 @@ using Backend.Dtos.EditDtos;
 using Backend.Entities;
 using Backend.Exceptions;
 using Backend.Repositories;
+using Backend.Utility;
 
 namespace Backend.Services;
 
@@ -12,12 +13,15 @@ public class UserAchievementsService
     private readonly UserAchievementsRepository _userAchievementsRepository;
     private readonly UserRepository _userRepository;
     private readonly AchievementRepository _achievementRepository;
+    private readonly TokenUtil _tokenUtil;
     
-    public UserAchievementsService(UserAchievementsRepository userAchievementsRepository, UserRepository userRepository, AchievementRepository achievementRepository)
+    public UserAchievementsService(UserAchievementsRepository userAchievementsRepository, UserRepository userRepository,
+        AchievementRepository achievementRepository, TokenUtil tokenUtil)
     {
         _userAchievementsRepository = userAchievementsRepository;
         _userRepository = userRepository;
         _achievementRepository = achievementRepository;
+        _tokenUtil = tokenUtil;
     }
     
     public async Task<IEnumerable<UserAchievementsDtos>> Retrieve()
@@ -34,6 +38,24 @@ public class UserAchievementsService
             throw new ArgumentException("UserAchievements not found");
         }
         return existingUserAchievements.ConvertToDto();
+    }
+    
+    public async Task<IEnumerable<AchievementDto>> RetrieveUserAchievements(string token)
+    {
+        var userId = _tokenUtil.GetIdFromToken(token);
+        var existingUser = await _userRepository.GetUserById(userId);
+        if (existingUser is null)
+        {
+            throw new ArgumentException("No user associated with provided token");
+        }
+        
+        var userAchievements = await _userAchievementsRepository.GetUserAchievementsByUserId(existingUser);
+        var achievementIds = userAchievements.Select(ua => ua.AchievementIdFk).ToList();
+        var achievements = await _achievementRepository.GetAchievementsByIds(achievementIds);
+        
+        return achievements
+            .Select(achievement => achievement.ConvertToDto())
+            .ToList();
     }
     
     public async Task AddUserAchievement(UserAchievementsDtos userAchievementsDto)

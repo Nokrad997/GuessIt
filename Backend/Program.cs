@@ -42,9 +42,9 @@ builder.Services.AddScoped<CountryRepository>();
 builder.Services.AddScoped<CityService>();
 builder.Services.AddScoped<CityRepository>();
 builder.Services.AddTransient<TokenUtil>();
+builder.Services.AddScoped<MonthlyUsageService>();
 builder.Services.Configure<Config>(builder.Configuration.GetSection("Keys"));
 
-// Add DbContext configuration
 builder.Services.AddDbContext<GuessItContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -85,11 +85,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigins",
         corsPolicyBuilder =>
         {
-            // Adjust these as needed
             corsPolicyBuilder.WithOrigins("http://localhost:3000")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowCredentials(); // Optional: If you want to allow credentials (cookies, etc.)
+                .AllowCredentials();
         });
 });
 

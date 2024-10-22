@@ -1,5 +1,5 @@
 import useLocation from '../../hooks/useLocation';
-import { useLocation as useRouterLocation } from 'react-router-dom';
+import { useNavigate, useLocation as useRouterLocation } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, useMapEvents, useMap, Marker, Polyline } from 'react-leaflet';
 import { Button, Modal } from 'react-bootstrap';
@@ -9,6 +9,9 @@ import './Game.css';
 import 'leaflet/dist/leaflet.css';
 import * as turf from '@turf/turf';
 import Results from '../../components/Results/Results';
+import monthlyUsage from '../../assets/monthly-usage.json';
+import useMonthlyUsage from '../../hooks/useMonthlyUsage';
+import { useError } from '../../components/ErrorContext/ErrorContext';
 
 L.Icon.Default.mergeOptions({
 	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -29,7 +32,11 @@ interface minMaxOfGeolocation {
 }
 
 const Game = () => {
+	var loadedPanoCount = parseInt(process.env.MONTHLY_USAGE || '0');
+	var monthlyUsage = 0;
 	const panoramaRef = useRef<HTMLDivElement | null>(null);
+	const { triggerError } = useError();
+	const navigate = useNavigate();
 	const [showMap, setShowMap] = useState(false);
 	const [showModal, setShowModal] = useState(false);
 	const [showResult, setShowResult] = useState(false);
@@ -44,12 +51,23 @@ const Game = () => {
 	const [score, setScore] = useState(0);
 	const [startTime, setStartTime] = useState<Date | null>(null);
 	const [endTime, setEndTime] = useState<Date | null>(null);
+	const [additionalRange, setAdditionalRange] = useState<number>(450);
 	const { fetchGeolocation, geolocation } = useLocation();
+	const { getMonthlyUsage, updateMonthlyUsage } = useMonthlyUsage();
 	const mapRef = useRef(null);
 	const routerLocation = useRouterLocation();
 	const MAX_ATTEMPTS = 100;
 
 	useEffect(() => {
+		const checkUsage = async () =>{
+			monthlyUsage = await getMonthlyUsage();
+			if(monthlyUsage > 12500){
+				triggerError("Monthly free quota reached")
+				navigate('/');
+            	return;
+			}
+		}
+
 		const queryParams = new URLSearchParams(routerLocation.search);
 		const geolocationId = queryParams.get('geolocationId');
 		const startGame = async () => {
@@ -59,6 +77,7 @@ const Game = () => {
 			}
 		};
 
+		checkUsage();
 		startGame();
 	}, []);
 
@@ -84,11 +103,20 @@ const Game = () => {
 	}, [attempts]);
 
 	const getMinMaxOfGeolocation = (): minMaxOfGeolocation => {
-		const coordinates = geolocation!.area.coordinates[0][0];
+		console.log(geolocation)
+		var coordinates = null
+		if (geolocation!.area.type === 'Polygon') {
+			coordinates = geolocation!.area.coordinates[0];
+		}
+		else {
+			coordinates = geolocation!.area.coordinates[0][0];
+		}
+
 		let minLat = 90;
 		let maxLat = -90;
 		let minLng = 180;
 		let maxLng = -180;
+		console.log(coordinates)
 
 		coordinates.forEach(([lng, lat]: [number, number]) => {
 			minLat = Math.min(minLat, lat);
@@ -113,7 +141,11 @@ const Game = () => {
 					continue;
 				}
 				randomPoint = turf.point([randomLng, randomLat]);
-				isInside = turf.booleanPointInPolygon(randomPoint, turf.polygon([geolocation.area.coordinates[0][0]]));
+				if (geolocation.area.type === 'Polygon') {
+					isInside = turf.booleanPointInPolygon(randomPoint, turf.polygon([geolocation.area.coordinates[0]]));
+				} else {
+					isInside = turf.booleanPointInPolygon(randomPoint, turf.polygon([geolocation.area.coordinates[0][0]]));
+				}
 			}
 
 			setGeneratedLocation({
@@ -125,24 +157,29 @@ const Game = () => {
 	};
 
 	const generatePanorama = () => {
+		setAdditionalRange(prev => prev + 50);
 		const sv = new window.google.maps.StreetViewService();
 		if (generatedLocation && !isProcessing) {
 			setIsProcessing(true);
 
 			const randomPoint = new window.google.maps.LatLng(generatedLocation.lat, generatedLocation.lng);
 			console.log("Using LatLng: ", randomPoint.lat(), randomPoint.lng());
-
-			sv.getPanorama({ location: randomPoint, radius: 500 }, processSVData);
+			sv.getPanorama({ location: randomPoint, radius: additionalRange }, processSVData);
 		}
 	};
 
 	const processSVData = (data: google.maps.StreetViewPanoramaData | null, status: google.maps.StreetViewStatus) => {
+		console.log(additionalRange);
 		console.log(status);
+
 		if (status === window.google.maps.StreetViewStatus.OK && panoramaRef.current && data?.location?.latLng) {
 			new window.google.maps.StreetViewPanorama(panoramaRef.current, {
 				position: data.location.latLng,
 				pov: { heading: 34, pitch: 10 },
 				disableDefaultUI: true,
+			}).addListener('pano_changed', () => {
+				loadedPanoCount++;
+				console.log("panoramaCount:" + loadedPanoCount);
 			});
 
 			setSelectedLocation({
@@ -154,7 +191,6 @@ const Game = () => {
 		} else {
 			setAttempts(prev => prev + 1);
 		}
-
 		setIsProcessing(false);
 	};
 
@@ -197,6 +233,11 @@ const Game = () => {
 		}
 	};
 
+	const updateUsage = async () => {
+		//MONTHY_USAGE na backend, zrobić endpoint do aktualizacji, czyszczenie pliku na początku miesiąca jeżeli przekracza 12500 to nie ładuj panoramy i wyświetl jakiś komunikat
+
+	}
+
 	useEffect(() => {
 		if (guessedLocation) {
 			calculateDistanceAndScore();
@@ -211,8 +252,9 @@ const Game = () => {
 		setShowModal(true);
 	};
 
-	const handleConfirmLocation = () => {
+	const handleConfirmLocation = async () => {
 		panoramaRef.current = null;
+		await updateMonthlyUsage(loadedPanoCount);
 		setGuessedLocation(tempGuessedLocation);
 		setShowModal(false);
 	};

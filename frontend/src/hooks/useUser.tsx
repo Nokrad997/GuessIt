@@ -13,6 +13,7 @@ const useUser = () => {
     setError(null);
     try {
       const data = await getUserData();
+      console.log(data)
       setUser(data);
     } catch (err) {
       setError('Failed to fetch user data');

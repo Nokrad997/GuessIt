@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar, Nav, Container, Row, Col, Button } from 'react-bootstrap';
+import { Navbar, Nav, Container, Row, Col, Button, DropdownButton, Dropdown } from 'react-bootstrap';
 import logo from '../../assets/logo_NoBackground.png';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../hooks/useAuth';
@@ -21,6 +21,16 @@ const CustomNavbar = () => {
         logoutCustomer(); 
         setLoggedIn(false); 
         navigate('/'); 
+    };
+
+    const handleSelect = (eventKey: string | null) => {
+        if (eventKey === 'account-management') {
+            navigate('/profile/management');
+        } else if (eventKey === 'user-stats') {
+            navigate('/profile/statistics-leaderboard');
+        } else if (eventKey === 'user-achievements') {
+            navigate('/profile/achievements');
+        }
     };
 
     return (
@@ -50,9 +60,17 @@ const CustomNavbar = () => {
                                     <Button variant="outline-light" className="me-2" onClick={() => navigate("/game-dashboard")}>
                                         Play
                                     </Button>
-                                    <Button variant="outline-light" className="me-2" onClick={() => navigate("/profile-management")}>
-                                        Profile
-                                    </Button>
+                                    <DropdownButton
+                                        id="dropdown-basic-button"
+                                        title="Account"
+                                        variant="outline-light"
+                                        onSelect={handleSelect}
+                                        className="me-2"
+                                    >
+                                        <Dropdown.Item eventKey="account-management">Account Management</Dropdown.Item>
+                                        <Dropdown.Item eventKey="user-stats">User Statistics</Dropdown.Item>
+                                        <Dropdown.Item eventKey="user-achievements">Achievements</Dropdown.Item>
+                                    </DropdownButton>
                                     <Button variant="outline-light" onClick={handleLogout}>
                                         Logout
                                     </Button>

@@ -423,7 +423,7 @@ namespace Backend.Migrations
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "admin@admin.com",
                             IsAdmin = true,
-                            Password = "$2a$11$AcRTAU40ViqK/8EMKYyCIurHwOsQ.TaSf3atWL7Zg4uUwK6YCcesy",
+                            Password = "$2a$11$awmnaO/DOfwdtLGujI5MXOIHQ1EHkBUwwzhiQnjkApdLHUL31H8vq",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "admin",
                             Verified = true
@@ -434,7 +434,7 @@ namespace Backend.Migrations
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "user@user.com",
                             IsAdmin = false,
-                            Password = "$2a$11$AbEHplHmeYTIoWzsM2FTz.3UwAz/gl8X6QCOu0t2m4g/fkwN4gbXS",
+                            Password = "$2a$11$cHzQPiWgqD4/w8Co3bxV4en4GLXqRJb13C9qDCXbMyBcl0j2q/OKy",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "user",
                             Verified = true

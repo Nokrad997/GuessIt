@@ -46,6 +46,24 @@ public class StatisticsController : ControllerBase
         }
     }
     
+    [HttpGet]
+    [Route("user-stats")]
+    public async Task<IActionResult> GetUserStatistics()
+    {
+        try
+        {
+            return Ok(new
+            {
+                message = "Retrieved statistics sucessfully",
+                statistics = await _statisticsService.GetUserStats(GetTokenFromRequest(HttpContext))
+            });
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new { message = "Failed in retrieving statistics", error = e.Message });
+        }
+    }
+    
     [HttpPost]
     [Authorize(Roles = "Admin, User")]
     public async Task<IActionResult> AddStatistics([FromBody] StatisticsDto statisticsDto)

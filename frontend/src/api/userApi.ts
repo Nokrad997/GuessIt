@@ -19,6 +19,7 @@ export const getUserData = async () => {
 
 export const updateUserData = async (updatedData: Partial<User>) => {
   try {
+    console.log(updatedData)
     const response = await api.put(`User/${updatedData.userId}`, updatedData);
     return response.data;
   } catch (error: any) {
