@@ -2,6 +2,7 @@ using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Entities;
 using Backend.Services;
+using Backend.Services.Interfaces;
 using Backend.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,9 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class GeolocationController : ControllerBase
 {
-    private readonly GeolocationService _geolocationService;
+    private readonly IGeolocationService _geolocationService;
     
-    public GeolocationController(GeolocationService geolocationService)
+    public GeolocationController(IGeolocationService geolocationService)
     {
         _geolocationService = geolocationService;
     }

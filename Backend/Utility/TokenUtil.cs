@@ -3,12 +3,13 @@ using System.Security.Claims;
 using System.Text;
 using Backend.Entities;
 using Backend.Exceptions;
+using Backend.Utility.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Backend.Utility;
 
-public class TokenUtil
+public class TokenUtil : ITokenUtil
 {
     private readonly string _privateKey;
     private readonly JwtSecurityTokenHandler _handler;

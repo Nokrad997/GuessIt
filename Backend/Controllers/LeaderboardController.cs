@@ -1,6 +1,7 @@
 using Backend.Dtos.EditDtos;
 using Backend.Dtos.Interfaces;
 using Backend.Services;
+using Backend.Services.Interfaces;
 using Backend.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,9 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class LeaderboardController : ControllerBase
 {
-    private readonly LeaderboardService _leaderboardService;
+    private readonly ILeaderboardService _leaderboardService;
     
-    public LeaderboardController(LeaderboardService leaderboardService)
+    public LeaderboardController(ILeaderboardService leaderboardService)
     {
         _leaderboardService = leaderboardService;
     }

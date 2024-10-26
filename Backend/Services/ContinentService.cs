@@ -1,15 +1,17 @@
 using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Repositories;
+using Backend.Repositories.Interfaces;
+using Backend.Services.Interfaces;
 
 namespace Backend.Services;
 
-public class ContinentService
+public class ContinentService : IContinentService
 {
-    private readonly ContinentRepository _continentRepository;
-    private readonly GeolocationRepository _geolocationRepository;
+    private readonly IContinentRepository _continentRepository;
+    private readonly IGeolocationRepository _geolocationRepository;
     
-    public ContinentService(ContinentRepository continentRepository, GeolocationRepository geolocationRepository)
+    public ContinentService(IContinentRepository continentRepository, IGeolocationRepository geolocationRepository)
     {
         _continentRepository = continentRepository;
         _geolocationRepository = geolocationRepository;

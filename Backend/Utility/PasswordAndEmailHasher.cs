@@ -1,10 +1,11 @@
 using System.Security.Cryptography;
 using System.Text;
+using Backend.Utility.Interfaces;
 using BCrypt.Net;
 
 namespace Backend.Utility;
 
-public class PasswordAndEmailHasher
+public class PasswordAndEmailHasher : IPasswordAndEmailHasher
 {
     public string HashPassword(string password)
     {

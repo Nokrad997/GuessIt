@@ -4,17 +4,20 @@ using Backend.Dtos.EditDtos;
 using Backend.Entities;
 using Backend.Exceptions;
 using Backend.Repositories;
+using Backend.Repositories.Interfaces;
+using Backend.Services.Interfaces;
 using Backend.Utility;
+using Backend.Utility.Interfaces;
 
 namespace Backend.Services;
 
-public class UserService
+public class UserService : IUserService
 {
-    private readonly TokenUtil _tokenUtil;
-    private readonly UserRepository _userRepository;
-    private readonly PasswordAndEmailHasher _passwordAndEmailHasher;
+    private readonly ITokenUtil _tokenUtil;
+    private readonly IUserRepository _userRepository;
+    private readonly IPasswordAndEmailHasher _passwordAndEmailHasher;
 
-    public UserService(TokenUtil tokenUtil, UserRepository userRepository, PasswordAndEmailHasher passwordAndEmailHasher)
+    public UserService(ITokenUtil tokenUtil, IUserRepository userRepository, IPasswordAndEmailHasher passwordAndEmailHasher)
     {
         _tokenUtil = tokenUtil;
         _userRepository = userRepository;

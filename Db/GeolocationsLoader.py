@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship, declarative_base
 from geoalchemy2 import Geometry
 from geojson import load as load_geojson
-from sqlalchemy import func
+from sqlalchemy import func, exists
 import os
 import json
 
@@ -112,6 +112,13 @@ def process_all_continents_and_countries(base_path):
 
     for continent in continents_data:
         process_continent_and_countries(base_path, continent)
+
+def check_if_db_was_populated():
+    return session.query(exists().where(Geolocation.geolocation_id.isnot(None))).scalar()
+
+if(check_if_db_was_populated()):
+    print("Database already populated. Exiting...")
+    exit(0)
 
 base_path = 'GeolocationsGeoJSONs'
 process_all_continents_and_countries(base_path)

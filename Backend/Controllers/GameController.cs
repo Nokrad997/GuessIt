@@ -2,6 +2,7 @@ using static System.String;
 using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Services;
+using Backend.Services.Interfaces;
 using Backend.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,9 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class GameController : ControllerBase
 {
-    private readonly GameService _gameService;
+    private readonly IGameService _gameService;
     
-    public GameController(GameService gameService)
+    public GameController(IGameService gameService)
     {
         _gameService = gameService;
     }

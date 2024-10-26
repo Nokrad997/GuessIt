@@ -3,17 +3,20 @@ using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Entities;
 using Backend.Repositories;
+using Backend.Repositories.Interfaces;
+using Backend.Services.Interfaces;
 using Backend.Utility;
+using Backend.Utility.Interfaces;
 
 namespace Backend.Services;
 
-public class StatisticsService
+public class StatisticsService : IStatisticsService
 {
-    private readonly StatisticsRepository _statisticsRepository;
-    private readonly UserRepository _userRepository;
-    private readonly TokenUtil _tokenUtil;
+    private readonly IStatisticsRepository _statisticsRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly ITokenUtil _tokenUtil;
     
-    public StatisticsService(StatisticsRepository statisticsRepository, UserRepository userRepository ,TokenUtil tokenUtil)
+    public StatisticsService(IStatisticsRepository statisticsRepository, IUserRepository userRepository ,ITokenUtil tokenUtil)
     {
         _statisticsRepository = statisticsRepository;
         _userRepository = userRepository;

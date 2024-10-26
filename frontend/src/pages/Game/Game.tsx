@@ -34,7 +34,7 @@ interface minMaxOfGeolocation {
 const Game = () => {
 	var loadedPanoCount = 0;
 	var traveledDistance = 0;
-	var previousPosition = null;
+	var previousPosition: google.maps.LatLng | null = null;
 	var monthlyUsage = 0;
 	const panoramaRef = useRef<HTMLDivElement | null>(null);
 	const { triggerError } = useError();

@@ -4,19 +4,22 @@ using Backend.Dtos.EditDtos;
 using Backend.Entities;
 using Backend.Exceptions;
 using Backend.Repositories;
+using Backend.Repositories.Interfaces;
+using Backend.Services.Interfaces;
 using Backend.Utility;
+using Backend.Utility.Interfaces;
 
 namespace Backend.Services;
 
-public class UserAchievementsService
+public class UserAchievementsService : IUserAchievementService
 {
-    private readonly UserAchievementsRepository _userAchievementsRepository;
-    private readonly UserRepository _userRepository;
-    private readonly AchievementRepository _achievementRepository;
-    private readonly TokenUtil _tokenUtil;
+    private readonly IUserAchievementsRepository _userAchievementsRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IAchievementRepository _achievementRepository;
+    private readonly ITokenUtil _tokenUtil;
     
-    public UserAchievementsService(UserAchievementsRepository userAchievementsRepository, UserRepository userRepository,
-        AchievementRepository achievementRepository, TokenUtil tokenUtil)
+    public UserAchievementsService(IUserAchievementsRepository userAchievementsRepository, IUserRepository userRepository,
+        IAchievementRepository achievementRepository, ITokenUtil tokenUtil)
     {
         _userAchievementsRepository = userAchievementsRepository;
         _userRepository = userRepository;

@@ -1,9 +1,10 @@
 using System.Text.Json;
+using Backend.Services.Interfaces;
 using Backend.Utility;
 
 namespace Backend.Services;
 
-public class MonthlyUsageService
+public class MonthlyUsageService : IMonthlyUsageService
 {
     private readonly string _filePath = "Utility/MonthlyUsage.json";
 

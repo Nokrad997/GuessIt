@@ -5,23 +5,50 @@ services:
       context: ./Backend
       dockerfile: Dockerfile
     ports:
-      - "5027:80"  # Mapowanie portu 80 wewnątrz kontenera na 5000 na hoście
+      - "5027:5027"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5027
     networks:
       - app-network
+    depends_on:
+      - postgres
+    command: >
+      sh -c "dotnet ef migrations add init && dotnet ef database update --no-build && dotnet Backend.dll"
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"  # Mapowanie portu 80 wewnątrz kontenera na 3000 na hoście (nginx)
+      - "3000:3000"
     networks:
       - app-network
     depends_on:
       - backend
 
+  postgres:
+    image: postgis/postgis:latest
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: Guess_It
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+
 networks:
   app-network:
-    driver: bridge

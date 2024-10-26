@@ -1,5 +1,6 @@
 using Backend.Dtos;
 using Backend.Services;
+using Backend.Services.Interfaces;
 using Backend.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +11,9 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class AchievementController : ControllerBase
 {
-    private readonly AchievementService _achievementService;
+    private readonly IAchievementService _achievementService;
 
-    public AchievementController(AchievementService achievementService)
+    public AchievementController(IAchievementService achievementService)
     {
         _achievementService = achievementService;
     }
@@ -60,25 +61,6 @@ public class AchievementController : ControllerBase
         catch (Exception e)
         {
             return BadRequest(new { message = "Failed in adding achievement", error = e.Message });
-        }
-    }
-
-    [HttpPost]
-    [Route("add-bulk")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> AddBulkAchievements([FromBody] IEnumerable<AchievementDto> achievementsDtos){
-        foreach (var achievementDto in achievementsDtos)
-        {
-            if(!DtoValidator.ValidateObject(achievementDto, out var message)){
-                return BadRequest(message);
-            }
-        }
-
-        try{
-            await _achievementService.AddAchievementsInBulk(achievementsDtos);
-            return Ok(new { message = "Achievements added successfully" });    
-        }catch(Exception e){
-            return BadRequest(new {message = "Failed in bulk add of achievements", error = e.Message});
         }
     }
 

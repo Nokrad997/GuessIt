@@ -1,15 +1,17 @@
 using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Repositories;
+using Backend.Repositories.Interfaces;
+using Backend.Services.Interfaces;
 
 namespace Backend.Services;
 
-public class CountryService
+public class CountryService : ICountryService
 {
-     private readonly CountryRepository _countryRepository;
-     private readonly GeolocationRepository _geolocationRepository; 
+     private readonly ICountryRepository _countryRepository;
+     private readonly IGeolocationRepository _geolocationRepository; 
      
-    public CountryService(CountryRepository countryRepository, GeolocationRepository geolocationRepository)
+    public CountryService(ICountryRepository countryRepository, GeolocationRepository geolocationRepository)
     {
         _countryRepository = countryRepository;
         _geolocationRepository = geolocationRepository;

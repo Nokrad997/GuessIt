@@ -1,4 +1,5 @@
 using Backend.Services;
+using Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,9 +9,9 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class MonthlyUsageController : ControllerBase
 {
-    private readonly MonthlyUsageService _monthlyUsageService;
+    private readonly IMonthlyUsageService _monthlyUsageService;
 
-    public MonthlyUsageController(MonthlyUsageService monthlyUsageService)
+    public MonthlyUsageController(IMonthlyUsageService monthlyUsageService)
     {
         _monthlyUsageService = monthlyUsageService;
     }

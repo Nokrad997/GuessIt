@@ -1,6 +1,7 @@
 using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Services;
+using Backend.Services.Interfaces;
 using Backend.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,9 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class UserAchievementsController : ControllerBase
 {
-    private readonly UserAchievementsService _userAchievementsService;
+    private readonly IUserAchievementService _userAchievementsService;
     
-    public UserAchievementsController(UserAchievementsService userAchievementsService)
+    public UserAchievementsController(IUserAchievementService userAchievementsService)
     {
         _userAchievementsService = userAchievementsService;
     }
