@@ -40,10 +40,10 @@ BEGIN
     UPDATE statistics
     SET lowest_time_in_seconds = time_diff_in_seconds
     WHERE user_id = NEW.user_id
-      AND time_diff_in_seconds < lowest_time_in_seconds;
+      AND lowest_time_in_seconds = 0 OR time_diff_in_seconds < lowest_time_in_seconds;
 
     UPDATE statistics
-    SET total_traveled_distance_in_meters = total_traveled_distance_in_meters + NEW.distance_to_starting_location * 1000
+    SET total_traveled_distance_in_meters = total_traveled_distance_in_meters + NEW.traveled_distance * 1000
     WHERE user_id = NEW.user_id;
 
     UPDATE statistics

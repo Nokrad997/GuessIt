@@ -1,6 +1,22 @@
 import User from '../interfaces/UserData';
 import { api } from './axios';
 
+export const getUsers = async () => {
+  try {
+    const response = await api.get('User/');
+    console.log(response.data)
+    return response.data.users;
+  } catch (error: any) {
+    if (error.response) {
+      console.error("Failed to fetch users:", error.response.status, error.response.data);
+      throw new Error(error.response.data.error || "Failed to fetch users");
+    } else {
+      console.error("Error during request:", error.message);
+      throw new Error("Failed to fetch users");
+    }
+  }
+};
+
 export const getUserData = async () => {
   try {
     const response = await api.get('User/user-data-based-on-token');

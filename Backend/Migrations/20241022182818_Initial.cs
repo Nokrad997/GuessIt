@@ -273,12 +273,12 @@ namespace Backend.Migrations
             migrationBuilder.InsertData(
                 table: "users",
                 columns: new[] { "user_id", "email", "password", "username", "verified" },
-                values: new object[] { -2, "user@user.com", "$2a$11$AbEHplHmeYTIoWzsM2FTz.3UwAz/gl8X6QCOu0t2m4g/fkwN4gbXS", "user", true });
+                values: new object[] { -2, "user@user.com", "$2a$11$uZKRrfsi6WpztMZLtKv/9ORPm.TwqeTC8SIuaK.8f0UIL3WgmQu9W", "user", true });
 
             migrationBuilder.InsertData(
                 table: "users",
                 columns: new[] { "user_id", "email", "is_admin", "password", "username", "verified" },
-                values: new object[] { -1, "admin@admin.com", true, "$2a$11$AcRTAU40ViqK/8EMKYyCIurHwOsQ.TaSf3atWL7Zg4uUwK6YCcesy", "admin", true });
+                values: new object[] { -1, "admin@admin.com", true, "$2a$11$XLzxxqQMi./5XMubIm9mN.Dim5tqf2FSfVY8OcLma1FuEmUlFJQ1K", "admin", true });
 
             migrationBuilder.CreateIndex(
                 name: "UQ_achievements_achievement_name",

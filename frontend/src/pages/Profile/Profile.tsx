@@ -110,11 +110,9 @@ const ProfilePage = () => {
                                     <Form.Label>Email</Form.Label>
                                     <Form.Control
                                         type="email"
-                                        value={email || ''}
                                         onChange={handleEmailChange}
                                         placeholder="Enter new email"
                                         autoComplete="disabled"
-                                        required
                                     />
                                 </Form.Group>
 
@@ -126,7 +124,6 @@ const ProfilePage = () => {
                                         onChange={handleUsernameChange}
                                         placeholder="Enter new username"
                                         autoComplete="disabled"
-                                        required
                                     />
                                 </Form.Group>
 

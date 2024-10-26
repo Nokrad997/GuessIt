@@ -15,6 +15,7 @@ public class EditGameDto : IValidatableObject
     [JsonConverter(typeof(PointConverter))]
     public Point GuessedLocation { get; set; }
     public double DistanceToStartingLocation { get; set; }
+    public double TraveledDistance { get; set; }
     public DateTime StartTime { get; set; }
     public DateTime EndTime { get; set; }
     public int Score { get; set; }
@@ -27,6 +28,7 @@ public class EditGameDto : IValidatableObject
             StartLocation = StartLocation,
             GuessedLocation = GuessedLocation,
             DistanceToStartingLocation = DistanceToStartingLocation,
+            TraveledDistance = TraveledDistance,
             StartTime = StartTime,
             EndTime = EndTime,
             Score = Score

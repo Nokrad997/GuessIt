@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Backend.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -13,9 +14,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Backend.Migrations
 {
     [DbContext(typeof(GuessItContext))]
-    partial class GuessItContextModelSnapshot : ModelSnapshot
+    [Migration("20241022182818_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -245,10 +248,6 @@ namespace Backend.Migrations
                         .HasColumnType("timestamptz")
                         .HasColumnName("start_time");
 
-                    b.Property<double>("TraveledDistance")
-                        .HasColumnType("decimal(10, 2)")
-                        .HasColumnName("traveled_distance");
-
                     b.Property<int>("UserIdFk")
                         .HasColumnType("int")
                         .HasColumnName("user_id");
@@ -380,7 +379,7 @@ namespace Backend.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("varchar(255)")
+                        .HasColumnType("varchar(50)")
                         .HasColumnName("email");
 
                     b.Property<bool>("IsAdmin")
@@ -425,9 +424,9 @@ namespace Backend.Migrations
                         {
                             UserId = -1,
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "$2a$11$huZlpeHenmg3Yjq8Umcu9eOCFUW4/s8VMAEk3Yvmg.YXg7lURQmVK",
+                            Email = "admin@admin.com",
                             IsAdmin = true,
-                            Password = "$2a$11$KYB2gWb0RCyfVzR8I4rIru6.cylcjFPgoFHXq14gigVzEx7pg1ywe",
+                            Password = "$2a$11$XLzxxqQMi./5XMubIm9mN.Dim5tqf2FSfVY8OcLma1FuEmUlFJQ1K",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "admin",
                             Verified = true
@@ -436,9 +435,9 @@ namespace Backend.Migrations
                         {
                             UserId = -2,
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "$2a$11$QUbj1LxIEejfuoJh8TaHgeqjJcV8HoAzvsex0y8n/t7zp.bYiyk3m",
+                            Email = "user@user.com",
                             IsAdmin = false,
-                            Password = "$2a$11$w8QLA0vHLr1WJ1r1aySTxOd7pkvFkttVi8aS65IKBMjepEOv6z6FC",
+                            Password = "$2a$11$uZKRrfsi6WpztMZLtKv/9ORPm.TwqeTC8SIuaK.8f0UIL3WgmQu9W",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "user",
                             Verified = true

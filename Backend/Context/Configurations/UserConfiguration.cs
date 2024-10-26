@@ -25,7 +25,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnName("username");
         builder.Property(u => u.Email)
             .IsRequired()
-            .HasColumnType("varchar(50)")
+            .HasColumnType("varchar(255)")
             .HasColumnName("email");
         builder.Property(u => u.Password)
             .IsRequired()

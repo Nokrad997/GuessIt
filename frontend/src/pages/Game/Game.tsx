@@ -9,9 +9,9 @@ import './Game.css';
 import 'leaflet/dist/leaflet.css';
 import * as turf from '@turf/turf';
 import Results from '../../components/Results/Results';
-import monthlyUsage from '../../assets/monthly-usage.json';
 import useMonthlyUsage from '../../hooks/useMonthlyUsage';
 import { useError } from '../../components/ErrorContext/ErrorContext';
+import calculateDistance from '../../assets/DistanceCalculator';
 
 L.Icon.Default.mergeOptions({
 	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -32,7 +32,9 @@ interface minMaxOfGeolocation {
 }
 
 const Game = () => {
-	var loadedPanoCount = parseInt(process.env.MONTHLY_USAGE || '0');
+	var loadedPanoCount = 0;
+	var traveledDistance = 0;
+	var previousPosition = null;
 	var monthlyUsage = 0;
 	const panoramaRef = useRef<HTMLDivElement | null>(null);
 	const { triggerError } = useError();
@@ -173,14 +175,34 @@ const Game = () => {
 		console.log(status);
 
 		if (status === window.google.maps.StreetViewStatus.OK && panoramaRef.current && data?.location?.latLng) {
-			new window.google.maps.StreetViewPanorama(panoramaRef.current, {
+			const pano = new window.google.maps.StreetViewPanorama(panoramaRef.current, {
 				position: data.location.latLng,
 				pov: { heading: 34, pitch: 10 },
 				disableDefaultUI: true,
-			}).addListener('pano_changed', () => {
+			});
+
+			pano.addListener('pano_changed', () => {
 				loadedPanoCount++;
 				console.log("panoramaCount:" + loadedPanoCount);
+			})
+			pano.addListener('position_changed', () => {
+				const currentPosition = pano.getPosition();
+				if (previousPosition!) {
+					const distance = calculateDistance(
+						previousPosition.lat(),
+						previousPosition.lng(),
+						currentPosition!.lat(),
+						currentPosition!.lng()
+					);
+
+					traveledDistance += distance;
+					console.log(`Traveled distance: ${traveledDistance.toFixed(2)} km`);
+				}
+
+				previousPosition = currentPosition;
 			});
+
+			previousPosition = pano.getPosition();
 
 			setSelectedLocation({
 				lat: data.location.latLng.lat(),
@@ -232,11 +254,6 @@ const Game = () => {
 			setScore(calculatedScore);
 		}
 	};
-
-	const updateUsage = async () => {
-		//MONTHY_USAGE na backend, zrobić endpoint do aktualizacji, czyszczenie pliku na początku miesiąca jeżeli przekracza 12500 to nie ładuj panoramy i wyświetl jakiś komunikat
-
-	}
 
 	useEffect(() => {
 		if (guessedLocation) {
@@ -339,6 +356,7 @@ const Game = () => {
 					endTime={endTime!}
 					timeElapsed={timeElapsed}
 					selectedLocation={selectedLocation!}
+					traveledDistance={traveledDistance}
 					guessedLocation={guessedLocation!}
 					gameType={new URLSearchParams(routerLocation.search).get('type')!}
 				/>

@@ -12,7 +12,7 @@ public class UserDto : EditUserDto, IValidatableObject
     public int UserId { get; init; }
 
     [EmailAddress]
-    public new string Email { get; init; }
+    public new string Email { get; set; }
     
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public new string Password { get; set; }

@@ -5,6 +5,7 @@ const useMonthlyUsage = () => {
     const { triggerError } = useError();
     const updateMonthlyUsage = async (userUsage: number) => {
         try{
+            console.log(userUsage)
             const response = await updateUsage(userUsage);
             return response;
         } catch(error: any){

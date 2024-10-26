@@ -8,6 +8,7 @@ export default interface GameResults {
         coordinates: number[];
     }
     DistanceToStartingLocation: number;
+    TraveledDistance: number;
     StartTime: Date;
     EndTime: Date;
 }

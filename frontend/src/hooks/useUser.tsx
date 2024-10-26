@@ -1,12 +1,28 @@
 import { useState } from 'react';
-import { getUserData, updateUserData, deleteUserAccount } from '../api/userApi';
+import { getUserData, updateUserData, deleteUserAccount, getUsers } from '../api/userApi';
 import User from '../interfaces/UserData';
 
 
 const useUser = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getUsers();
+      console.log(data)
+      setUsers(data);
+    } catch (err) {
+      setError('Failed to fetch users');
+      throw new Error("");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchUserData = async () => {
     setLoading(true);
@@ -53,8 +69,10 @@ const useUser = () => {
 
   return {
     user,
+    users,
     loading,
     error,
+    fetchUsers,
     fetchUserData,
     editUserData,
     removeUserAccount,

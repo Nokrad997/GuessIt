@@ -15,11 +15,12 @@ interface ResultsProps {
   endTime: Date;
   timeElapsed: number;
   selectedLocation: Location;
+  traveledDistance: number;
   guessedLocation: Location;
   gameType: string;
 }
 
-const Results: React.FC<ResultsProps> = ({ score, distance, startTime, endTime, timeElapsed, selectedLocation, guessedLocation, gameType }) => {
+const Results: React.FC<ResultsProps> = ({ score, distance, startTime, endTime, timeElapsed, selectedLocation, traveledDistance, guessedLocation, gameType }) => {
   const { sendGameResults } = useGame();
 
   useEffect(() => {
@@ -34,6 +35,7 @@ const Results: React.FC<ResultsProps> = ({ score, distance, startTime, endTime, 
           coordinates: [guessedLocation.lat, guessedLocation.lng]
         },
         DistanceToStartingLocation: distance,
+        TraveledDistance: traveledDistance,
         StartTime: startTime,
         EndTime: endTime
       }, gameType)

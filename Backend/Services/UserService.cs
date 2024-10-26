@@ -12,13 +12,13 @@ public class UserService
 {
     private readonly TokenUtil _tokenUtil;
     private readonly UserRepository _userRepository;
-    private readonly PasswordHasher _passwordHasher;
+    private readonly PasswordAndEmailHasher _passwordAndEmailHasher;
 
-    public UserService(TokenUtil tokenUtil, UserRepository userRepository, PasswordHasher passwordHasher)
+    public UserService(TokenUtil tokenUtil, UserRepository userRepository, PasswordAndEmailHasher passwordAndEmailHasher)
     {
         _tokenUtil = tokenUtil;
         _userRepository = userRepository;
-        _passwordHasher = passwordHasher;
+        _passwordAndEmailHasher = passwordAndEmailHasher;
     }
     
     public async Task<IEnumerable<UserDto>> Retrieve()
@@ -51,13 +51,16 @@ public class UserService
     }
     public async Task AddUserAsAdmin(UserDto userDto)
     {
-        var existingUser = await _userRepository.GetUserByEmail(userDto.Email);
+        var existingUsers = await _userRepository.GetAllUsers();
+        var existingUser = existingUsers.FirstOrDefault(user =>
+            _passwordAndEmailHasher.VerifyEmail(userDto.Email, user.Email));
         if (existingUser is not null)
         {
             throw new BadCredentialsException("User with provided email already exists");
         }
         
-        userDto.Password = _passwordHasher.HashPassword(userDto.Password);
+        userDto.Password = _passwordAndEmailHasher.HashPassword(userDto.Password);
+        userDto.Email = _passwordAndEmailHasher.HashEmail(userDto.Email);
         User user = userDto.ConvertToEntity();
         
         await _userRepository.AddUser(user);
@@ -70,7 +73,8 @@ public class UserService
         }
         
         var existingUser = await _userRepository.GetUserById(id);
-        var emailCheck = await _userRepository.GetUserByEmail(userDto.Email);
+        var existingUsers = await _userRepository.GetAllUsers();
+        var emailCheck = existingUsers.FirstOrDefault(user => _passwordAndEmailHasher.VerifyEmail(userDto.Email, user.Email));
         if (existingUser is null)
         {
             throw new ArgumentException("User with provided id doesn't exist");
@@ -89,7 +93,8 @@ public class UserService
     public async Task<UserDto> EditUserAsAdmin(int id, EditUserDto userDto)
     {
         var existingUser = await _userRepository.GetUserById(id);
-        var emailCheck = await _userRepository.GetUserByEmail(userDto.Email);
+        var existingUsers = await _userRepository.GetAllUsers();
+        var emailCheck = existingUsers.FirstOrDefault(user => _passwordAndEmailHasher.VerifyEmail(userDto.Email, user.Email));
         if (existingUser is null)
         {
             throw new ArgumentException("User with provided id doesn't exist");
@@ -148,8 +153,14 @@ public class UserService
                 
             if (userProp.Name.Equals("Password") && sourceValue != null)
             {
-                sourceValue = _passwordHasher.HashPassword(sourceValue.ToString()); 
+                sourceValue = _passwordAndEmailHasher.HashPassword(sourceValue.ToString()); 
             }
+
+            if (userProp.Name.Equals("Email") && !String.IsNullOrEmpty(sourceValue.ToString()))
+            {
+                sourceValue = _passwordAndEmailHasher.HashEmail(sourceValue.ToString());
+            }
+            
             if (!Equals(sourceValue, targetValue) && sourceValue != null)
             {
                 userProp.SetValue(user, sourceValue);

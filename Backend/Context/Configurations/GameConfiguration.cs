@@ -35,6 +35,10 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
             .IsRequired()
             .HasColumnType("decimal(10, 2)")
             .HasColumnName("distance_to_starting_location");
+        builder.Property(g => g.TraveledDistance)
+            .IsRequired()
+            .HasColumnType("decimal(10, 2)")
+            .HasColumnName("traveled_distance");
         builder.Property(g => g.StartTime)
             .IsRequired()
             .HasColumnType("timestamptz")

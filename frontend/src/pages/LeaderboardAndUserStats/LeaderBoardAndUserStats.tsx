@@ -4,24 +4,39 @@ import LeaderboardEntry from '../../interfaces/LeaderboardEntry';
 import UserStats from '../../interfaces/UserStats';
 import useLeaderboard from '../../hooks/useLeaderboard';
 import useUserStats from '../../hooks/useUserStats';
+import useUser from '../../hooks/useUser';
 
 const LeaderboardAndUserStats = () => {
     const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
     const [userStats, setUserStats] = useState<UserStats | null>(null);
     const { getLeaderboard } = useLeaderboard();
     const { getUserStats } = useUserStats();
+    const { fetchUsers, users } = useUser();
 
     useEffect(() => {
         const fetchLeaderboard = async () => {
             const leaderboardData = await getLeaderboard();
-            setLeaderboard(leaderboardData);
+            await fetchUsers();
+            setLeaderboard(leaderboardData.leaderboard.map((entry: { userIdFk: number; username: string; }) => {
+                const matchingUser = users.find(user => user.userId === entry.userIdFk);
+                if (matchingUser) {
+                    entry.username = matchingUser.username;
+                } else {
+                    entry.username = "Unknown";
+                }
+
+                return entry;
+            }));
         };
+
         const fetchUserStats = async () => {
             const statsData = await getUserStats();
-            setUserStats(statsData);
+            console.log(statsData)
+            setUserStats(statsData.statistics);
         };
         fetchLeaderboard();
         fetchUserStats();
+        console.log(leaderboard)
     }, []);
     return (
         <Container
