@@ -12,7 +12,7 @@ const UserAchievements = () => {
             setAchievements(result.userAchievements); 
         };
         getAchievements();
-    }, [getUserAchievements]);
+    }, []);
     return (
         <Container
             fluid

@@ -1,6 +1,7 @@
 using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Services;
+using Backend.Services.Interfaces;
 using Backend.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,9 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class FriendsController : ControllerBase
 {
-    private readonly FriendsService _friendsService;
+    private readonly IFriendsService _friendsService;
 
-    public FriendsController(FriendsService friendsService)
+    public FriendsController(IFriendsService friendsService)
     {
         _friendsService = friendsService;
     }

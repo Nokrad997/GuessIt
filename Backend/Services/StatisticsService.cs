@@ -93,10 +93,10 @@ public class StatisticsService : IStatisticsService
         {
             throw new ArgumentException("User not found");
         }
-        if(await _statisticsRepository.GetStatisticsByUserId(statisticsDto.UserIdFk) is not null)
-        {
-            throw new ArgumentException("Statistics for user already exists");
-        }
+        // if(await _statisticsRepository.GetStatisticsByUserId(statisticsDto.UserIdFk) is not null)
+        // {
+        //     throw new ArgumentException("Statistics for user already exists");
+        // }
         UpdatePropertiesIfNeeded(existingStatistics, statisticsDto, ["StatisticId", "UserIdFk"]);
         
         await _statisticsRepository.EditStatistics(existingStatistics);

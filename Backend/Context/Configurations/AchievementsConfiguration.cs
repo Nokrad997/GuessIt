@@ -1,6 +1,8 @@
+using System.Text.Json;
 using Backend.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Backend.Controllers;
 
@@ -30,7 +32,12 @@ public class AchievementsConfiguration : IEntityTypeConfiguration<Achievement>
         builder.Property(a => a.AchievementCriteria)
             .IsRequired()
             .HasColumnType("jsonb")
-            .HasColumnName("achievement_criteria");
+            .HasColumnName("achievement_criteria")
+            .HasConversion(
+                new ValueConverter<Dictionary<string,object>,string>(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null),
+                    v => JsonSerializer.Deserialize<Dictionary<string, object>>(v, (JsonSerializerOptions)null)
+                ));
         builder.Property(x => x.CreatedAt)
             .HasColumnName("created_at")
             .HasColumnType("timestamptz")

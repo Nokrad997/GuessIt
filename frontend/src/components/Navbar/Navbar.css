@@ -1,11 +1,31 @@
 .custom-navbar {
-    min-height: 10vh; 
-    background-color: #2e2e2e; 
+    min-height: 10vh;
+    background-color: #2e2e2e;
     display: flex;
-    align-items: center; 
+    align-items: center;
 }
 
 .custom-navbar .navbar-brand,
 .custom-navbar .nav-link {
     line-height: 10vh;
 }
+
+.custom-dropdown-item {
+    background-color: #2e2e2e !important;
+    color: #fff !important;
+}
+
+.custom-dropdown-item:hover {
+    background-color: #2e2e2e !important;
+    color: #fff !important;
+}
+
+.custom-dropdown-menu {
+    background-color: #2e2e2e !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.full-width-button {
+    text-align: center;
+  }

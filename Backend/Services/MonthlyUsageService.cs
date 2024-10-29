@@ -6,7 +6,12 @@ namespace Backend.Services;
 
 public class MonthlyUsageService : IMonthlyUsageService
 {
-    private readonly string _filePath = "Utility/MonthlyUsage.json";
+    private readonly string _filePath;
+
+    public MonthlyUsageService(string filePath = "Utility/MonthlyUsage.json")
+    {
+        _filePath = filePath;
+    }
 
     public async Task<string> UpdateMonthlyUsage(int userUsage)
     {

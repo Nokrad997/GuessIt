@@ -1,15 +1,17 @@
 using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Repositories;
+using Backend.Repositories.Interfaces;
+using Backend.Services.Interfaces;
 
 namespace Backend.Services;
 
-public class CityService
+public class CityService : ICityService
 {
-    private readonly CityRepository _cityRepository;
-    private readonly GeolocationRepository _geolocationRepository;
+    private readonly ICityRepository _cityRepository;
+    private readonly IGeolocationRepository _geolocationRepository;
     
-    public CityService(CityRepository cityRepository, GeolocationRepository geolocationRepository)
+    public CityService(ICityRepository cityRepository, IGeolocationRepository geolocationRepository)
     {
         _cityRepository = cityRepository;
         _geolocationRepository = geolocationRepository;

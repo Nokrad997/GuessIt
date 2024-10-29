@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Card, ListGroup, Table } from 'react-bootstrap';
+import { Container, Row, Col, Card, ListGroup, Table, Button, ButtonGroup } from 'react-bootstrap';
 import LeaderboardEntry from '../../interfaces/LeaderboardEntry';
 import UserStats from '../../interfaces/UserStats';
 import useLeaderboard from '../../hooks/useLeaderboard';
@@ -9,46 +9,53 @@ import useUser from '../../hooks/useUser';
 const LeaderboardAndUserStats = () => {
     const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
     const [userStats, setUserStats] = useState<UserStats | null>(null);
+    const [showLeaderboard, setShowLeaderboard] = useState(true);
     const { getLeaderboard } = useLeaderboard();
     const { getUserStats } = useUserStats();
     const { fetchUsers, users } = useUser();
 
     useEffect(() => {
-        const fetchLeaderboard = async () => {
-            const leaderboardData = await getLeaderboard();
+        const fetchUserData = async () => {
             await fetchUsers();
-            setLeaderboard(leaderboardData.leaderboard.map((entry: { userIdFk: number; username: string; }) => {
-                const matchingUser = users.find(user => user.userId === entry.userIdFk);
-                if (matchingUser) {
-                    entry.username = matchingUser.username;
-                } else {
-                    entry.username = "Unknown";
-                }
-
-                return entry;
-            }));
         };
 
-        const fetchUserStats = async () => {
-            const statsData = await getUserStats();
-            console.log(statsData)
-            setUserStats(statsData.statistics);
-        };
-        fetchLeaderboard();
-        fetchUserStats();
-        console.log(leaderboard)
+        fetchUserData();
     }, []);
+
+    useEffect(() => {
+        const assignUsernamesToLeaderboard = async (leaderboard: any) => {
+            return leaderboard.map((entry: { userIdFk: number; username: string; }) => {
+                const matchingUser = users.find(user => user.userId === entry.userIdFk);
+                entry.username = matchingUser ? matchingUser.username : "Unknown";
+                return entry;
+            });
+        };
+
+        const fetchLeaderboardAndStats = async () => {
+            const [leaderboardData, statsData] = await Promise.all([
+                getLeaderboard(),
+                getUserStats(),
+            ]);
+            const processedLeaderboard = await assignUsernamesToLeaderboard(leaderboardData.leaderboard);
+            setLeaderboard(processedLeaderboard);
+
+            setUserStats(statsData.statistics);
+        }
+
+        fetchLeaderboardAndStats();
+    }, [users]);
+
     return (
         <Container
             fluid
-            className="d-flex justify-content-center align-items-center"
+            className="d-flex flex-column justify-content-center align-items-center"
             style={{
                 minHeight: '100vh',
                 background: 'linear-gradient(6deg, rgba(2,0,36,1) 0%, rgba(27,61,134,1) 35%, rgba(0,212,255,1) 100%)'
             }}
         >
             <Row className="w-100 justify-content-center">
-                <Col md={6} className="mb-4">
+                <Col md={6} className={`mb-4 ${!showLeaderboard && 'd-none d-md-block'}`}>
                     <Card>
                         <Card.Body>
                             <h2 className="text-center mb-4">Leaderboard</h2>
@@ -81,7 +88,8 @@ const LeaderboardAndUserStats = () => {
                         </Card.Body>
                     </Card>
                 </Col>
-                <Col md={6}>
+
+                <Col md={6} className={`${showLeaderboard && 'd-none d-md-block'}`}>
                     <Card>
                         <Card.Body>
                             <h2 className="text-center mb-4">Your Stats</h2>
@@ -115,7 +123,28 @@ const LeaderboardAndUserStats = () => {
                     </Card>
                 </Col>
             </Row>
+
+            <ButtonGroup
+                className="d-md-none mt-3 fixed-bottom pb-3"
+                style={{ marginBottom: '2vh', width: '80vw', justifyContent: 'center', alignContent: 'center', left: '10vw' }}
+            >
+                <Button
+                    variant={showLeaderboard ? "primary" : "outline-primary"}
+                    onClick={() => setShowLeaderboard(true)}
+                    style={{ backgroundColor: showLeaderboard ? '#1B3D86' : '#2e2e2e', color: '#fff', border: "none" }}
+                >
+                    Leaderboard
+                </Button>
+                <Button
+                    variant={!showLeaderboard ? "primary" : "outline-primary"}
+                    onClick={() => setShowLeaderboard(false)}
+                    style={{ backgroundColor: !showLeaderboard ? '#1B3D86' : '#2e2e2e', color: '#fff', border: "none", marginLeft: '2px' }}
+                >
+                    Your Stats
+                </Button>
+            </ButtonGroup>
         </Container>
     );
 };
+
 export default LeaderboardAndUserStats;

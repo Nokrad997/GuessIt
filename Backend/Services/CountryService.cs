@@ -11,7 +11,7 @@ public class CountryService : ICountryService
      private readonly ICountryRepository _countryRepository;
      private readonly IGeolocationRepository _geolocationRepository; 
      
-    public CountryService(ICountryRepository countryRepository, GeolocationRepository geolocationRepository)
+    public CountryService(ICountryRepository countryRepository, IGeolocationRepository geolocationRepository)
     {
         _countryRepository = countryRepository;
         _geolocationRepository = geolocationRepository;

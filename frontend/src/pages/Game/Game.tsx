@@ -33,7 +33,8 @@ interface minMaxOfGeolocation {
 
 const Game = () => {
 	var loadedPanoCount = 0;
-	var traveledDistance = 0;
+	const traveledDistanceRef = useRef(0);
+	const [traveledDistance, setTraveledDistance] = useState(0);
 	var previousPosition: google.maps.LatLng | null = null;
 	var monthlyUsage = 0;
 	const panoramaRef = useRef<HTMLDivElement | null>(null);
@@ -61,12 +62,12 @@ const Game = () => {
 	const MAX_ATTEMPTS = 100;
 
 	useEffect(() => {
-		const checkUsage = async () =>{
+		const checkUsage = async () => {
 			monthlyUsage = await getMonthlyUsage();
-			if(monthlyUsage > 12500){
+			if (monthlyUsage > 12500) {
 				triggerError("Monthly free quota reached")
 				navigate('/');
-            	return;
+				return;
 			}
 		}
 
@@ -195,8 +196,8 @@ const Game = () => {
 						currentPosition!.lng()
 					);
 
-					traveledDistance += distance;
-					console.log(`Traveled distance: ${traveledDistance.toFixed(2)} km`);
+					traveledDistanceRef.current += distance
+					console.log(`Traveled distance: ${traveledDistanceRef.current.toFixed(2)} km`);
 				}
 
 				previousPosition = currentPosition;
@@ -227,38 +228,23 @@ const Game = () => {
 			const queryParams = new URLSearchParams(routerLocation.search);
 			const gameType = queryParams.get('type');
 
-			let calculatedScore = 0;
-			if (gameType === 'country') {
-				if (dist <= 50) {
-					calculatedScore = 100;
-				} else if (dist <= 100) {
-					calculatedScore = 50;
-				} else if (dist <= 200) {
-					calculatedScore = 25;
-				} else {
-					calculatedScore = 0;
-				}
-			} else if (gameType === 'continent') {
-				if (dist <= 500) {
-					calculatedScore = 100;
-				} else if (dist <= 1000) {
-					calculatedScore = 75;
-				} else if (dist <= 2000) {
-					calculatedScore = 50;
-				} else if (dist <= 5000) {
-					calculatedScore = 25;
-				} else {
-					calculatedScore = 0;
-				}
-			}
+			const gameTypeFactor = gameType === 'continent' ? 2 : 1;
+
+			const timeTakenMinutes = (Number(new Date()) - Number(startTime!)) / (1000 * 60); 
+			console.log(timeTakenMinutes)
+			const calculatedScore = Math.floor(
+				1000 * gameTypeFactor / (dist + 1) * (60 * gameTypeFactor / (timeTakenMinutes + 1))
+			);
+			console.log(calculatedScore)
 			setScore(calculatedScore);
 		}
 	};
 
 	useEffect(() => {
 		if (guessedLocation) {
-			calculateDistanceAndScore();
+			setTraveledDistance(traveledDistanceRef.current)
 			setEndTime(new Date());
+			calculateDistanceAndScore();
 
 			setShowResult(true);
 		}
@@ -313,10 +299,10 @@ const Game = () => {
 							ref={mapRef}
 						>
 							<TileLayer
-								// url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-								// attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-								url="https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png?lang=en"
+								url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 								attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+								// url="https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png?lang=en"
+								// attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 							/>
 							<MapClickHandler />
 							<RestrictMapMovement />

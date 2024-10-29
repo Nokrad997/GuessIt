@@ -26,6 +26,9 @@ services:
       - app-network
     depends_on:
       - backend
+    volumes:
+      - ./frontend:/app  # Montujemy katalog źródłowy jako wolumen
+      - /app/node_modules
 
   postgres:
     image: postgis/postgis:latest
@@ -37,6 +40,8 @@ services:
       - "5432:5432"
     networks:
       - app-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4
@@ -52,3 +57,6 @@ services:
 
 networks:
   app-network:
+
+volumes:
+  postgres-data:
