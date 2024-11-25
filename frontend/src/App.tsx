@@ -16,7 +16,7 @@ import LeaderboardAndUserStats from './pages/LeaderboardAndUserStats/LeaderBoard
 function App() {
   return (
     <LoadScriptNext
-      googleMapsApiKey={'AIzaSyB2mbuR4LbvGpVT5uAoftZbQkb72hhfY1g'} 
+      googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ''} 
       libraries={['places', 'geometry']}
     >
       <div className="App">

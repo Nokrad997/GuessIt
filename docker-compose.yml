@@ -55,6 +55,17 @@ services:
     depends_on:
       - postgres
 
+  Scripts:
+    build:
+      context: ./Db
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    command: >
+      sh -c "sleep 20 && python3 execute_sql.py && python3 data_population.py"
+
 networks:
   app-network:
 
