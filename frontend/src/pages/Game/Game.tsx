@@ -1,5 +1,5 @@
 import useLocation from '../../hooks/useLocation';
-import { useLocation as useRouterLocation } from 'react-router-dom';
+import { useNavigate, useLocation as useRouterLocation } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, useMapEvents, useMap, Marker, Polyline } from 'react-leaflet';
 import { Button, Modal } from 'react-bootstrap';
@@ -9,6 +9,9 @@ import './Game.css';
 import 'leaflet/dist/leaflet.css';
 import * as turf from '@turf/turf';
 import Results from '../../components/Results/Results';
+import useMonthlyUsage from '../../hooks/useMonthlyUsage';
+import { useError } from '../../components/ErrorContext/ErrorContext';
+import calculateDistance from '../../assets/DistanceCalculator';
 
 L.Icon.Default.mergeOptions({
 	iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
@@ -29,7 +32,14 @@ interface minMaxOfGeolocation {
 }
 
 const Game = () => {
+	var loadedPanoCount = 0;
+	const traveledDistanceRef = useRef(0);
+	const [traveledDistance, setTraveledDistance] = useState(0);
+	var previousPosition: google.maps.LatLng | null = null;
+	var monthlyUsage = 0;
 	const panoramaRef = useRef<HTMLDivElement | null>(null);
+	const { triggerError } = useError();
+	const navigate = useNavigate();
 	const [showMap, setShowMap] = useState(false);
 	const [showModal, setShowModal] = useState(false);
 	const [showResult, setShowResult] = useState(false);
@@ -44,12 +54,23 @@ const Game = () => {
 	const [score, setScore] = useState(0);
 	const [startTime, setStartTime] = useState<Date | null>(null);
 	const [endTime, setEndTime] = useState<Date | null>(null);
+	const [additionalRange, setAdditionalRange] = useState<number>(450);
 	const { fetchGeolocation, geolocation } = useLocation();
+	const { getMonthlyUsage, updateMonthlyUsage } = useMonthlyUsage();
 	const mapRef = useRef(null);
 	const routerLocation = useRouterLocation();
 	const MAX_ATTEMPTS = 100;
 
 	useEffect(() => {
+		const checkUsage = async () => {
+			monthlyUsage = await getMonthlyUsage();
+			if (monthlyUsage > 12500) {
+				triggerError("Monthly free quota reached")
+				navigate('/');
+				return;
+			}
+		}
+
 		const queryParams = new URLSearchParams(routerLocation.search);
 		const geolocationId = queryParams.get('geolocationId');
 		const startGame = async () => {
@@ -59,6 +80,7 @@ const Game = () => {
 			}
 		};
 
+		checkUsage();
 		startGame();
 	}, []);
 
@@ -84,11 +106,20 @@ const Game = () => {
 	}, [attempts]);
 
 	const getMinMaxOfGeolocation = (): minMaxOfGeolocation => {
-		const coordinates = geolocation!.area.coordinates[0][0];
+		console.log(geolocation)
+		var coordinates = null
+		if (geolocation!.area.type === 'Polygon') {
+			coordinates = geolocation!.area.coordinates[0];
+		}
+		else {
+			coordinates = geolocation!.area.coordinates[0][0];
+		}
+
 		let minLat = 90;
 		let maxLat = -90;
 		let minLng = 180;
 		let maxLng = -180;
+		console.log(coordinates)
 
 		coordinates.forEach(([lng, lat]: [number, number]) => {
 			minLat = Math.min(minLat, lat);
@@ -113,7 +144,11 @@ const Game = () => {
 					continue;
 				}
 				randomPoint = turf.point([randomLng, randomLat]);
-				isInside = turf.booleanPointInPolygon(randomPoint, turf.polygon([geolocation.area.coordinates[0][0]]));
+				if (geolocation.area.type === 'Polygon') {
+					isInside = turf.booleanPointInPolygon(randomPoint, turf.polygon([geolocation.area.coordinates[0]]));
+				} else {
+					isInside = turf.booleanPointInPolygon(randomPoint, turf.polygon([geolocation.area.coordinates[0][0]]));
+				}
 			}
 
 			setGeneratedLocation({
@@ -125,25 +160,50 @@ const Game = () => {
 	};
 
 	const generatePanorama = () => {
+		setAdditionalRange(prev => prev + 50);
 		const sv = new window.google.maps.StreetViewService();
 		if (generatedLocation && !isProcessing) {
 			setIsProcessing(true);
 
 			const randomPoint = new window.google.maps.LatLng(generatedLocation.lat, generatedLocation.lng);
 			console.log("Using LatLng: ", randomPoint.lat(), randomPoint.lng());
-
-			sv.getPanorama({ location: randomPoint, radius: 500 }, processSVData);
+			sv.getPanorama({ location: randomPoint, radius: additionalRange }, processSVData);
 		}
 	};
 
 	const processSVData = (data: google.maps.StreetViewPanoramaData | null, status: google.maps.StreetViewStatus) => {
+		console.log(additionalRange);
 		console.log(status);
+
 		if (status === window.google.maps.StreetViewStatus.OK && panoramaRef.current && data?.location?.latLng) {
-			new window.google.maps.StreetViewPanorama(panoramaRef.current, {
+			const pano = new window.google.maps.StreetViewPanorama(panoramaRef.current, {
 				position: data.location.latLng,
 				pov: { heading: 34, pitch: 10 },
 				disableDefaultUI: true,
 			});
+
+			pano.addListener('pano_changed', () => {
+				loadedPanoCount++;
+				console.log("panoramaCount:" + loadedPanoCount);
+			})
+			pano.addListener('position_changed', () => {
+				const currentPosition = pano.getPosition();
+				if (previousPosition!) {
+					const distance = calculateDistance(
+						previousPosition.lat(),
+						previousPosition.lng(),
+						currentPosition!.lat(),
+						currentPosition!.lng()
+					);
+
+					traveledDistanceRef.current += distance
+					console.log(`Traveled distance: ${traveledDistanceRef.current.toFixed(2)} km`);
+				}
+
+				previousPosition = currentPosition;
+			});
+
+			previousPosition = pano.getPosition();
 
 			setSelectedLocation({
 				lat: data.location.latLng.lat(),
@@ -154,7 +214,6 @@ const Game = () => {
 		} else {
 			setAttempts(prev => prev + 1);
 		}
-
 		setIsProcessing(false);
 	};
 
@@ -169,38 +228,23 @@ const Game = () => {
 			const queryParams = new URLSearchParams(routerLocation.search);
 			const gameType = queryParams.get('type');
 
-			let calculatedScore = 0;
-			if (gameType === 'country') {
-				if (dist <= 50) {
-					calculatedScore = 100;
-				} else if (dist <= 100) {
-					calculatedScore = 50;
-				} else if (dist <= 200) {
-					calculatedScore = 25;
-				} else {
-					calculatedScore = 0;
-				}
-			} else if (gameType === 'continent') {
-				if (dist <= 500) {
-					calculatedScore = 100;
-				} else if (dist <= 1000) {
-					calculatedScore = 75;
-				} else if (dist <= 2000) {
-					calculatedScore = 50;
-				} else if (dist <= 5000) {
-					calculatedScore = 25;
-				} else {
-					calculatedScore = 0;
-				}
-			}
+			const gameTypeFactor = gameType === 'continent' ? 2 : 1;
+
+			const timeTakenMinutes = (Number(new Date()) - Number(startTime!)) / (1000 * 60); 
+			console.log(timeTakenMinutes)
+			const calculatedScore = Math.floor(
+				1000 * gameTypeFactor / (dist + 1) * (60 * gameTypeFactor / (timeTakenMinutes + 1))
+			);
+			console.log(calculatedScore)
 			setScore(calculatedScore);
 		}
 	};
 
 	useEffect(() => {
 		if (guessedLocation) {
-			calculateDistanceAndScore();
+			setTraveledDistance(traveledDistanceRef.current)
 			setEndTime(new Date());
+			calculateDistanceAndScore();
 
 			setShowResult(true);
 		}
@@ -211,8 +255,9 @@ const Game = () => {
 		setShowModal(true);
 	};
 
-	const handleConfirmLocation = () => {
+	const handleConfirmLocation = async () => {
 		panoramaRef.current = null;
+		await updateMonthlyUsage(loadedPanoCount);
 		setGuessedLocation(tempGuessedLocation);
 		setShowModal(false);
 	};
@@ -254,10 +299,10 @@ const Game = () => {
 							ref={mapRef}
 						>
 							<TileLayer
-								// url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-								// attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-								url="https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png?lang=en"
+								url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
 								attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+								// url="https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png?lang=en"
+								// attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 							/>
 							<MapClickHandler />
 							<RestrictMapMovement />
@@ -297,6 +342,7 @@ const Game = () => {
 					endTime={endTime!}
 					timeElapsed={timeElapsed}
 					selectedLocation={selectedLocation!}
+					traveledDistance={traveledDistance}
 					guessedLocation={guessedLocation!}
 					gameType={new URLSearchParams(routerLocation.search).get('type')!}
 				/>

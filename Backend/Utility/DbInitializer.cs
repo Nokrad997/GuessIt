@@ -6,12 +6,12 @@ namespace Backend.Utility;
 public class DbInitializer
 {
     private readonly ModelBuilder _modelBuilder;
-    private readonly PasswordHasher _passwordHasher;
+    private readonly PasswordAndEmailHasher _passwordAndEmailHasher;
 
-    public DbInitializer(ModelBuilder modelBuilder, PasswordHasher passwordHasher)
+    public DbInitializer(ModelBuilder modelBuilder, PasswordAndEmailHasher passwordAndEmailHasher)
     {
         _modelBuilder = modelBuilder;
-        _passwordHasher = passwordHasher;
+        _passwordAndEmailHasher = passwordAndEmailHasher;
     }
 
     public void seed()
@@ -21,8 +21,8 @@ public class DbInitializer
             {
                 UserId = -1,
                 Username = "admin",
-                Email = "admin@admin.com",
-                Password = _passwordHasher.HashPassword("admin"),
+                Email = _passwordAndEmailHasher.HashEmail("admin@admin.com"),
+                Password = _passwordAndEmailHasher.HashPassword("admin"),
                 IsAdmin = true,
                 Verified = true
             },
@@ -30,8 +30,8 @@ public class DbInitializer
             {
                 UserId = -2,
                 Username = "user",
-                Email = "user@user.com",
-                Password = _passwordHasher.HashPassword("user"),
+                Email = _passwordAndEmailHasher.HashEmail("user@user.com"),
+                Password = _passwordAndEmailHasher.HashPassword("user"),
                 IsAdmin = false,
                 Verified = true
             }

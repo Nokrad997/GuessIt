@@ -4,7 +4,9 @@ using Backend.Context;
 using Backend.Repositories;
 using Backend.Repositories.Interfaces;
 using Backend.Services;
+using Backend.Services.Interfaces;
 using Backend.Utility;
+using Backend.Utility.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -16,35 +18,35 @@ builder.Services.AddAuthorization();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<PasswordHasher>();
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<UserRepository>();
-builder.Services.AddScoped<TokenService>();
-builder.Services.AddScoped<AchievementService>();
-builder.Services.AddScoped<AchievementRepository>();
-builder.Services.AddScoped<FriendsService>();
-builder.Services.AddScoped<FriendsRepository>();
-builder.Services.AddScoped<LeaderboardService>();
-builder.Services.AddScoped<LeaderboardRepository>();
-builder.Services.AddScoped<StatisticsService>();
-builder.Services.AddScoped<StatisticsRepository>();
-builder.Services.AddScoped<UserAchievementsService>();
-builder.Services.AddScoped<UserAchievementsRepository>();
-builder.Services.AddScoped<GameService>();
-builder.Services.AddScoped<GameRepository>();
-builder.Services.AddScoped<GeolocationService>();
-builder.Services.AddScoped<GeolocationRepository>();
-builder.Services.AddScoped<ContinentService>();
-builder.Services.AddScoped<ContinentRepository>();
-builder.Services.AddScoped<CountryService>();
-builder.Services.AddScoped<CountryRepository>();
-builder.Services.AddScoped<CityService>();
-builder.Services.AddScoped<CityRepository>();
-builder.Services.AddTransient<TokenUtil>();
+builder.Services.AddScoped<IPasswordAndEmailHasher, PasswordAndEmailHasher>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IAchievementService, AchievementService>();
+builder.Services.AddScoped<IAchievementRepository, AchievementRepository>();
+builder.Services.AddScoped<IFriendsService, FriendsService>();
+builder.Services.AddScoped<IFriendsRepository, FriendsRepository>();
+builder.Services.AddScoped<ILeaderboardService, LeaderboardService>();
+builder.Services.AddScoped<ILeaderboardRepository, LeaderboardRepository>();
+builder.Services.AddScoped<IStatisticsService, StatisticsService>();
+builder.Services.AddScoped<IStatisticsRepository, StatisticsRepository>();
+builder.Services.AddScoped<IUserAchievementService, UserAchievementsService>();
+builder.Services.AddScoped<IUserAchievementsRepository, UserAchievementsRepository>();
+builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IGameRepository, GameRepository>();
+builder.Services.AddScoped<IGeolocationService, GeolocationService>();
+builder.Services.AddScoped<IGeolocationRepository, GeolocationRepository>();
+builder.Services.AddScoped<IContinentService, ContinentService>();
+builder.Services.AddScoped<IContinentRepository, ContinentRepository>();
+builder.Services.AddScoped<ICountryService, CountryService>();
+builder.Services.AddScoped<ICountryRepository, CountryRepository>();
+builder.Services.AddScoped<ICityService, CityService>();
+builder.Services.AddScoped<ICityRepository, CityRepository>();
+builder.Services.AddScoped<ITokenUtil, TokenUtil>();
+builder.Services.AddScoped<IMonthlyUsageService, MonthlyUsageService>();
 builder.Services.Configure<Config>(builder.Configuration.GetSection("Keys"));
 
-// Add DbContext configuration
 builder.Services.AddDbContext<GuessItContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -85,11 +87,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigins",
         corsPolicyBuilder =>
         {
-            // Adjust these as needed
-            corsPolicyBuilder.WithOrigins("http://localhost:3000")
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials(); // Optional: If you want to allow credentials (cookies, etc.)
+            corsPolicyBuilder
+                .WithOrigins("http://localhost:3000")
+                .WithMethods("GET", "POST", "PUT", "DELETE")
+                .WithHeaders("Content-Type", "Authorization");
         });
 });
 
@@ -102,11 +103,10 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseCors("AllowSpecificOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
@@ -115,6 +115,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapGet("/", () => "AmiSwinka!");
+app.MapGet("/", () => "Hello World!");
 
 app.Run();

@@ -245,6 +245,10 @@ namespace Backend.Migrations
                         .HasColumnType("timestamptz")
                         .HasColumnName("start_time");
 
+                    b.Property<double>("TraveledDistance")
+                        .HasColumnType("decimal(10, 2)")
+                        .HasColumnName("traveled_distance");
+
                     b.Property<int>("UserIdFk")
                         .HasColumnType("int")
                         .HasColumnName("user_id");
@@ -376,7 +380,7 @@ namespace Backend.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("varchar(50)")
+                        .HasColumnType("varchar(255)")
                         .HasColumnName("email");
 
                     b.Property<bool>("IsAdmin")
@@ -421,9 +425,9 @@ namespace Backend.Migrations
                         {
                             UserId = -1,
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "admin@admin.com",
+                            Email = "$2a$11$huZlpeHenmg3Yjq8Umcu9eOCFUW4/s8VMAEk3Yvmg.YXg7lURQmVK",
                             IsAdmin = true,
-                            Password = "$2a$11$AcRTAU40ViqK/8EMKYyCIurHwOsQ.TaSf3atWL7Zg4uUwK6YCcesy",
+                            Password = "$2a$11$KYB2gWb0RCyfVzR8I4rIru6.cylcjFPgoFHXq14gigVzEx7pg1ywe",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "admin",
                             Verified = true
@@ -432,9 +436,9 @@ namespace Backend.Migrations
                         {
                             UserId = -2,
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "user@user.com",
+                            Email = "$2a$11$QUbj1LxIEejfuoJh8TaHgeqjJcV8HoAzvsex0y8n/t7zp.bYiyk3m",
                             IsAdmin = false,
-                            Password = "$2a$11$AbEHplHmeYTIoWzsM2FTz.3UwAz/gl8X6QCOu0t2m4g/fkwN4gbXS",
+                            Password = "$2a$11$w8QLA0vHLr1WJ1r1aySTxOd7pkvFkttVi8aS65IKBMjepEOv6z6FC",
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Username = "user",
                             Verified = true

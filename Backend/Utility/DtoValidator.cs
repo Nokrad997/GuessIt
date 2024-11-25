@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Backend.Utility;
 
-internal class DtoValidator
+public class DtoValidator
 {
     public static bool ValidateObject<T>(T dto, out List<ValidationResult> messages) where T : IValidatableObject
     {

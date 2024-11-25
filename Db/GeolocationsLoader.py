@@ -2,11 +2,11 @@ from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship, declarative_base
 from geoalchemy2 import Geometry
 from geojson import load as load_geojson
-from sqlalchemy import func
+from sqlalchemy import func, exists
 import os
 import json
 
-DATABASE_URL = "postgresql://postgres:root@localhost:5432/GuessIt"
+DATABASE_URL = "postgresql://postgres:root@localhost:5432/Guess_It" #change postgres to root in order to work within container
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -113,7 +113,14 @@ def process_all_continents_and_countries(base_path):
     for continent in continents_data:
         process_continent_and_countries(base_path, continent)
 
-base_path = 'GeolocationsGeoJSONs'
-process_all_continents_and_countries(base_path)
+def check_if_db_was_populated():
+    return session.query(exists().where(Geolocation.geolocation_id.isnot(None))).scalar()
 
-print("Data has been processed and stored in the database.")
+if(check_if_db_was_populated()):
+    print("Database already populated. Exiting...")
+    exit(0)
+else:
+    base_path = 'GeolocationsGeoJSONs'
+    process_all_continents_and_countries(base_path)
+
+    print("Data has been processed and stored in the database.")

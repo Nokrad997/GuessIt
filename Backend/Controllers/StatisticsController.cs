@@ -1,6 +1,7 @@
 using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Services;
+using Backend.Services.Interfaces;
 using Backend.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,9 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class StatisticsController : ControllerBase
 {
-    private readonly StatisticsService _statisticsService;
+    private readonly IStatisticsService _statisticsService;
     
-    public StatisticsController(StatisticsService statisticsService)
+    public StatisticsController(IStatisticsService statisticsService)
     {
         _statisticsService = statisticsService;
     }
@@ -39,6 +40,24 @@ public class StatisticsController : ControllerBase
         try
         {
             return Ok(new {message = "Successfully retrieved statistics", statistics = await _statisticsService.Retrieve(id)});
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new { message = "Failed in retrieving statistics", error = e.Message });
+        }
+    }
+    
+    [HttpGet]
+    [Route("user-stats")]
+    public async Task<IActionResult> GetUserStatistics()
+    {
+        try
+        {
+            return Ok(new
+            {
+                message = "Retrieved statistics sucessfully",
+                statistics = await _statisticsService.GetUserStats(GetTokenFromRequest(HttpContext))
+            });
         }
         catch (Exception e)
         {

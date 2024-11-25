@@ -1,9 +1,11 @@
 using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Services;
+using Backend.Services.Interfaces;
 using Backend.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static System.String;
 
 namespace Backend.Controllers;
 
@@ -11,9 +13,9 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class UserAchievementsController : ControllerBase
 {
-    private readonly UserAchievementsService _userAchievementsService;
+    private readonly IUserAchievementService _userAchievementsService;
     
-    public UserAchievementsController(UserAchievementsService userAchievementsService)
+    public UserAchievementsController(IUserAchievementService userAchievementsService)
     {
         _userAchievementsService = userAchievementsService;
     }
@@ -38,6 +40,21 @@ public class UserAchievementsController : ControllerBase
         try
         {
             return Ok(new {message = "UserAchievement retrieved successfully", userAchievement = await _userAchievementsService.Retrieve(id)});
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new { message = "Failed in retrieving userAchievements", error = e.Message });
+        }
+    }
+    
+    [HttpGet]
+    [Route("getUserAssociatedAchievements")]
+    [Authorize(Roles = "Admin, User")]
+    public async Task<IActionResult> GetUserAssociatedAchievements()
+    {
+        try
+        {
+            return Ok(new { message = "Successfully retrieved user achievements", userAchievements = await _userAchievementsService.RetrieveUserAchievements(GetTokenFromRequest(HttpContext))});
         }
         catch (Exception e)
         {
@@ -97,5 +114,15 @@ public class UserAchievementsController : ControllerBase
         {
             return BadRequest(new { message = "Failed in deleting userAchievements", error = e.Message });
         }
+    }
+    
+    private static string GetTokenFromRequest(HttpContext context)
+    {
+        var retrievedToken = context.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
+        if(IsNullOrEmpty(retrievedToken))
+        {
+            throw new Exception("Token not found");
+        }
+        return retrievedToken;
     }
 }

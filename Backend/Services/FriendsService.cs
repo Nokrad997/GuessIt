@@ -4,17 +4,19 @@ using Backend.Dtos.EditDtos;
 using Backend.Entities;
 using Backend.Repositories;
 using Backend.Repositories.Interfaces;
+using Backend.Services.Interfaces;
 using Backend.Utility;
 using Backend.Utility.Enums;
+using Backend.Utility.Interfaces;
 
 namespace Backend.Services;
 
-public class FriendsService
+public class FriendsService : IFriendsService
 {
-    private readonly FriendsRepository _friendsRepository;
-    private readonly TokenUtil _tokenUtil;
+    private readonly IFriendsRepository _friendsRepository;
+    private readonly ITokenUtil _tokenUtil;
     
-    public FriendsService(FriendsRepository friendsRepository, TokenUtil tokenUtil)
+    public FriendsService(IFriendsRepository friendsRepository, ITokenUtil tokenUtil)
     {
         _friendsRepository = friendsRepository;
         _tokenUtil = tokenUtil;

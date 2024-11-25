@@ -1,12 +1,14 @@
+using Backend.Services.Interfaces;
 using Backend.Utility;
+using Backend.Utility.Interfaces;
 
 namespace Backend.Services;
 
-public class TokenService
+public class TokenService : ITokenService
 {
-    private readonly TokenUtil _tokenUtil;
+    private readonly ITokenUtil _tokenUtil;
 
-    public TokenService(TokenUtil tokenUtil)
+    public TokenService(ITokenUtil tokenUtil)
     {
         _tokenUtil = tokenUtil;
     }

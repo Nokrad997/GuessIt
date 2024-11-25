@@ -1,6 +1,7 @@
 using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Services;
+using Backend.Services.Interfaces;
 using Backend.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,9 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class CountryController : ControllerBase
 {
-    private readonly CountryService _countryService;
+    private readonly ICountryService _countryService;
     
-    public CountryController(CountryService countryService)
+    public CountryController(ICountryService countryService)
     {
         _countryService = countryService;
     }

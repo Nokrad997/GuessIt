@@ -9,13 +9,15 @@ import CustomNavbar from './components/Navbar/Navbar';
 import Profile from './pages/Profile/Profile';
 import Location from './pages/Location/Location';
 import Game from './pages/Game/Game';
+import UserAchievements from './pages/Achievements/Achievements';
+import LeaderboardAndUserStats from './pages/LeaderboardAndUserStats/LeaderBoardAndUserStats';
+
 
 function App() {
   return (
     <LoadScriptNext
       googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY || ''} 
       libraries={['places', 'geometry']}
-      loadingElement={<div>Loading Google Maps...</div>} 
     >
       <div className="App">
         <div className="Navbar">
@@ -26,9 +28,11 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/profile-management" element={<Profile />} />
+            <Route path="/profile/management" element={<Profile />} />
+            <Route path='/profile/achievements' element={<UserAchievements />} />
+            <Route path='/profile/statistics-leaderboard' element={<LeaderboardAndUserStats/>} />
             <Route path="/game-dashboard" element={<Location />} />
-            <Route path="game-dashboard/game" element={<Game />} />
+            <Route path="/game-dashboard/game" element={<Game />} />
           </Routes>
         </div>
       </div>

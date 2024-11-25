@@ -1,14 +1,16 @@
 using Backend.Dtos.EditDtos;
 using Backend.Dtos.Interfaces;
 using Backend.Repositories;
+using Backend.Repositories.Interfaces;
+using Backend.Services.Interfaces;
 
 namespace Backend.Services;
 
-public class LeaderboardService
+public class LeaderboardService : ILeaderboardService
 {
-    private readonly LeaderboardRepository _leaderboardRepository;
+    private readonly ILeaderboardRepository _leaderboardRepository;
     
-    public LeaderboardService(LeaderboardRepository leaderboardRepository)
+    public LeaderboardService(ILeaderboardRepository leaderboardRepository)
     {
         _leaderboardRepository = leaderboardRepository;
     }

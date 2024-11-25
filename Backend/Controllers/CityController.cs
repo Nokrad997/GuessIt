@@ -1,6 +1,7 @@
 using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Services;
+using Backend.Services.Interfaces;
 using Backend.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,9 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class CityController : ControllerBase
 {
-    private readonly CityService _cityService;
+    private readonly ICityService _cityService;
     
-    public CityController(CityService cityService)
+    public CityController(ICityService cityService)
     {
         _cityService = cityService;
     }

@@ -3,32 +3,38 @@ using Backend.Dtos.EditDtos;
 using Backend.Entities;
 using Backend.Exceptions;
 using Backend.Repositories;
+using Backend.Repositories.Interfaces;
+using Backend.Services.Interfaces;
 using Backend.Utility;
+using Backend.Utility.Interfaces;
 
 namespace Backend.Services;
 
-public class AuthService
+public class AuthService : IAuthService
 {
-    private readonly UserRepository _userRepository;
-    private readonly PasswordHasher _passwordHasher;
-    private readonly TokenUtil _tokenUtil;
+    private readonly IUserRepository _userRepository;
+    private readonly IPasswordAndEmailHasher _passwordAndEmailHasher;
+    private readonly ITokenUtil _tokenUtil;
 
-    public AuthService(UserRepository userRepository, PasswordHasher passwordHasher, TokenUtil tokenUtil)
+    public AuthService(IUserRepository userRepository, IPasswordAndEmailHasher passwordAndEmailHasher, ITokenUtil tokenUtil)
     {
         _userRepository = userRepository;
-        _passwordHasher = passwordHasher;
+        _passwordAndEmailHasher = passwordAndEmailHasher;
         _tokenUtil = tokenUtil;
     }
 
     public async Task RegisterUser(EditUserDto registerUserDto)
     {
-        var existingUser = await _userRepository.GetUserByEmail(registerUserDto.Email);
+        var existingUsers = await _userRepository.GetAllUsers();
+        var existingUser = existingUsers.FirstOrDefault(user =>
+            _passwordAndEmailHasher.VerifyEmail(registerUserDto.Email, user.Email));
         if (existingUser is not null)
         {
             throw new BadCredentialsException("User with provided email already exists");
         }
         
-        registerUserDto.Password = _passwordHasher.HashPassword(registerUserDto.Password);
+        registerUserDto.Password = _passwordAndEmailHasher.HashPassword(registerUserDto.Password);
+        registerUserDto.Email = _passwordAndEmailHasher.HashEmail(registerUserDto.Email);
         User user = registerUserDto.ConvertToEntity();
         
         await _userRepository.AddUser(user);
@@ -36,13 +42,15 @@ public class AuthService
 
     public async Task<TokensDto> LoginUser(AuthUserDto authUserDto)
     {
-        var existingUser = await _userRepository.GetUserByEmail(authUserDto.Email);
+        var existingUsers = await _userRepository.GetAllUsers();
+        var existingUser = existingUsers.FirstOrDefault(user =>
+            _passwordAndEmailHasher.VerifyEmail(authUserDto.Email, user.Email));
         if (existingUser is null)
         {
             throw new BadCredentialsException("Wrong email or password");
         }
 
-        if (_passwordHasher.VerifyPassword(authUserDto.Password, existingUser.Password))
+        if (_passwordAndEmailHasher.VerifyPassword(authUserDto.Password, existingUser.Password))
         {
             var tokens = _tokenUtil.CreateTokenPair(existingUser);
             return new TokensDto

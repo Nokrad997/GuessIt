@@ -26,9 +26,9 @@ public class UserAchievementsRepository : IUserAchievementsRepository
         return existingUserAchievements;
     }
 
-    public async Task<UserAchievements?> GetUserAchievementsByUserId(int userId)
+    public async Task<IEnumerable<UserAchievements>> GetUserAchievementsByUserId(User user)
     {
-        return await _context.UserAchievements.FirstOrDefaultAsync(u => u.UserIdFk == userId);
+        return await _context.UserAchievements.Where(u => u.UserIdFk == user.UserId).ToListAsync();
     }
 
     public async Task AddUserAchievements(UserAchievements userAchievement)

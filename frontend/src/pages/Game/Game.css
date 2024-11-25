@@ -18,7 +18,7 @@
     top: 0;
     left: 0;
     height: 100%;
-    width: 40%;
+    width: 80%;
     background-color: white;
     transform: translateX(-100%);
     transition: transform 0.5s ease;

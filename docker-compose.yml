@@ -1,0 +1,73 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "5027:5027"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5027
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+    command: >
+      sh -c "dotnet ef migrations add init && dotnet ef database update --no-build && dotnet Backend.dll"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app  # Montujemy katalog źródłowy jako wolumen
+      - /app/node_modules
+
+  postgres:
+    image: postgis/postgis:latest
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: Guess_It
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+
+  Scripts:
+    build:
+      context: ./Db
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    command: >
+      sh -c "sleep 20 && python3 execute_sql.py && python3 data_population.py"
+
+networks:
+  app-network:
+
+volumes:
+  postgres-data:

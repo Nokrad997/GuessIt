@@ -3,7 +3,8 @@ import { Card, Container, Row, Col, Spinner, Alert, Button } from 'react-bootstr
 import { useNavigate } from 'react-router-dom';
 import useLocation from '../../hooks/useLocation';
 
-const ITEMS_PER_PAGE = 8;
+const MOBILE_ITEMS_PER_PAGE = 3;
+const DESKTOP_ITEMS_PER_PAGE = 8;
 
 const Location = () => {
     const { continents, countries, loading, error, fetchContinents, fetchCountries } = useLocation();
@@ -12,11 +13,24 @@ const Location = () => {
     const [selectedCountry, setSelectedCountry] = useState<number | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [isPageLoading, setIsPageLoading] = useState(false);
+    const [itemsPerPage, setItemsPerPage] = useState(DESKTOP_ITEMS_PER_PAGE);
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchContinents();
-        console.log(continents);
+    }, []);
+
+    useEffect(() => {
+        const updateItemsPerPage = () => {
+            if (window.innerWidth <= 768) {
+                setItemsPerPage(MOBILE_ITEMS_PER_PAGE); // Używaj mniej elementów na mniejszych ekranach
+            } else {
+                setItemsPerPage(DESKTOP_ITEMS_PER_PAGE);
+            }
+        };
+        updateItemsPerPage();
+        window.addEventListener("resize", updateItemsPerPage);
+        return () => window.removeEventListener("resize", updateItemsPerPage);
     }, []);
 
     const redirectToGame = (id: number | null, type: 'continent' | 'country', geolocationId: number) => {
@@ -33,7 +47,6 @@ const Location = () => {
             setCurrentPage(1);
             if (continentId !== null) fetchCountries(continentId);
             setIsPageLoading(false);
-            console.log(countries);
         }, 500);
     };
 
@@ -65,47 +78,36 @@ const Location = () => {
     };
 
     const paginateItems = (items: Array<{ id: number; name: string; geolocation: number }>) => {
-        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-        const endIndex = startIndex + ITEMS_PER_PAGE;
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
         return items.slice(startIndex, endIndex);
     };
 
     const renderCards = (
-        items: Array<{ id: number; name: string; geolocation: number }>, 
+        items: Array<{ id: number; name: string; geolocation: number }>,
         onClick: (id: number | null, geolocationId: number) => void,
         wholeLabel: string,
         showWholeOption: boolean,
         continentId: number | null = null,
     ) => {
-        const paginatedItems = paginateItems(items);
+        let paginatedItems;
+
+        if (currentPage === 1 && continentId !== null) {
+            paginatedItems = items.slice(0, itemsPerPage - 1);
+        } else {
+            paginatedItems = paginateItems(items);
+        }
         return (
-            <Row 
-                className="justify-content-center mt-4"
-                style={{ 
-                    display: 'flex', 
-                    flexWrap: 'wrap', 
-                    gap: '20px', 
-                    justifyContent: 'center' 
-                }}
-            >
-                {showWholeOption && (
+            <Row className="justify-content-center mt-4">
+                {showWholeOption && currentPage === 1 && (
                     <Col xs={12} sm={6} md={4} lg={2} className="mb-4 d-flex justify-content-center">
-                        <Card 
+                        <Card
                             onClick={() => {
                                 const continent = continents.find(cont => cont.id === continentId);
-                                const geolocationId = continent ? continent.geolocation : 0; 
+                                const geolocationId = continent ? continent.geolocation : 0;
                                 handleCountryClick(continentId, geolocationId, 'continent');
-                            }} 
-                            style={{ 
-                                cursor: 'pointer', 
-                                minWidth: '200px',  
-                                minHeight: '150px', 
-                                width: '100%', 
-                                maxWidth: '250px',
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                justifyContent: 'center' 
                             }}
+                            style={{ cursor: 'pointer', width: '100%', maxWidth: '250px', minHeight: '150px' }}
                         >
                             <Card.Body className="d-flex align-items-center justify-content-center">
                                 <Card.Title className="text-center">{wholeLabel}</Card.Title>
@@ -115,18 +117,9 @@ const Location = () => {
                 )}
                 {paginatedItems.map(item => (
                     <Col xs={12} sm={6} md={4} lg={3} key={item.id} className="mb-4 d-flex justify-content-center">
-                        <Card 
+                        <Card
                             onClick={() => onClick(item.id, item.geolocation)}
-                            style={{ 
-                                cursor: 'pointer', 
-                                minWidth: '200px',  
-                                minHeight: '150px', 
-                                width: '100%', 
-                                maxWidth: '250px',
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                justifyContent: 'center' 
-                            }}
+                            style={{ cursor: 'pointer', width: '100%', maxWidth: '250px', minHeight: '150px' }}
                         >
                             <Card.Body className="d-flex align-items-center justify-content-center">
                                 <Card.Title className="text-center">{item.name}</Card.Title>
@@ -136,10 +129,10 @@ const Location = () => {
                 ))}
             </Row>
         );
-    };    
+    };
 
     const totalItems = currentView === 'continent' ? continents.length : countries.length;
-    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
 
     return (
         <Container

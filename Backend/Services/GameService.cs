@@ -3,18 +3,21 @@ using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Entities;
 using Backend.Repositories;
+using Backend.Repositories.Interfaces;
+using Backend.Services.Interfaces;
 using Backend.Utility;
+using Backend.Utility.Interfaces;
 using RTools_NTS.Util;
 
 namespace Backend.Services;
 
-public class GameService
+public class GameService : IGameService
 {
-    private readonly GameRepository _gameRepository;
-    private readonly UserRepository _userRepository;
-    private readonly TokenUtil _tokenUtil;
+    private readonly IGameRepository _gameRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly ITokenUtil _tokenUtil;
 
-    public GameService(GameRepository gameRepository, UserRepository userRepository, TokenUtil tokenUtil)
+    public GameService(IGameRepository gameRepository, IUserRepository userRepository, ITokenUtil tokenUtil)
     {
         _gameRepository = gameRepository;
         _userRepository = userRepository;

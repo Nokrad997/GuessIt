@@ -3,17 +3,20 @@ using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Entities;
 using Backend.Repositories;
+using Backend.Repositories.Interfaces;
+using Backend.Services.Interfaces;
 using Backend.Utility;
+using Backend.Utility.Interfaces;
 
 namespace Backend.Services;
 
-public class StatisticsService
+public class StatisticsService : IStatisticsService
 {
-    private readonly StatisticsRepository _statisticsRepository;
-    private readonly UserRepository _userRepository;
-    private readonly TokenUtil _tokenUtil;
+    private readonly IStatisticsRepository _statisticsRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly ITokenUtil _tokenUtil;
     
-    public StatisticsService(StatisticsRepository statisticsRepository, UserRepository userRepository ,TokenUtil tokenUtil)
+    public StatisticsService(IStatisticsRepository statisticsRepository, IUserRepository userRepository ,ITokenUtil tokenUtil)
     {
         _statisticsRepository = statisticsRepository;
         _userRepository = userRepository;
@@ -35,6 +38,22 @@ public class StatisticsService
         }
         
         return existingStatistics.ConvertToDto();
+    }
+    
+    public async Task<StatisticsDto> GetUserStats(string token)
+    {
+        var userId = _tokenUtil.GetIdFromToken(token);
+        var existingUser = await _userRepository.GetUserById(userId);
+        if (existingUser is null)
+        {
+            throw new ArgumentException("User not found");
+        }
+        var userStats = await _statisticsRepository.GetStatisticsByUserId(existingUser.UserId);
+        if (userStats is null)
+        {
+            return GetEmptyStatistics();
+        }
+        return userStats.ConvertToDto();
     }
     
     public async Task AddStatistics(StatisticsDto statisticsDto, string token)
@@ -74,10 +93,10 @@ public class StatisticsService
         {
             throw new ArgumentException("User not found");
         }
-        if(await _statisticsRepository.GetStatisticsByUserId(statisticsDto.UserIdFk) is not null)
-        {
-            throw new ArgumentException("Statistics for user already exists");
-        }
+        // if(await _statisticsRepository.GetStatisticsByUserId(statisticsDto.UserIdFk) is not null)
+        // {
+        //     throw new ArgumentException("Statistics for user already exists");
+        // }
         UpdatePropertiesIfNeeded(existingStatistics, statisticsDto, ["StatisticId", "UserIdFk"]);
         
         await _statisticsRepository.EditStatistics(existingStatistics);
@@ -116,5 +135,18 @@ public class StatisticsService
                 userProp.SetValue(statistic, sourceValue);
             }
         }
+    }
+    
+    private StatisticsDto GetEmptyStatistics()
+    {
+        return new StatisticsDto
+        {
+            AverageScore = 0,
+            HighestScore = 0,
+            LowestTimeInSeconds = 0,
+            TotalGames = 0,
+            TotalPoints = 0,
+            TotalTraveledDistanceInMeters = 0
+        };
     }
 }

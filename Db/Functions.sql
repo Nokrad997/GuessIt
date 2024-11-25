@@ -40,10 +40,10 @@ BEGIN
     UPDATE statistics
     SET lowest_time_in_seconds = time_diff_in_seconds
     WHERE user_id = NEW.user_id
-      AND time_diff_in_seconds < lowest_time_in_seconds;
+      AND lowest_time_in_seconds = 0 OR time_diff_in_seconds < lowest_time_in_seconds;
 
     UPDATE statistics
-    SET total_traveled_distance_in_meters = total_traveled_distance_in_meters + NEW.distance_to_starting_location * 1000
+    SET total_traveled_distance_in_meters = total_traveled_distance_in_meters + NEW.traveled_distance * 1000
     WHERE user_id = NEW.user_id;
 
     UPDATE statistics
@@ -80,7 +80,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION check_single_achievement(
     p_user_id INT, 
     p_achievement RECORD, 
-    p_achievement_criteria JSON, 
+    p_achievement_criteria JSONB, 
     p_user_stat RECORD
 )
 RETURNS VOID AS $$
@@ -132,13 +132,12 @@ RETURNS TRIGGER AS $$
 DECLARE
     achievement RECORD;
     user_stat RECORD;
-    achievement_criteria JSON;
+    achievement_criteria JSONB;
 BEGIN
     SELECT * INTO user_stat FROM statistics WHERE "user_id" = NEW."user_id";
 
     FOR achievement IN SELECT * FROM achievements LOOP
-        achievement_criteria := achievement."achievement_criteria"::json;
-
+        achievement_criteria := achievement."achievement_criteria"::jsonb;
         PERFORM check_single_achievement(NEW."user_id", achievement, achievement_criteria, user_stat);
     END LOOP;
 

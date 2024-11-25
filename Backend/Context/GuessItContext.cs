@@ -29,7 +29,7 @@ namespace Backend.Context;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            new DbInitializer(modelBuilder, new PasswordHasher()).seed();
+            new DbInitializer(modelBuilder, new PasswordAndEmailHasher()).seed();
 
             modelBuilder.ApplyConfiguration(new FriendsConfiguration());
             modelBuilder.ApplyConfiguration(new GameConfiguration());

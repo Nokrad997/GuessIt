@@ -1,5 +1,6 @@
 using Backend.Dtos;
 using Backend.Services;
+using Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -10,9 +11,9 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class TokenController : ControllerBase
 {
-    private readonly TokenService _tokenService;
+    private readonly ITokenService _tokenService;
 
-    public TokenController(TokenService tokenService)
+    public TokenController(ITokenService tokenService)
     {
         _tokenService = tokenService;
     }

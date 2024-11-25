@@ -3,14 +3,16 @@ using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Entities;
 using Backend.Repositories;
+using Backend.Repositories.Interfaces;
+using Backend.Services.Interfaces;
 
 namespace Backend.Services;
 
-public class AchievementService
+public class AchievementService : IAchievementService
 {
-    private readonly AchievementRepository _achievementRepository;
-
-    public AchievementService(AchievementRepository achievementRepository)
+    private readonly IAchievementRepository _achievementRepository;
+    
+    public AchievementService(IAchievementRepository achievementRepository)
     {
         _achievementRepository = achievementRepository;
     }
@@ -45,27 +47,6 @@ public class AchievementService
         }
 
         await _achievementRepository.AddAchievement(dto.ConvertToEntity());
-    }
-
-    public async Task AddAchievementsInBulk(IEnumerable<AchievementDto> achievementsDtos){
-        foreach (var achievementDto in achievementsDtos)
-        {
-            var existingAchievement = await _achievementRepository.GetAchievementByName(achievementDto.AchievementName);
-            if (existingAchievement is not null)
-            {
-                throw new ArgumentException("Achievement with provided name already exists");
-            }
-
-            existingAchievement = await _achievementRepository.GetAchievementByCriteria(achievementDto.AchievementCriteria);
-            if(existingAchievement is not null){
-                if (AreDictionariesEqual(existingAchievement.AchievementCriteria, achievementDto.AchievementCriteria))
-                {
-                    throw new ArgumentException($"Achievement with the provided criteria already exists: {FormatCriteria(existingAchievement.AchievementCriteria)}");
-                }
-            }
-        }
-
-        await _achievementRepository.AddAchievementsInBulk(achievementsDtos.Select(ad => ad.ConvertToEntity()).ToList());
     }
 
     public async Task<AchievementDto> EditAchievement(int id, EditAchievementDto dto)
@@ -118,25 +99,4 @@ public class AchievementService
             }
         }
     }
-    
-    private bool AreDictionariesEqual(Dictionary<string, object> dict1, Dictionary<string, object> dict2)
-    {
-        if (dict1.Count != dict2.Count)
-            return false;
-
-        foreach (var pair in dict1)
-        {
-            if (!dict2.TryGetValue(pair.Key, out var value) || !Equals(pair.Value, value))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-    
-    private string FormatCriteria(Dictionary<string, object> criteria)
-    {
-        return string.Join(", ", criteria.Select(kvp => $"{kvp.Key}: {kvp.Value}"));
-    }
-
 }

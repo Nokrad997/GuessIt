@@ -1,6 +1,7 @@
 using Backend.Dtos;
 using Backend.Dtos.EditDtos;
 using Backend.Services;
+using Backend.Services.Interfaces;
 using Backend.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,9 @@ namespace Backend.Controllers;
 [Route("api/[controller]")]
 public class ContinentController : ControllerBase
 {
-    private readonly ContinentService _continentService;
+    private readonly IContinentService _continentService;
     
-    public ContinentController(ContinentService continentService)
+    public ContinentController(IContinentService continentService)
     {
         _continentService = continentService;
     }
