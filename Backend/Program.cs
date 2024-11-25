@@ -87,10 +87,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowSpecificOrigins",
         corsPolicyBuilder =>
         {
-            corsPolicyBuilder.AllowAnyOrigin()
-                // .WithOrigins("http://localhost:3000")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
+            corsPolicyBuilder
+                .WithOrigins("http://localhost:3000")
+                .WithMethods("GET", "POST", "PUT", "DELETE")
+                .WithHeaders("Content-Type", "Authorization");
         });
 });
 
@@ -115,6 +115,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.MapGet("/", () => "AmiSwinka!");
+app.MapGet("/", () => "Hello World!");
 
 app.Run();

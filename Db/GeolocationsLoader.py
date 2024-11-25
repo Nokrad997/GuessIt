@@ -116,23 +116,6 @@ def process_all_continents_and_countries(base_path):
 def check_if_db_was_populated():
     return session.query(exists().where(Geolocation.geolocation_id.isnot(None))).scalar()
 
-def execute_sql_file(sql_file_path):
-     with open(sql_file_path, 'r') as file:
-        sql_script = file.read()
-
-        connection = engine.raw_connection()
-        try:
-            cursor = connection.cursor()
-            cursor.execute(sql_script)
-            connection.commit()
-            print(f"Skrypt SQL z {sql_file_path} został wykonany pomyślnie.")
-        finally:
-            cursor.close()
-            connection.close()
-
-execute_sql_file("Functions.sql")
-execute_sql_file("Triggers.sql")
-
 if(check_if_db_was_populated()):
     print("Database already populated. Exiting...")
     exit(0)
