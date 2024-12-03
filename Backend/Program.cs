@@ -77,6 +77,8 @@ builder.Services.AddAuthentication(x =>
         };
     });
 
+builder.Services.AddSingleton(new EncryptionUtil(tokenSettings.EncryptionKey, tokenSettings.IV));
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new PointConverter());
@@ -104,6 +106,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 // app.UseHttpsRedirection();
+app.UseMiddleware<EncryptionMiddleware>();
 app.UseStaticFiles();
 
 app.UseRouting();

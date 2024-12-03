@@ -21,9 +21,9 @@ public class AuthController : ControllerBase
     
     [Route("register")]
     [HttpPost]
-    [Consumes("application/json")]
     public async Task<IActionResult> RegisterUser([FromBody] EditUserDto registerUserDto)
     {
+        
         if (!DtoValidator.ValidateObject(registerUserDto, out var messages))
         {
             return BadRequest(messages);
@@ -31,7 +31,7 @@ public class AuthController : ControllerBase
         try
         {
             await _authService.RegisterUser(registerUserDto);
-            return Ok(new { message = "User registered successfully" });;
+            return Ok(new { message = "User registered successfully" });
         }
         catch(Exception e)
         {
@@ -41,7 +41,6 @@ public class AuthController : ControllerBase
 
     [Route("login")]
     [HttpPost]
-    [Consumes("application/json")]
     public async Task<IActionResult> LoginUser([FromBody] AuthUserDto authUserDto)
     {
         if(!DtoValidator.ValidateObject(authUserDto, out var messages))

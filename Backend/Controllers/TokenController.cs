@@ -20,7 +20,6 @@ public class TokenController : ControllerBase
     
     [Route("validate")]
     [HttpPost]
-    [Consumes("application/json")]
     public IActionResult ValidateToken()
     {
         var token = Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
@@ -48,7 +47,6 @@ public class TokenController : ControllerBase
 
     [Route("refresh")]
     [HttpPost]
-    [Consumes("application/json")]
     [Authorize]
     public IActionResult RefreshAccessToken([FromBody] TokensDto tokens)
     {

@@ -18,7 +18,6 @@ public class MonthlyUsageController : ControllerBase
     
     [Route("{userUsage:int}")]
     [HttpPost]
-    [Consumes("application/json")]
     [Authorize(Roles = "Admin, User")]
     public async Task<IActionResult> UpdateMonthlyUsage(int userUsage)
     {
