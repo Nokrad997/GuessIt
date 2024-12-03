@@ -8,7 +8,7 @@ AFTER INSERT OR UPDATE ON games
 FOR EACH ROW
 EXECUTE FUNCTION update_leaderboard();
 
-CREATE OR REPLACE TRIGGER after_game_insert
+CREATE OR REPLACE TRIGGER after_game_insert_trigger
 AFTER INSERT OR UPDATE ON statistics
 FOR EACH ROW
 EXECUTE FUNCTION check_achievements();
